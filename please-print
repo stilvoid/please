@@ -28,7 +28,7 @@ function load {
 }
 
 function print {
-    local obj="${1:?Must supply an object}"
+    local obj="${1:?Object not found}"
     local indent="${2-}"
 
     declare -A new=$obj
@@ -47,8 +47,14 @@ function print {
 
 read -r in
 
-echo $in
+if [ "$#" -eq 0 ]; then
+    print "$in"
+else
+    for arg in "$@"; do
+        print "$(load "$in" "$arg")"
+    done
+fi
 
 # load "$in" three.dot
 
-print "$in"
+#print "$in"
