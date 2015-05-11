@@ -24,6 +24,7 @@ func wrapObj(in interface{}) string {
     out = strings.Replace(out, "\\", "\\\\", -1)
     out = strings.Replace(out, "\"", "\\\"", -1)
     out = strings.Replace(out, "\n", "\\n", -1)
+    out = strings.Replace(out, "$", "\\$", -1)
     out = fmt.Sprintf("\"%s\"", out)
 
     return out

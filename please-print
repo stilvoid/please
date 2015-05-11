@@ -18,7 +18,7 @@ function load {
         rest=""
     fi
 
-    declare -A new=$obj
+    declare -A new="$obj"
 
     if [ -n "$rest" ]; then
         load "${new[$head]}" "$rest"
@@ -31,7 +31,7 @@ function print {
     local obj="${1:?Object not found}"
     local indent="${2-}"
 
-    declare -A new=$obj
+    declare -A new="$obj"
 
     if [[ "${#new[@]}" == "1" && "${!new[@]}" == "0" ]]; then
         # It's (probably) a value
