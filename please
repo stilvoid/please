@@ -1,0 +1,23 @@
+#!/bin/bash
+
+declare -A aliases
+
+aliases[get]=request
+aliases[post]=request
+aliases[put]=request
+aliases[delete]=request
+
+command=${1:?You must supply a command}
+
+PATH=$PATH:./
+
+if [ -n "${aliases[$command]}" ]; then
+    command="${aliases[$command]} $command"
+else
+    if ! which please-$command &>/dev/null; then
+        echo "Unknown command: $command"
+        exit 1
+    fi
+fi
+
+please-$command ${@:2}
