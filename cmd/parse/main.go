@@ -1,187 +1,91 @@
 package main
 
 import (
-    "bytes"
-    "encoding/csv"
-    "encoding/json"
+    "code.google.com/p/getopt"
     "fmt"
-    "github.com/clbanning/x2j"
-    "golang.org/x/net/html"
     "io/ioutil"
+    "offend.me.uk/please"
     "os"
-    "reflect"
-    "strconv"
-    "strings"
 )
 
-type node struct {
-    node interface{} `xml:",any"`
-    list []interface{} `xml:",any"`
-    value interface{} `xml:",any"`
-}
+var parsers map[string]func([]byte, string) (interface{}, error)
+var formatters map[string]func(interface{}, string) string
 
-func wrapObj(in interface{}, path string) string {
-    out := parseObj(in, path)
-    out = strings.Replace(out, "\\", "\\\\", -1)
-    out = strings.Replace(out, "\"", "\\\"", -1)
-    out = strings.Replace(out, "\n", "\\n", -1)
-    out = strings.Replace(out, "$", "\\$", -1)
-    out = fmt.Sprintf("\"%s\"", out)
+func parseAuto(input []byte, path string) (interface{}, error) {
+    var parsed interface{}
+    var err error
 
-    return out
-}
+    for name, parser := range(parsers) {
+        fmt.Println(name)
+        if name != "auto" {
+            parsed, err = parser(input, path)
 
-func parseObj(in interface{}, path string) (out string) {
-
-    if in == nil {
-        return ""
-    }
-
-    val := reflect.ValueOf(in)
-
-    split_path := strings.SplitN(path, ".", 2)
-
-    this_path := split_path[0]
-    var next_path string
-
-    if len(split_path) > 1{
-        next_path = split_path[1]
-    }
-
-    switch val.Kind() {
-    case reflect.Map:
-        vv := in.(map[string]interface{})
-
-        if this_path != "" {
-            if _, ok := vv[this_path]; !ok {
-                fmt.Fprintf(os.Stderr, "Key does not exist: %s\n", this_path)
-                os.Exit(1)
+            if err == nil {
+                break
             }
-
-            return parseObj(vv[this_path], next_path)
         }
-
-        parts := make([]string, len(vv))
-
-        i := 0
-
-        for key, value := range vv {
-            parts[i] = fmt.Sprintf("[%s]=%s", key, wrapObj(value, next_path))
-            i++
-        }
-
-        return fmt.Sprintf("(%s)", strings.Join(parts, " "))
-    case reflect.Array, reflect.Slice:
-        if this_path != "" {
-            index, err := strconv.Atoi(this_path)
-
-            if err != nil || index < 0 || index >= val.Len() {
-                fmt.Fprintf(os.Stderr, "Key does not exist: %s\n", this_path)
-                os.Exit(1)
-            }
-
-            return parseObj(val.Index(index).Interface(), next_path)
-        }
-
-        parts := make([]string, val.Len())
-
-        i := 0
-
-        for index := 0; index < val.Len(); index++ {
-            value := val.Index(index).Interface()
-
-            parts[i] = fmt.Sprintf("[%d]=%s", index, wrapObj(value, next_path))
-            i++
-        }
-
-        return fmt.Sprintf("(%s)", strings.Join(parts, " "))
-    default:
-        if this_path != "" {
-            fmt.Fprintf(os.Stderr, "Key does not exist: %s\n", this_path)
-            os.Exit(1)
-        }
-
-        return fmt.Sprint(in)
     }
+
+    return parsed, err
 }
 
-func tryJSON(input []byte, path string) {
-    var in interface{}
-
-    err := json.Unmarshal(input, &in)
-
-    if err == nil {
-        fmt.Println(parseObj(in, path))
-        os.Exit(0)
-    }
-}
-
-func tryXML(input []byte, path string) {
-    in := make(map[string]interface{})
-
-    err := x2j.Unmarshal(input, &in)
-
-    if err == nil {
-        fmt.Println(parseObj(in, path))
-        os.Exit(0)
-    }
-}
-
-func tryCSV(input []byte, path string) {
-    in, err := csv.NewReader(bytes.NewReader(input)).ReadAll()
-
-    if err == nil {
-        fmt.Println(parseObj(in, path))
-        os.Exit(0)
-    }
-}
-
-func formatHTML(n *html.Node) map[string]interface{} {
-    out := make(map[string]interface{})
-
-    for _, a := range n.Attr {
-        out[fmt.Sprintf("-%s", a.Key)] = a.Val
+func init() {
+    parsers = map[string]func([]byte, string) (interface{}, error) {
+        "auto": parseAuto,
+        "json": please.ParseJSON,
+        "xml": please.ParseXML,
+        "csv": please.ParseCSV,
+        "html": please.ParseHTML,
     }
 
-    for c := n.FirstChild; c != nil; c = c.NextSibling {
-        if c.Type == html.TextNode {
-            text := strings.TrimSpace(c.Data)
-
-            if text != "" {
-                out["#text"] = c.Data
-            }
-        } else {
-            // FIXME - Deal with multiples of the same node type
-            out[c.Data] = formatHTML(c)
-        }
-    }
-
-    return out
-}
-
-func tryHTML(input []byte, path string) {
-    doc, err := html.Parse(bytes.NewReader(input))
-
-    if err == nil {
-        in := formatHTML(doc)
-        fmt.Println(parseObj(in, path))
-        os.Exit(0)
+    formatters = map[string]func(interface{}, string) string {
+        "bash": please.FormatBash,
     }
 }
 
 func main() {
-    input, _ := ioutil.ReadAll(os.Stdin)
-    var path string
+    // Flags
+    in_format := getopt.String('i', "auto", "Parse the input as 'types'", "type")
+    out_format := getopt.String('o', "bash", "Use 'type' as the output format", "type")
+    getopt.Parse()
 
-    if len(os.Args) > 1 {
-        path = os.Args[1]
+    // Validate parser
+    if _, ok := parsers[*in_format]; !ok {
+        fmt.Printf("Unknown input format: %s\n", *in_format)
+        os.Exit(1)
     }
 
-    tryJSON(input, path)
-    tryXML(input, path)
-    tryCSV(input, path)
-    tryHTML(input, path)
+    // Validate formatter
+    if _, ok := formatters[*out_format]; !ok {
+        fmt.Printf("Unknown output format: %s\n", *out_format)
+        os.Exit(1)
+    }
 
-    fmt.Fprintln(os.Stderr, "Input could not be parsed")
-    os.Exit(1)
+    var err error
+
+    // Read from stdin
+    input, err := ioutil.ReadAll(os.Stdin)
+    if err != nil {
+        fmt.Println("Error reading input")
+        os.Exit(1)
+    }
+
+    // Path
+    var path string
+
+    if getopt.NArgs() > 0 {
+        path = getopt.Arg(0)
+    }
+
+    // Try parsing
+    parsed, err := parsers[*in_format](input, path)
+
+    if err != nil {
+        fmt.Fprintln(os.Stderr, "Input could not be parsed")
+        fmt.Println(err)
+        os.Exit(1)
+    }
+
+    // ...and format back out :)
+    fmt.Println(formatters[*out_format](parsed, path))
 }
