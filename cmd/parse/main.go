@@ -9,19 +9,18 @@ import (
 )
 
 var parsers map[string]func([]byte, string) (interface{}, error)
+var parser_preference []string
 var formatters map[string]func(interface{}, string) string
 
 func parseAuto(input []byte, path string) (interface{}, error) {
     var parsed interface{}
     var err error
 
-    for name, parser := range(parsers) {
-        if name != "auto" {
-            parsed, err = parser(input, path)
+    for _, name := range(parser_preference) {
+        parsed, err = parsers[name](input, path)
 
-            if err == nil {
-                break
-            }
+        if err == nil {
+            break
         }
     }
 
@@ -36,6 +35,14 @@ func init() {
         "csv": please.ParseCSV,
         "html": please.ParseHTML,
         "mime": please.ParseMIME,
+    }
+
+    parser_preference = []string {
+        "json",
+        "xml",
+        "csv",
+        "html",
+        "mime",
     }
 
     formatters = map[string]func(interface{}, string) string {
