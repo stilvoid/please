@@ -16,7 +16,6 @@ func parseAuto(input []byte, path string) (interface{}, error) {
     var err error
 
     for name, parser := range(parsers) {
-        fmt.Println(name)
         if name != "auto" {
             parsed, err = parser(input, path)
 
