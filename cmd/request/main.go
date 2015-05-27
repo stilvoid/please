@@ -70,13 +70,17 @@ func getResponse(req *http.Request) *http.Response {
     return resp
 }
 
-func printResponse(resp *http.Response, include_headers bool) {
+func printResponse(resp *http.Response, include_headers bool, include_status bool) {
     body, err := ioutil.ReadAll(resp.Body)
     resp.Body.Close()
 
     if err != nil {
         fmt.Println(err)
         os.Exit(1)
+    }
+
+    if include_status {
+        fmt.Println(resp.StatusCode)
     }
 
     if include_headers {
@@ -89,8 +93,10 @@ func printResponse(resp *http.Response, include_headers bool) {
 
 func main() {
     // Flags
-    include_headers := getopt.Bool('i', "", "Include headers in output")
-    headers_included := getopt.Bool('h', "", "Headers are included in the input")
+    headers_included := getopt.Bool('i', "Include headers in output")
+
+    include_headers := getopt.Bool('h', "Output headers with the response")
+    include_status := getopt.Bool('s', "Output HTTP status line with the response")
 
     // Cheat because it's better than writing *another* arg parser
     getopt.SetParameters("<url>")
@@ -123,5 +129,5 @@ func main() {
 
     resp := getResponse(req)
 
-    printResponse(resp, *include_headers)
+    printResponse(resp, *include_headers, *include_status)
 }

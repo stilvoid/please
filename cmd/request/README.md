@@ -14,8 +14,20 @@
 
     Options:
 
-        -h      The data on standard input contains headers and they should be
+        -i      The data on standard input contains headers and they should be
                 included in the request - overriding default headers where
                 appropriate.
 
-        -i      Include response headers in the output.
+        -s      Include the HTTP status code with the response
+
+        -h      Output headers with the response.
+
+    Notes:
+
+        No matter in which order the -s and -h options are given, output
+        will always take the same format:
+
+        status code (if option enabled)
+        headers... (if option enabled)
+        blank line (if headers option enabled)
+        body
