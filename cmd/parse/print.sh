@@ -35,7 +35,7 @@ function print {
 
     if [[ "${#new[@]}" == "1" && "${!new[@]}" == "0" ]]; then
         # It's (probably) a value
-        echo "$indent$obj"
+        echo "$indent${new[0]}"
     else
         # It's an object
         for key in "${!new[@]}"; do
@@ -46,9 +46,5 @@ function print {
 }
 
 read -r in
-
-echo $in
-
-# load "$in" three.dot
 
 print "$in"
