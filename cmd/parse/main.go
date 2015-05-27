@@ -36,6 +36,7 @@ func init() {
         "xml": please.ParseXML,
         "csv": please.ParseCSV,
         "html": please.ParseHTML,
+        "mime": please.ParseMIME,
     }
 
     formatters = map[string]func(interface{}, string) string {
