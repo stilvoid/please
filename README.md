@@ -2,75 +2,156 @@
 
 Please is a command line utility that makes it easy to integrate web APIs into your shell scripts.
 
-## Getting data
+It's called Please because the web works much better if you ask nicely.
 
-Please only speaks HTTP but it understands a variety of socket types:
+It is comprised of three sub-commands:
 
-* http://api.example.com/
+* `please-request`
 
-* https://api.example.com/
+    for communicating with web servers
 
-* unix:///var/run/my.sock
+* `please-respond`
 
-Please supports all HTTP method types and if you ever need a non-standard one, you can specify:
+    acts as a one-shot web server - useful in testing you applications
 
-* GET
-* POST
-* PUT
-* DELETE
-* PATCH
-* HEAD
-* OPTIONS
+* `please-parse`
 
-Please can customise all parts of the HTTP request (but provides sensible defaults if you don't):
+    understands the data exchange formats of the web and can translate between them
 
-* Headers
-* Query string parameters
-* Request body
+## please-request
+
+Probably the most important thing you will need to do with a web service is to communicate with it. `please-request` is fluent in HTTP and allows you to send any type of request along with any headers and content you need. It then outputs the response, optionally including the status code and headers.
+
+`please-request` supports all HTTP method types and if you ever need a non-standard one, you can specify it directly.
+
+### Usage
+
+    please-request <method> [options...] <url>
+
+    -i    Headers included in the input
+
+    -s    Output HTTP status line with the response
+    -h    Output headers with the response
+
+    There are aliases for the most common methods:
+
+        please get <url>
+        please post <url>
+        please put <url>
+        please delete <url>
+
+    For any other methods, you will need to specify the method directly:
+
+        please request head <url>
+        please request info <url>
+        please request patch <url>
 
 ### Examples
 
 Simple HTTP GET:
 
-    please get http://api.example.com/
+    $ please get http://api.example.com/
 
-Posting some data:
+Posting "Hello, world" to a URL:
 
-    please post "Hello, world" to http://api.example.com/
+    $ echo "Hello, world" | please post http://api.example.com/
 
-or:
+Including headers as part of your request:
 
-    cat "Hello, world" | please post to http://api.example.com/
+Note the `-i` flag.
 
-The `to` is optional but we think it reads better :)
+    $ cat <<EOF | please post -i http://api.example.com/
+    Content-Type: text/html
 
-## Parsing data
+    Hello, world
+    EOF
 
-Please can deal with a number of structured data formats and make them easy to parse from bash
+## `please-respond`
+
+`please-respond` sets up a web server that looks out for any one web request on the address and port specified, outputs the request that was received, returns the specified response, and then shuts down. This can be very useful for testing.
+
+### Usage
+
+    please-respond [options...] <status> [<address>[:<port>]]
+
+    -i    Headers included in the input
+
+    -m    Include request method in output
+    -u    Include URL in output
+    -h    Include headers in output
+
+### Examples
+
+A "Hello, world" service:
+
+Note: by default, `please-respond` listens on `0.0.0.0:8000`
+
+    $ echo "Hello, world" | please respond 200
+
+Then in another terminal:
+
+    $ please get http://127.0.0.1:8000/
+
+## `please-parse`
+
+`please-parse` can deal with a number of structured data formats and make them easy to parse from bash
 
 * JSON
-* YAML
 * XML
+* CSV
 * HTML
+* MIME messages
 
-Please parses data structures out into a format that can easily be parsed by bash.
+Please parses data structures in the above formats and can output them as:
 
-Alternatively, please can parse out just the particular value or values you're interested in.
+* bash `declare` syntax
+* YAML
+
+If you're not familiar with associative arrays in bash or how `declare` works, it's worth reading the following:
+
+* <http://www.gnu.org/software/bash/manual/html_node/Arrays.html>
+
+* <http://www.tldp.org/LDP/abs/html/declareref.html>
+
+### Usage
+
+    please-parse [-i type] [-o type] [path...]
+
+    -i type  Parse the input as 'type' (default: auto)
+    -o type  Use 'type' as the output format (default: bash)
+
+    If path is given, only output data from the path downwards.
 
 ### Examples
 
 Parsing a whole tree:
 
-    echo '{"this":{"is":["some","json"],"that":"we"},"will":"parse"}' | please parse
-
+    $ echo '{"this":{"is":["some","json"],"that":"we"},"will":"parse"}' | please parse
     ([this]="([is]=\"([0]=some [1]=json)\" [that]=we)" [will]=parse)
 
 Getting a single value:
 
-    echo '{"this":{"is":["some","json"],"that":"we"},"will":"parse"}' | please parse this.that
-
+    $ echo '{"this":{"is":["some","json"],"that":"we"},"will":"parse"}' | please parse this.that
     we
 
-## Formatting data
+Specifying the input format:
 
-Please can 
+Note the `-i` flag
+
+    $ echo '<xml example="true"><child>one</child><child>two</child></xml>' | please parse -i xml
+    ([xml]="([-example]=\"true\" [child]=\"([0]=\\\"one\\\" [1]=\\\"two\\\")\")")
+
+Specifying the output format:
+
+Note the `-o` flag
+
+    $ echo '{"json": ["input", "here"], "yaml": "output"}' | please parse -o yaml
+    'json': 
+      - "input"
+      - "here"
+    'yaml': "output"
+
+Making use of the bash-declare output format
+
+    $ echo '{"json": ["array", "values"]}' | please parse json | (declare -A data=$(cat -); echo ${data[1]})
+    values
