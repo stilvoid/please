@@ -2,6 +2,7 @@ package main
 
 import (
     "bufio"
+    "bytes"
     "code.google.com/p/getopt"
     "fmt"
     "github.com/andrew-d/go-termutil"
@@ -21,30 +22,38 @@ func createRequest(method string, url string, input io.Reader, headers_included 
 
     method = strings.ToUpper(method)
 
-    if headers_included {
-        if input == nil {
-            fmt.Println("Error reading headers")
-            os.Exit(1)
-        }
+    if input == nil {
+        req, err = http.NewRequest(method, url, nil)
+    } else if !headers_included {
+        req, err = http.NewRequest(method, url, input)
+    } else {
+        input_reader := bufio.NewReader(input)
 
-        // Parse headers from input
-        reader := textproto.NewReader(bufio.NewReader(input))
+        reader := textproto.NewReader(input_reader)
+
         headers, err = reader.ReadMIMEHeader()
 
         if err != nil {
             fmt.Println("Error parsing headers:", err)
             os.Exit(1)
         }
-    }
 
-    req, err = http.NewRequest(method, url, input)
+        body, err := ioutil.ReadAll(input_reader)
+
+        if err != nil {
+            fmt.Println("Error reading input:", err)
+            os.Exit(1)
+        }
+
+        req, err = http.NewRequest(method, url, bytes.NewReader(body))
+    }
 
     if err != nil {
         fmt.Println("Error creating request:", err)
         os.Exit(1)
     }
 
-    if headers_included {
+    if input != nil && headers_included {
         for name, values := range headers {
             for i, value := range values {
                 if i == 0 {

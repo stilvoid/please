@@ -51,6 +51,8 @@ func printRequest(req *http.Request, include_method bool, include_url bool, incl
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
     printRequest(req, h.include_method, h.include_url, h.include_headers)
 
+    input_reader := bufio.NewReader(h.data)
+
     if h.headers_included {
         if h.data == nil {
             fmt.Println("Error reading headers")
@@ -58,7 +60,7 @@ func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
         }
 
         // Parse headers from input
-        reader := textproto.NewReader(bufio.NewReader(h.data))
+        reader := textproto.NewReader(input_reader)
         headers, err := reader.ReadMIMEHeader()
 
         if err != nil {
@@ -78,7 +80,7 @@ func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
     }
 
     if h.data != nil {
-        io.Copy(w, h.data)
+        io.Copy(w, input_reader)
     }
 
     h.listener.Close()
