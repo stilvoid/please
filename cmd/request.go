@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
     "bufio"
@@ -100,7 +100,7 @@ func printResponse(resp *http.Response, include_headers bool, include_status boo
     fmt.Println(string(body))
 }
 
-func main() {
+func Request(args []string) {
     // Flags
     headers_included := getopt.Bool('i', "Include headers in output")
 
@@ -114,7 +114,7 @@ func main() {
     opts := getopt.CommandLine
 
     // Get the command
-    opts.Parse(os.Args)
+    opts.Parse(args)
     if opts.NArgs() < 1 {
         getopt.Usage()
         os.Exit(1)

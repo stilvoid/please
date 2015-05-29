@@ -1,4 +1,4 @@
-package please
+package parser
 
 import (
     "bufio"
@@ -7,7 +7,7 @@ import (
     "net/textproto"
 )
 
-func ParseMIME(input []byte, path string) (interface{}, error) {
+func Mime(input []byte, path string) (interface{}, error) {
     input_reader := bufio.NewReader(bytes.NewReader(input))
 
     reader := textproto.NewReader(input_reader)

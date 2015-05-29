@@ -6,15 +6,15 @@ It's called Please because the web works much better if you ask nicely.
 
 It is comprised of three sub-commands:
 
-* `please-request`
+* `please request`
 
     for communicating with web servers
 
-* `please-respond`
+* `please respond`
 
     acts as a one-shot web server - useful in testing you applications
 
-* `please-parse`
+* `please parse`
 
     understands the data exchange formats of the web and can translate between them
 
@@ -55,15 +55,15 @@ Here are a few ways that please might be useful in a bash script
     - json
     now: yaml
 
-## please-request
+## please request
 
-Probably the most important thing you will need to do with a web service is to communicate with it. `please-request` is fluent in HTTP and allows you to send any type of request along with any headers and content you need. It then outputs the response, optionally including the status code and headers.
+Probably the most important thing you will need to do with a web service is to communicate with it. `please request` is fluent in HTTP and allows you to send any type of request along with any headers and content you need. It then outputs the response, optionally including the status code and headers.
 
-`please-request` supports all HTTP method types and if you ever need a non-standard one, you can specify it directly.
+`please request` supports all HTTP method types and if you ever need a non-standard one, you can specify it directly.
 
 ### Usage
 
-    please-request <method> [options...] <url>
+    please request <method> [options...] <url>
 
     -i    Headers included in the input
 
@@ -103,13 +103,13 @@ Note the `-i` flag.
     Hello, world
     EOF
 
-## `please-respond`
+## `please respond`
 
-`please-respond` sets up a web server that looks out for any one web request on the address and port specified, outputs the request that was received, returns the specified response, and then shuts down. This can be very useful for testing.
+`please respond` sets up a web server that looks out for any one web request on the address and port specified, outputs the request that was received, returns the specified response, and then shuts down. This can be very useful for testing.
 
 ### Usage
 
-    please-respond [options...] <status> [<address>[:<port>]]
+    please respond [options...] <status> [<address>[:<port>]]
 
     -i    Headers included in the input
 
@@ -121,7 +121,7 @@ Note the `-i` flag.
 
 A "Hello, world" service:
 
-Note: by default, `please-respond` listens on `0.0.0.0:8000`
+Note: by default, `please respond` listens on `0.0.0.0:8000`
 
     $ echo "Hello, world" | please respond 200
 
@@ -129,9 +129,9 @@ Then in another terminal:
 
     $ please get http://127.0.0.1:8000/
 
-## `please-parse`
+## `please parse`
 
-`please-parse` can deal with a number of structured data formats and make them easy to parse from bash
+`please parse` can deal with a number of structured data formats and make them easy to parse from bash
 
 * JSON
 * XML
@@ -152,7 +152,7 @@ If you're not familiar with associative arrays in bash or how `declare` works, i
 
 ### Usage
 
-    please-parse [-i type] [-o type] [path...]
+    please parse [-i type] [-o type] [path...]
 
     -i type  Parse the input as 'type' (default: auto)
     -o type  Use 'type' as the output format (default: bash)

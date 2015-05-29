@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
     "bufio"
@@ -86,7 +86,7 @@ func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
     h.listener.Close()
 }
 
-func main() {
+func Respond(args []string) {
     // Flags
     headers_included := getopt.Bool('i', "Output headers with the response")
 
@@ -100,7 +100,7 @@ func main() {
     opts := getopt.CommandLine
 
     // Deal with flags and get the url
-    opts.Parse(os.Args)
+    opts.Parse(args)
     if opts.NArgs() < 1 {
         getopt.Usage()
         os.Exit(1)

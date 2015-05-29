@@ -1,10 +1,10 @@
-package please
+package parser
 
 import (
     "encoding/json"
 )
 
-func ParseJSON(input []byte, path string) (interface{}, error) {
+func Json(input []byte, path string) (interface{}, error) {
     var parsed interface{}
 
     err := json.Unmarshal(input, &parsed)

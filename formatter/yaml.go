@@ -1,4 +1,4 @@
-package please
+package formatter
 
 import (
     "fmt"
@@ -6,7 +6,7 @@ import (
     "os"
 )
 
-func FormatYAML(in interface{}, path string) (out string) {
+func Yaml(in interface{}, path string) (out string) {
     bytes, err := yaml.Marshal(in)
 
     if err != nil {

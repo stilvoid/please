@@ -1,4 +1,4 @@
-package please
+package formatter
 
 import (
     "fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 func wrapObj(in interface{}, path string) string {
-    out := FormatBash(in, path)
+    out := Bash(in, path)
     out = strings.Replace(out, "\\", "\\\\", -1)
     out = strings.Replace(out, "\"", "\\\"", -1)
     out = strings.Replace(out, "\n", "\\n", -1)
@@ -19,7 +19,7 @@ func wrapObj(in interface{}, path string) string {
     return out
 }
 
-func FormatBash(in interface{}, path string) (out string) {
+func Bash(in interface{}, path string) (out string) {
 
     if in == nil {
         return ""
@@ -46,7 +46,7 @@ func FormatBash(in interface{}, path string) (out string) {
                 os.Exit(1)
             }
 
-            return FormatBash(vv[this_path], next_path)
+            return Bash(vv[this_path], next_path)
         }
 
         parts := make([]string, len(vv))
@@ -68,7 +68,7 @@ func FormatBash(in interface{}, path string) (out string) {
                 os.Exit(1)
             }
 
-            return FormatBash(val.Index(index).Interface(), next_path)
+            return Bash(val.Index(index).Interface(), next_path)
         }
 
         parts := make([]string, val.Len())

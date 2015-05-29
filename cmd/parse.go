@@ -1,10 +1,11 @@
-package main
+package cmd
 
 import (
     "code.google.com/p/getopt"
     "fmt"
     "io/ioutil"
-    "offend.me.uk/please"
+    "github.com/stilvoid/please/formatter"
+    "github.com/stilvoid/please/parser"
     "os"
 )
 
@@ -30,11 +31,11 @@ func parseAuto(input []byte, path string) (interface{}, error) {
 func init() {
     parsers = map[string]func([]byte, string) (interface{}, error) {
         "auto": parseAuto,
-        "json": please.ParseJSON,
-        "xml": please.ParseXML,
-        "csv": please.ParseCSV,
-        "html": please.ParseHTML,
-        "mime": please.ParseMIME,
+        "json": parser.Json,
+        "xml": parser.Xml,
+        "csv": parser.Csv,
+        "html": parser.Html,
+        "mime": parser.Mime,
     }
 
     parser_preference = []string {
@@ -46,16 +47,19 @@ func init() {
     }
 
     formatters = map[string]func(interface{}, string) string {
-        "bash": please.FormatBash,
-        "yaml": please.FormatYAML,
+        "bash": formatter.Bash,
+        "yaml": formatter.Yaml,
     }
 }
 
-func main() {
+func Parse(args []string) {
     // Flags
     in_format := getopt.String('i', "auto", "Parse the input as 'types'", "type")
     out_format := getopt.String('o', "bash", "Use 'type' as the output format", "type")
-    getopt.Parse()
+
+    opts := getopt.CommandLine
+
+    opts.Parse(args)
 
     // Validate parser
     if _, ok := parsers[*in_format]; !ok {

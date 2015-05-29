@@ -1,4 +1,4 @@
-package please
+package parser
 
 import (
     "bytes"
@@ -13,7 +13,7 @@ type node struct {
     value interface{} `xml:",any"`
 }
 
-func formatHTML(n *html.Node) map[string]interface{} {
+func formatHtml(n *html.Node) map[string]interface{} {
     out := make(map[string]interface{})
 
     for _, a := range n.Attr {
@@ -29,20 +29,20 @@ func formatHTML(n *html.Node) map[string]interface{} {
             }
         } else {
             // FIXME - Deal with multiples of the same node type
-            out[c.Data] = formatHTML(c)
+            out[c.Data] = formatHtml(c)
         }
     }
 
     return out
 }
 
-func ParseHTML(input []byte, path string) (interface{}, error) {
+func Html(input []byte, path string) (interface{}, error) {
     var parsed interface{}
 
     doc, err := html.Parse(bytes.NewReader(input))
 
     if err == nil {
-        parsed = formatHTML(doc)
+        parsed = formatHtml(doc)
     }
 
     return parsed, err
