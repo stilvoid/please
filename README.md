@@ -20,7 +20,9 @@ It is comprised of three sub-commands:
 
 ## Examples
 
-Here are a few ways that please might be useful in a bash script
+There are some examples in the examples folder.
+
+Here are a few other ways that please might be useful in a bash script:
 
 ### Getting the title of a web page
 

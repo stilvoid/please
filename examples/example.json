@@ -1,0 +1,13 @@
+{
+    "description": "some example json",
+    "an array": [
+        "first entry",
+        {
+            "nested": "object"
+        },
+        ["nested", "array"]
+    ],
+    "child": {
+        "with": "value"
+    }
+}
