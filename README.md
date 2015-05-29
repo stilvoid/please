@@ -24,8 +24,8 @@ Here are a few ways that please might be useful in a bash script
 
 ### Getting the title of a web page
 
-    $ please get http://example.com/ | please parse html.head.title.#text
-    Find examples of anything
+    $ please get http://example.com/ | please parse html.head.title
+    Example Domain
 
 ### Testing an api
 
@@ -128,6 +128,7 @@ Note: by default, `please respond` listens on `0.0.0.0:8000`
 Then in another terminal:
 
     $ please get http://127.0.0.1:8000/
+    Hello, world
 
 ## `please parse`
 
