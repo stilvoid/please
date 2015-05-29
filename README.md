@@ -18,6 +18,43 @@ It is comprised of three sub-commands:
 
     understands the data exchange formats of the web and can translate between them
 
+## Examples
+
+Here are a few ways that please might be useful in a bash script
+
+### Getting the title of a web page
+
+    $ please get http://example.com/ | please parse html.head.title.#text
+    Find examples of anything
+
+### Testing an api
+
+    $ echo '{"thing": 1}' | please post http://myapi.com
+    Success
+
+### Testing authentication
+
+    $ echo 'Authorization: Bearer mytoken' | please get -is http://myapi.com
+    401
+
+### Providing a single-use mock web server for testing client code
+
+    $ (echo Hello, world | please respond 200) & sleep 1s && curl -i http://localhost:8000
+    HTTP/1.1 200 OK
+    Date: Fri, 29 May 2015 22:23:30 GMT
+    Content-Length: 13
+    Content-Type: text/plain; charset=utf-8
+
+    Hello, world
+
+### Converting between structured data formats
+
+    $ echo '{"some": ["lovely", "json"], "now": "yaml"}' | please parse -o yaml
+    some:
+    - lovely
+    - json
+    now: yaml
+
 ## please-request
 
 Probably the most important thing you will need to do with a web service is to communicate with it. `please-request` is fluent in HTTP and allows you to send any type of request along with any headers and content you need. It then outputs the response, optionally including the status code and headers.
