@@ -102,7 +102,7 @@ func printResponse(resp *http.Response, include_headers bool, include_status boo
 
 func Request(args []string) {
     // Flags
-    headers_included := getopt.Bool('i', "Include headers in output")
+    headers_included := getopt.Bool('i', "Include headers from input")
 
     include_headers := getopt.Bool('h', "Output headers with the response")
     include_status := getopt.Bool('s', "Output HTTP status line with the response")
