@@ -1,13 +1,13 @@
 package parser
 
 import (
-    "encoding/json"
+	"encoding/json"
 )
 
 func Json(input []byte, path string) (interface{}, error) {
-    var parsed interface{}
+	var parsed interface{}
 
-    err := json.Unmarshal(input, &parsed)
+	err := json.Unmarshal(input, &parsed)
 
-    return parsed, err
+	return parsed, err
 }
