@@ -2,16 +2,16 @@
 
 # This script will build please for all platforms
 
-platforms="linux darwin windows"
-architectures="386 amd64"
+declare -A platforms=([linux]=linux [darwin]=osx [windows]=windows)
+declare -A architectures=([386]=i386 [amd64]=amd64)
 
 echo "Building please"
 
-for platform in $platforms; do
-    for architecture in $architectures; do
+for platform in ${!platforms[@]}; do
+    for architecture in ${!architectures[@]}; do
         echo "... $platform $architecture..."
 
-        name=please-$platform-$architecture
+        name=please-${platforms[$platform]}-${architectures[$architecture]}
 
         if [ "$platform" == "windows" ]; then
             name=${name}.exe
