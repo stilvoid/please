@@ -5,6 +5,10 @@
 declare -A platforms=([linux]=linux [darwin]=osx [windows]=windows)
 declare -A architectures=([386]=i386 [amd64]=amd64)
 
+DESTDIR=dist
+
+mkdir -p $DESTDIR
+
 echo "Building please"
 
 for platform in ${!platforms[@]}; do
@@ -17,7 +21,7 @@ for platform in ${!platforms[@]}; do
             name=${name}.exe
         fi
 
-        GOOS=$platform GOARCH=$architecture go build -o $name
+        GOOS=$platform GOARCH=$architecture go build -o $DESTDIR/$name
     done
 done
 
