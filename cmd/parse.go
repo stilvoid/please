@@ -49,6 +49,7 @@ func init() {
 	formatters = map[string]func(interface{}, string) string{
 		"bash": formatter.Bash,
 		"yaml": formatter.Yaml,
+		"dot":  formatter.Dot,
 	}
 }
 

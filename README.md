@@ -146,6 +146,7 @@ Please parses data structures in the above formats and can output them as:
 
 * bash `declare` syntax
 * YAML
+* dot (graphviz)
 
 If you're not familiar with associative arrays in bash or how `declare` works, it's worth reading the following:
 
@@ -195,3 +196,7 @@ Making use of the bash-declare output format
 
     $ echo '{"json": ["array", "values"]}' | please parse json | (declare -A data=$(cat -); echo ${data[1]})
     values
+
+Generating a graph from some json (you need graphviz installed)
+
+    $ echo '{"vars": ["foo", "bar", "baz"], "cake": {"is_lie": true}}' | please parse -o dot | dot -Tpng > graph.png
