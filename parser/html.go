@@ -56,7 +56,7 @@ func formatHtml(n *html.Node) map[string]interface{} {
 	return out
 }
 
-func Html(input []byte, path string) (interface{}, error) {
+func Html(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	doc, err := html.Parse(bytes.NewReader(input))

@@ -9,16 +9,19 @@ import (
 	"os"
 )
 
-var parsers map[string]func([]byte, string) (interface{}, error)
-var parser_preference []string
-var formatters map[string]func(interface{}, string) string
+type Parser func([]byte) (interface{}, error)
+type Formatter func(interface{}, string) string
 
-func parseAuto(input []byte, path string) (interface{}, error) {
+var parsers map[string]Parser
+var parser_preference []string
+var formatters map[string]Formatter
+
+func parseAuto(input []byte) (interface{}, error) {
 	var parsed interface{}
 	var err error
 
 	for _, name := range parser_preference {
-		parsed, err = parsers[name](input, path)
+		parsed, err = parsers[name](input)
 
 		if err == nil {
 			break
@@ -29,7 +32,7 @@ func parseAuto(input []byte, path string) (interface{}, error) {
 }
 
 func init() {
-	parsers = map[string]func([]byte, string) (interface{}, error){
+	parsers = map[string]Parser{
 		"auto": parseAuto,
 		"json": parser.Json,
 		"xml":  parser.Xml,
@@ -46,7 +49,7 @@ func init() {
 		"mime",
 	}
 
-	formatters = map[string]func(interface{}, string) string{
+	formatters = map[string]Formatter{
 		"bash": formatter.Bash,
 		"yaml": formatter.Yaml,
 		"dot":  formatter.Dot,
@@ -91,7 +94,7 @@ func Parse(args []string) {
 	}
 
 	// Try parsing
-	parsed, err := parsers[*in_format](input, path)
+	parsed, err := parsers[*in_format](input)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Input could not be parsed")

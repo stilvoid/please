@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-func Json(input []byte, path string) (interface{}, error) {
+func Json(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	err := json.Unmarshal(input, &parsed)
