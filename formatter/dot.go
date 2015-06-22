@@ -145,9 +145,16 @@ func flatten(in interface{}, path string, current_path string) ([]node, []link) 
 			os.Exit(1)
 		}
 
+		target := current_path + "=content"
+
+		nodes = append(nodes, node{
+			name:  target,
+			label: fmt.Sprint(in),
+		})
+
 		links = append(links, link{
 			left:  current_path,
-			right: fmt.Sprint(in),
+			right: target,
 		})
 
 		return nodes, links
