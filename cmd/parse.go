@@ -98,6 +98,7 @@ func init() {
 	formatters = map[string]Formatter{
 		"bash": formatter.Bash,
 		"dot":  formatter.Dot,
+		"json": formatter.Json,
 		"xml":  formatter.Xml,
 		"yaml": formatter.Yaml,
 	}
