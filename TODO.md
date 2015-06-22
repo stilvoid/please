@@ -1,7 +1,5 @@
 # ToDo
 
-* Add XML formatter
-
 * Add JSON formatter
 
 * Write some tests!
