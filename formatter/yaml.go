@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func Yaml(in interface{}, path string) (out string) {
+func Yaml(in interface{}) (out string) {
 	bytes, err := yaml.Marshal(in)
 
 	if err != nil {

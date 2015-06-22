@@ -7,10 +7,13 @@ import (
 	"github.com/stilvoid/please/parser"
 	"io/ioutil"
 	"os"
+	"reflect"
+	"strconv"
+	"strings"
 )
 
 type Parser func([]byte) (interface{}, error)
-type Formatter func(interface{}, string) string
+type Formatter func(interface{}) string
 
 var parsers map[string]Parser
 var parser_preference []string
@@ -29,6 +32,49 @@ func parseAuto(input []byte) (interface{}, error) {
 	}
 
 	return parsed, err
+}
+
+func filter(in interface{}, path string) interface{} {
+	if path == "" {
+		return in
+	}
+
+	split_path := strings.SplitN(path, ".", 2)
+
+	this_path := split_path[0]
+	var next_path string
+
+	if len(split_path) > 1 {
+		next_path = split_path[1]
+	}
+
+	val := reflect.ValueOf(in)
+
+	switch val.Kind() {
+	case reflect.Map:
+		vv := in.(map[string]interface{})
+
+		next, ok := vv[this_path]
+
+		if !ok {
+			break
+		}
+
+		return filter(next, next_path)
+	case reflect.Array, reflect.Slice:
+		index, err := strconv.Atoi(this_path)
+
+		if err != nil || index < 0 || index >= val.Len() {
+			break
+		}
+
+		return filter(val.Index(index).Interface(), next_path)
+	}
+
+	fmt.Fprintf(os.Stderr, "Key does not exist %s\n", this_path)
+	os.Exit(1)
+
+	return nil
 }
 
 func init() {
@@ -86,13 +132,6 @@ func Parse(args []string) {
 		os.Exit(1)
 	}
 
-	// Path
-	var path string
-
-	if getopt.NArgs() > 0 {
-		path = getopt.Arg(0)
-	}
-
 	// Try parsing
 	parsed, err := parsers[*in_format](input)
 
@@ -102,6 +141,11 @@ func Parse(args []string) {
 		os.Exit(1)
 	}
 
+	// Path
+	if getopt.NArgs() > 0 {
+		parsed = filter(parsed, getopt.Arg(0))
+	}
+
 	// ...and format back out :)
-	fmt.Println(formatters[*out_format](parsed, path))
+	fmt.Println(formatters[*out_format](parsed))
 }

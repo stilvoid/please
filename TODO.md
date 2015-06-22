@@ -1,7 +1,5 @@
 # ToDo
 
-* Move code that pulls out the requested value to *before* it hits the formatter
-
 * Add XML formatter
 
 * Add JSON formatter
