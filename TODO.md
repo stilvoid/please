@@ -6,6 +6,6 @@
 
 * Add JSON formatter
 
-* Make indenting optional across all formatters (but not bash I guess)
+* Write some tests!
 
-* Fix HTML parser so that it correctly makes lists where there is more than one of the same type of node
+* Make indenting optional across all formatters (but not bash I guess)

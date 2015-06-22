@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"golang.org/x/net/html"
+	"reflect"
 	"strings"
 )
 
@@ -28,8 +29,27 @@ func formatHtml(n *html.Node) map[string]interface{} {
 				out["#text"] = c.Data
 			}
 		} else {
-			// FIXME - Deal with multiples of the same node type
-			out[c.Data] = formatHtml(c)
+			existing_value, exists := out[c.Data]
+
+			new_value := formatHtml(c)
+
+			if !exists {
+				out[c.Data] = new_value
+			} else {
+				val := reflect.ValueOf(existing_value)
+
+				kind := val.Kind()
+
+				if kind != reflect.Array && kind != reflect.Slice {
+					out[c.Data] = []interface{}{
+						existing_value,
+						new_value,
+					}
+				} else {
+					// *this* is sick
+					out[c.Data] = reflect.Append(val, reflect.ValueOf(new_value)).Interface().([]interface{})
+				}
+			}
 		}
 	}
 
