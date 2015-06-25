@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"bufio"
-	"code.google.com/p/getopt"
 	"fmt"
 	"github.com/andrew-d/go-termutil"
+	"github.com/pborman/getopt"
 	"io"
 	"io/ioutil"
 	"net"

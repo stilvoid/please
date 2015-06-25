@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"code.google.com/p/getopt"
 	"fmt"
+	"github.com/pborman/getopt"
 	"github.com/stilvoid/please/formatter"
 	"github.com/stilvoid/please/parser"
 	"io/ioutil"
