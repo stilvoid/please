@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
 	"github.com/stilvoid/please/formatter"
 	"github.com/stilvoid/please/parser"
@@ -89,6 +90,11 @@ func Parse(args []string) {
 	})
 
 	opts.Parse(args)
+
+	if termutil.Isatty(os.Stdin.Fd()) {
+		getopt.Usage()
+		os.Exit(1)
+	}
 
 	// Validate parser
 	if _, ok := parsers[*in_format]; !ok && *in_format != "auto" {
