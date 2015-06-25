@@ -19,7 +19,35 @@ var parsers map[string]Parser
 var parser_preference []string
 var formatters map[string]Formatter
 
-func parseAuto(input []byte) (interface{}, error) {
+func init() {
+	parsers = map[string]Parser{
+		"csv":  parser.Csv,
+		"html": parser.Html,
+		"json": parser.Json,
+		"mime": parser.Mime,
+		"xml":  parser.Xml,
+		"yaml": parser.Yaml,
+	}
+
+	parser_preference = []string{
+		"json",
+		"xml",
+		"yaml",
+		"csv",
+		"html",
+		"mime",
+	}
+
+	formatters = map[string]Formatter{
+		"bash": formatter.Bash,
+		"dot":  formatter.Dot,
+		"json": formatter.Json,
+		"xml":  formatter.Xml,
+		"yaml": formatter.Yaml,
+	}
+}
+
+func parseAuto(input []byte) (interface{}, string, error) {
 	var parsed interface{}
 	var err error
 
