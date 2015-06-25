@@ -6,7 +6,6 @@ import (
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/textproto"
@@ -21,31 +20,6 @@ type responder struct {
 	headers_included bool
 	listener         net.Listener
 	data             io.ReadSeeker
-}
-
-func printRequest(req *http.Request, include_method bool, include_url bool, include_headers bool) {
-	body, err := ioutil.ReadAll(req.Body)
-	req.Body.Close()
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	if include_method {
-		fmt.Println(req.Method)
-	}
-
-	if include_url {
-		fmt.Println(req.URL)
-	}
-
-	if include_headers {
-		req.Header.Write(os.Stdout)
-		fmt.Println()
-	}
-
-	fmt.Println(string(body))
 }
 
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
