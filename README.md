@@ -137,6 +137,7 @@ Then in another terminal:
 `please parse` can deal with a number of structured data formats and make them easy to parse from bash
 
 * JSON
+* YAML
 * XML
 * CSV
 * HTML
@@ -145,7 +146,9 @@ Then in another terminal:
 Please parses data structures in the above formats and can output them as:
 
 * bash `declare` syntax
+* JSON
 * YAML
+* XML
 * dot (graphviz)
 
 If you're not familiar with associative arrays in bash or how `declare` works, it's worth reading the following:
