@@ -27,28 +27,21 @@ func Bash(in interface{}) (out string) {
 
 	switch val.Kind() {
 	case reflect.Map:
-		vv := in.(map[string]interface{})
+		parts := make([]string, val.Len())
 
-		parts := make([]string, len(vv))
-
-		i := 0
-
-		for key, value := range vv {
-			parts[i] = fmt.Sprintf("[%s]=%s", key, wrapObj(value))
-			i++
+		for i, key := range val.MapKeys() {
+			value := val.MapIndex(key).Interface()
+			parts[i] = fmt.Sprintf("[%s]=%s", key.String(), wrapObj(value))
 		}
 
 		return fmt.Sprintf("(%s)", strings.Join(parts, " "))
 	case reflect.Array, reflect.Slice:
 		parts := make([]string, val.Len())
 
-		i := 0
+		for i := 0; i < val.Len(); i++ {
+			value := val.Index(i).Interface()
 
-		for index := 0; index < val.Len(); index++ {
-			value := val.Index(index).Interface()
-
-			parts[i] = fmt.Sprintf("[%d]=%s", index, wrapObj(value))
-			i++
+			parts[i] = fmt.Sprintf("[%d]=%s", i, wrapObj(value))
 		}
 
 		return fmt.Sprintf("(%s)", strings.Join(parts, " "))

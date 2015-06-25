@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -55,11 +56,38 @@ func parseAuto(input []byte) (interface{}, string, error) {
 		parsed, err = parsers[name](input)
 
 		if err == nil {
-			break
+			return parsed, name, err
 		}
 	}
 
-	return parsed, err
+	return nil, "", fmt.Errorf("Input format could not be identified")
+}
+
+func forceStringKeys(in interface{}) interface{} {
+	val := reflect.ValueOf(in)
+
+	switch val.Kind() {
+	case reflect.Map:
+		new_map := make(map[string]interface{}, val.Len())
+
+		for _, key := range val.MapKeys() {
+			string_key := fmt.Sprint(key.Interface())
+			new_map[string_key] = forceStringKeys(val.MapIndex(key).Interface())
+		}
+
+		return new_map
+	case reflect.Array, reflect.Slice:
+		new_slice := make([]interface{}, val.Len())
+
+		for i := 0; i < val.Len(); i++ {
+			value := val.Index(i).Interface()
+			new_slice[i] = forceStringKeys(value)
+		}
+
+		return new_slice
+	default:
+		return in
+	}
 }
 
 func filter(in interface{}, path string) interface{} {
@@ -105,31 +133,46 @@ func filter(in interface{}, path string) interface{} {
 	return nil
 }
 
-func init() {
-	parsers = map[string]Parser{
-		"auto": parseAuto,
-		"json": parser.Json,
-		"xml":  parser.Xml,
-		"csv":  parser.Csv,
-		"html": parser.Html,
-		"mime": parser.Mime,
+func sortKeys(in interface{}) []string {
+	v := reflect.ValueOf(in)
+
+	if v.Kind() != reflect.Map {
+		panic("Not a map!")
 	}
 
-	parser_preference = []string{
-		"json",
-		"xml",
-		"csv",
-		"html",
-		"mime",
+	vkeys := v.MapKeys()
+
+	keys := make([]string, 0, len(vkeys))
+
+	for _, key := range vkeys {
+		keys = append(keys, key.String())
 	}
 
-	formatters = map[string]Formatter{
-		"bash": formatter.Bash,
-		"dot":  formatter.Dot,
-		"json": formatter.Json,
-		"xml":  formatter.Xml,
-		"yaml": formatter.Yaml,
+	sort.Strings(keys)
+
+	return keys
+}
+
+func parse(input []byte, format string) (interface{}, string, error) {
+	if format == "auto" {
+		return parseAuto(input)
 	}
+
+	output, err := parsers[format](input)
+
+	return output, format, err
+}
+
+func format(input interface{}, format string) string {
+	return formatters[format](input)
+}
+
+func printParsers() {
+	fmt.Printf(" Input types: %s\n", strings.Join(sortKeys(parsers), ", "))
+}
+
+func printFormatters() {
+	fmt.Printf(" Output types: %s\n", strings.Join(sortKeys(formatters), ", "))
 }
 
 func Parse(args []string) {
@@ -139,17 +182,26 @@ func Parse(args []string) {
 
 	opts := getopt.CommandLine
 
+	opts.SetUsage(func() {
+		getopt.CommandLine.PrintUsage(os.Stderr)
+		fmt.Println()
+		printParsers()
+		printFormatters()
+	})
+
 	opts.Parse(args)
 
 	// Validate parser
-	if _, ok := parsers[*in_format]; !ok {
-		fmt.Printf("Unknown input format: %s\n", *in_format)
+	if _, ok := parsers[*in_format]; !ok && *in_format != "auto" {
+		fmt.Printf("Unknown input format: %s\n\n", *in_format)
+		printParsers()
 		os.Exit(1)
 	}
 
 	// Validate formatter
 	if _, ok := formatters[*out_format]; !ok {
-		fmt.Printf("Unknown output format: %s\n", *out_format)
+		fmt.Printf("Unknown output format: %s\n\n", *out_format)
+		printFormatters()
 		os.Exit(1)
 	}
 
@@ -163,7 +215,7 @@ func Parse(args []string) {
 	}
 
 	// Try parsing
-	parsed, err := parsers[*in_format](input)
+	parsed, detected_in_format, err := parse(input, *in_format)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Input could not be parsed")
@@ -176,6 +228,11 @@ func Parse(args []string) {
 		parsed = filter(parsed, getopt.Arg(0))
 	}
 
+	// Pretty much everything hates non-string keys :S
+	if detected_in_format == "yaml" && *out_format != "yaml" {
+		parsed = forceStringKeys(parsed)
+	}
+
 	// ...and format back out :)
-	fmt.Println(formatters[*out_format](parsed))
+	fmt.Println(format(parsed, *out_format))
 }
