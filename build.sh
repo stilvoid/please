@@ -2,6 +2,10 @@
 
 # This script will build please for all platforms
 
+# Run tests first
+
+go test ./... || exit 1
+
 declare -A platforms=([linux]=linux [darwin]=osx [windows]=windows)
 declare -A architectures=([386]=i386 [amd64]=amd64)
 

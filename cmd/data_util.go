@@ -54,15 +54,14 @@ func filter(in interface{}, path string) interface{} {
 
 	switch val.Kind() {
 	case reflect.Map:
-		vv := in.(map[string]interface{})
-
-		next, ok := vv[this_path]
-
-		if !ok {
-			break
+		for _, key := range val.MapKeys() {
+			if fmt.Sprint(key.Interface()) == this_path {
+				value := val.MapIndex(key).Interface()
+				return filter(value, next_path)
+			}
 		}
 
-		return filter(next, next_path)
+		break
 	case reflect.Array, reflect.Slice:
 		index, err := strconv.Atoi(this_path)
 
@@ -91,7 +90,7 @@ func sortKeys(in interface{}) []string {
 	keys := make([]string, 0, len(vkeys))
 
 	for _, key := range vkeys {
-		keys = append(keys, key.String())
+		keys = append(keys, fmt.Sprint(key.Interface()))
 	}
 
 	sort.Strings(keys)
