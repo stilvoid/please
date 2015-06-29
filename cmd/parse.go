@@ -6,6 +6,7 @@ import (
 	"github.com/pborman/getopt"
 	"github.com/stilvoid/please/formatter"
 	"github.com/stilvoid/please/parser"
+	"github.com/stilvoid/please/util"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -68,11 +69,11 @@ func format(input interface{}, format string) string {
 }
 
 func printParsers() {
-	fmt.Printf(" Input types: %s\n", strings.Join(sortKeys(parsers), ", "))
+	fmt.Printf(" Input types: %s\n", strings.Join(util.SortKeys(parsers), ", "))
 }
 
 func printFormatters() {
-	fmt.Printf(" Output types: %s\n", strings.Join(sortKeys(formatters), ", "))
+	fmt.Printf(" Output types: %s\n", strings.Join(util.SortKeys(formatters), ", "))
 }
 
 func Parse(args []string) {
@@ -130,12 +131,12 @@ func Parse(args []string) {
 
 	// Path
 	if getopt.NArgs() > 0 {
-		parsed = filter(parsed, getopt.Arg(0))
+		parsed = util.Filter(parsed, getopt.Arg(0))
 	}
 
 	// Pretty much everything hates non-string keys :S
 	if detected_in_format == "yaml" && *out_format != "yaml" {
-		parsed = forceStringKeys(parsed)
+		parsed = util.ForceStringKeys(parsed)
 	}
 
 	// ...and format back out :)

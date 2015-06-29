@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
+	"github.com/stilvoid/please/util"
 	"io"
 	"net"
 	"net/http"
@@ -23,7 +24,7 @@ type responder struct {
 }
 
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	printRequest(req, h.include_method, h.include_url, h.include_headers)
+	util.PrintRequest(req, h.include_method, h.include_url, h.include_headers)
 
 	input_reader := bufio.NewReader(h.data)
 

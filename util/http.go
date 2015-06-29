@@ -1,4 +1,4 @@
-package cmd
+package util
 
 import (
 	"bufio"
@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func createRequest(method string, url string, input io.Reader, headers_included bool) *http.Request {
+func CreateRequest(method string, url string, input io.Reader, headers_included bool) *http.Request {
 	var req *http.Request
 	var headers map[string][]string
 	var err error
@@ -65,7 +65,7 @@ func createRequest(method string, url string, input io.Reader, headers_included 
 	return req
 }
 
-func getResponse(req *http.Request) *http.Response {
+func GetResponse(req *http.Request) *http.Response {
 	resp, err := http.DefaultClient.Do(req)
 
 	if err != nil {
@@ -76,7 +76,7 @@ func getResponse(req *http.Request) *http.Response {
 	return resp
 }
 
-func printRequest(req *http.Request, include_method bool, include_url bool, include_headers bool) {
+func PrintRequest(req *http.Request, include_method bool, include_url bool, include_headers bool) {
 	body, err := ioutil.ReadAll(req.Body)
 	req.Body.Close()
 
@@ -101,7 +101,7 @@ func printRequest(req *http.Request, include_method bool, include_url bool, incl
 	fmt.Println(string(body))
 }
 
-func printResponse(resp *http.Response, include_headers bool, include_status bool) {
+func PrintResponse(resp *http.Response, include_headers bool, include_status bool) {
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 

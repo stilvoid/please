@@ -1,4 +1,4 @@
-package cmd
+package util
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ func TestSortKeys(t *testing.T) {
 
 	expected := []string{"0", "1", "2"}
 
-	actual := sortKeys(input)
+	actual := SortKeys(input)
 
 	if len(actual) != len(expected) {
 		t.Errorf("Lengths differ: %d vs %d", len(actual), len(expected))
@@ -37,7 +37,7 @@ func TestSortKeysNotMap(t *testing.T) {
 
 	input := "I am not a map"
 
-	sortKeys(input)
+	SortKeys(input)
 }
 
 func TestFilter(t *testing.T) {
@@ -59,7 +59,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	for path, expected := range cases {
-		actual := filter(input, path)
+		actual := Filter(input, path)
 
 		if expected != actual {
 			t.Errorf("Case failed: %v vs %v", expected, actual)

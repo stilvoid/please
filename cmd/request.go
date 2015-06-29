@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
+	"github.com/stilvoid/please/util"
 	"net/http"
 	"os"
 	"path"
@@ -40,12 +41,12 @@ func Request(args []string) {
 
 	var req *http.Request
 	if termutil.Isatty(os.Stdin.Fd()) {
-		req = createRequest(method, url, nil, *headers_included)
+		req = util.CreateRequest(method, url, nil, *headers_included)
 	} else {
-		req = createRequest(method, url, os.Stdin, *headers_included)
+		req = util.CreateRequest(method, url, os.Stdin, *headers_included)
 	}
 
-	resp := getResponse(req)
+	resp := util.GetResponse(req)
 
-	printResponse(resp, *include_headers, *include_status)
+	util.PrintResponse(resp, *include_headers, *include_status)
 }

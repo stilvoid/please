@@ -1,4 +1,4 @@
-package cmd
+package util
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func forceStringKeys(in interface{}) interface{} {
+func ForceStringKeys(in interface{}) interface{} {
 	val := reflect.ValueOf(in)
 
 	switch val.Kind() {
@@ -18,7 +18,7 @@ func forceStringKeys(in interface{}) interface{} {
 
 		for _, key := range val.MapKeys() {
 			string_key := fmt.Sprint(key.Interface())
-			new_map[string_key] = forceStringKeys(val.MapIndex(key).Interface())
+			new_map[string_key] = ForceStringKeys(val.MapIndex(key).Interface())
 		}
 
 		return new_map
@@ -27,7 +27,7 @@ func forceStringKeys(in interface{}) interface{} {
 
 		for i := 0; i < val.Len(); i++ {
 			value := val.Index(i).Interface()
-			new_slice[i] = forceStringKeys(value)
+			new_slice[i] = ForceStringKeys(value)
 		}
 
 		return new_slice
@@ -36,7 +36,7 @@ func forceStringKeys(in interface{}) interface{} {
 	}
 }
 
-func filter(in interface{}, path string) interface{} {
+func Filter(in interface{}, path string) interface{} {
 	if path == "" {
 		return in
 	}
@@ -57,7 +57,7 @@ func filter(in interface{}, path string) interface{} {
 		for _, key := range val.MapKeys() {
 			if fmt.Sprint(key.Interface()) == this_path {
 				value := val.MapIndex(key).Interface()
-				return filter(value, next_path)
+				return Filter(value, next_path)
 			}
 		}
 
@@ -69,7 +69,7 @@ func filter(in interface{}, path string) interface{} {
 			break
 		}
 
-		return filter(val.Index(index).Interface(), next_path)
+		return Filter(val.Index(index).Interface(), next_path)
 	}
 
 	fmt.Fprintf(os.Stderr, "Key does not exist %s\n", this_path)
@@ -78,7 +78,7 @@ func filter(in interface{}, path string) interface{} {
 	return nil
 }
 
-func sortKeys(in interface{}) []string {
+func SortKeys(in interface{}) []string {
 	v := reflect.ValueOf(in)
 
 	if v.Kind() != reflect.Map {
