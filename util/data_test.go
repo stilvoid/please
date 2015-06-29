@@ -1,6 +1,7 @@
 package util
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -59,10 +60,62 @@ func TestFilter(t *testing.T) {
 	}
 
 	for path, expected := range cases {
-		actual := Filter(input, path)
+		actual, err := Filter(input, path)
+
+		if err != nil {
+			t.Fail()
+		}
 
 		if expected != actual {
 			t.Errorf("Case failed: %v vs %v", expected, actual)
 		}
+	}
+}
+
+func TestFilterBadKey(t *testing.T) {
+	input := map[string]interface{}{
+		"foo": "bar",
+	}
+
+	val, err := Filter(input, "not foo")
+
+	if err == nil || err.Error() != "Key does not exist: not foo" {
+		t.Errorf("Unexpected return values: %v, %v", val, err)
+	}
+}
+
+func TestForceStringKeys(t *testing.T) {
+	input := map[int]interface{}{
+		13: []interface{}{
+			"foo",
+			map[int]interface{}{
+				0:   "none",
+				100: "some",
+			},
+		},
+		66: map[int]interface{}{
+			1: []interface{}{"foo", "bar"},
+			2: "two",
+		},
+	}
+
+	expected := map[string]interface{}{
+		"13": []interface{}{
+			"foo",
+			map[string]interface{}{
+				"0":   "none",
+				"100": "some",
+			},
+		},
+		"66": map[string]interface{}{
+			"1": []interface{}{"foo", "bar"},
+			"2": "two",
+		},
+	}
+
+	actual := ForceStringKeys(input)
+
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("Unexpected result:\n%#v\nvs\n%#v\n", actual, expected)
 	}
 }

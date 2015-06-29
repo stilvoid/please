@@ -131,7 +131,12 @@ func Parse(args []string) {
 
 	// Path
 	if getopt.NArgs() > 0 {
-		parsed = util.Filter(parsed, getopt.Arg(0))
+		parsed, err = util.Filter(parsed, getopt.Arg(0))
+
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 	}
 
 	// Pretty much everything hates non-string keys :S

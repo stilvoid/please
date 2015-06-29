@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"os"
 	"reflect"
 	"sort"
 	"strconv"
@@ -36,9 +35,9 @@ func ForceStringKeys(in interface{}) interface{} {
 	}
 }
 
-func Filter(in interface{}, path string) interface{} {
+func Filter(in interface{}, path string) (interface{}, error) {
 	if path == "" {
-		return in
+		return in, nil
 	}
 
 	split_path := strings.SplitN(path, ".", 2)
@@ -72,10 +71,7 @@ func Filter(in interface{}, path string) interface{} {
 		return Filter(val.Index(index).Interface(), next_path)
 	}
 
-	fmt.Fprintf(os.Stderr, "Key does not exist %s\n", this_path)
-	os.Exit(1)
-
-	return nil
+	return nil, fmt.Errorf("Key does not exist: %s", this_path)
 }
 
 func SortKeys(in interface{}) []string {
