@@ -40,25 +40,11 @@ func CreateRequest(method string, url string, input io.Reader, headers_included 
 		}
 
 		req, err = http.NewRequest(method, url, bytes.NewReader(body))
+
+		req.Header = headers
 	}
 
-	if err != nil {
-		return nil, err
-	}
-
-	if input != nil && headers_included {
-		for name, values := range headers {
-			for i, value := range values {
-				if i == 0 {
-					req.Header.Set(name, value)
-				} else {
-					req.Header.Add(name, value)
-				}
-			}
-		}
-	}
-
-	return req, nil
+	return req, err
 }
 
 func GetResponse(req *http.Request) (*http.Response, error) {
