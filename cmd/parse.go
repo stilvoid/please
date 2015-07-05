@@ -12,70 +12,6 @@ import (
 	"strings"
 )
 
-type Parser func([]byte) (interface{}, error)
-type Formatter func(interface{}) string
-
-var parsers map[string]Parser
-var parser_preference []string
-var formatters map[string]Formatter
-
-func init() {
-	parsers = map[string]Parser{
-		"csv":  parser.Csv,
-		"html": parser.Html,
-		"json": parser.Json,
-		"mime": parser.Mime,
-		"xml":  parser.Xml,
-		"yaml": parser.Yaml,
-	}
-
-	parser_preference = []string{
-		"json",
-		"xml",
-		"yaml",
-		"csv",
-		"html",
-		"mime",
-	}
-
-	formatters = map[string]Formatter{
-		"bash": formatter.Bash,
-		"dot":  formatter.Dot,
-		"json": formatter.Json,
-		"xml":  formatter.Xml,
-		"yaml": formatter.Yaml,
-	}
-}
-
-func parse(input []byte, format string) (interface{}, string, error) {
-	if format == "auto" {
-		for _, name := range parser_preference {
-			parsed, err := parsers[name](input)
-
-			if err == nil {
-				return parsed, name, err
-			}
-		}
-
-		return nil, "", fmt.Errorf("Input format could not be identified")
-	}
-
-	output, err := parsers[format](input)
-	return output, format, err
-}
-
-func format(input interface{}, format string) string {
-	return formatters[format](input)
-}
-
-func printParsers() {
-	fmt.Printf(" Input types: %s\n", strings.Join(util.SortKeys(parsers), ", "))
-}
-
-func printFormatters() {
-	fmt.Printf(" Output types: %s\n", strings.Join(util.SortKeys(formatters), ", "))
-}
-
 func Parse(args []string) {
 	// Flags
 	in_format := getopt.String('i', "auto", "Parse the input as 'types'", "type")
@@ -85,9 +21,12 @@ func Parse(args []string) {
 
 	opts.SetUsage(func() {
 		getopt.CommandLine.PrintUsage(os.Stderr)
+
 		fmt.Println()
-		printParsers()
-		printFormatters()
+
+		fmt.Printf(" Input types: %s\n", strings.Join(util.SortKeys(parser.Parsers), ", "))
+
+		fmt.Printf(" Output types: %s\n", strings.Join(util.SortKeys(formatter.Formatters), ", "))
 	})
 
 	opts.Parse(args)
@@ -97,35 +36,20 @@ func Parse(args []string) {
 		os.Exit(1)
 	}
 
-	// Validate parser
-	if _, ok := parsers[*in_format]; !ok && *in_format != "auto" {
-		fmt.Printf("Unknown input format: %s\n\n", *in_format)
-		printParsers()
-		os.Exit(1)
-	}
-
-	// Validate formatter
-	if _, ok := formatters[*out_format]; !ok {
-		fmt.Printf("Unknown output format: %s\n\n", *out_format)
-		printFormatters()
-		os.Exit(1)
-	}
-
 	var err error
 
 	// Read from stdin
 	input, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
-		fmt.Println("Error reading input")
+		fmt.Fprintln(os.Stderr, "Error reading input")
 		os.Exit(1)
 	}
 
 	// Try parsing
-	parsed, detected_in_format, err := parse(input, *in_format)
+	parsed, _, err := parser.Parse(input, *in_format)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Input could not be parsed")
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
@@ -139,11 +63,6 @@ func Parse(args []string) {
 		}
 	}
 
-	// Pretty much everything hates non-string keys :S
-	if detected_in_format == "yaml" && *out_format != "yaml" {
-		parsed = util.ForceStringKeys(parsed)
-	}
-
 	// ...and format back out :)
-	fmt.Println(format(parsed, *out_format))
+	fmt.Println(formatter.Format(parsed, *out_format))
 }
