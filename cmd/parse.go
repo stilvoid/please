@@ -64,5 +64,12 @@ func Parse(args []string) {
 	}
 
 	// ...and format back out :)
-	fmt.Println(formatter.Format(parsed, *out_format))
+	output, err := formatter.Format(parsed, *out_format)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	fmt.Println(output)
 }
