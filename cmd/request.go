@@ -39,14 +39,33 @@ func Request(args []string) {
 	}
 	url := opts.Arg(0)
 
-	var req *http.Request
+	var (
+		req *http.Request
+		err error
+	)
+
 	if termutil.Isatty(os.Stdin.Fd()) {
-		req = util.CreateRequest(method, url, nil, *headers_included)
+		req, err = util.CreateRequest(method, url, nil, *headers_included)
 	} else {
-		req = util.CreateRequest(method, url, os.Stdin, *headers_included)
+		req, err = util.CreateRequest(method, url, os.Stdin, *headers_included)
 	}
 
-	resp := util.GetResponse(req)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 
-	util.PrintResponse(resp, *include_headers, *include_status)
+	resp, err := util.GetResponse(req)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	err = util.PrintResponse(os.Stdout, resp, *include_headers, *include_status)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

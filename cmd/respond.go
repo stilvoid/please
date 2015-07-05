@@ -24,7 +24,12 @@ type responder struct {
 }
 
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	util.PrintRequest(req, h.include_method, h.include_url, h.include_headers)
+	err := util.PrintRequest(os.Stdout, req, h.include_method, h.include_url, h.include_headers)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 
 	input_reader := bufio.NewReader(h.data)
 

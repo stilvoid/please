@@ -8,11 +8,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/textproto"
-	"os"
 	"strings"
 )
 
-func CreateRequest(method string, url string, input io.Reader, headers_included bool) *http.Request {
+func CreateRequest(method string, url string, input io.Reader, headers_included bool) (*http.Request, error) {
 	var req *http.Request
 	var headers map[string][]string
 	var err error
@@ -31,23 +30,20 @@ func CreateRequest(method string, url string, input io.Reader, headers_included 
 		headers, err = reader.ReadMIMEHeader()
 
 		if err != nil {
-			fmt.Println("Error parsing headers:", err)
-			os.Exit(1)
+			return nil, err
 		}
 
 		body, err := ioutil.ReadAll(input_reader)
 
 		if err != nil {
-			fmt.Println("Error reading input:", err)
-			os.Exit(1)
+			return nil, err
 		}
 
 		req, err = http.NewRequest(method, url, bytes.NewReader(body))
 	}
 
 	if err != nil {
-		fmt.Println("Error creating request:", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	if input != nil && headers_included {
@@ -62,62 +58,57 @@ func CreateRequest(method string, url string, input io.Reader, headers_included 
 		}
 	}
 
-	return req
+	return req, nil
 }
 
-func GetResponse(req *http.Request) *http.Response {
-	resp, err := http.DefaultClient.Do(req)
-
-	if err != nil {
-		fmt.Println("Error contacting host:", err)
-		os.Exit(1)
-	}
-
-	return resp
+func GetResponse(req *http.Request) (*http.Response, error) {
+	return http.DefaultClient.Do(req)
 }
 
-func PrintRequest(req *http.Request, include_method bool, include_url bool, include_headers bool) {
+func PrintRequest(w io.Writer, req *http.Request, include_method bool, include_url bool, include_headers bool) error {
 	body, err := ioutil.ReadAll(req.Body)
 	req.Body.Close()
 
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	if include_method {
-		fmt.Println(req.Method)
+		fmt.Fprintln(w, req.Method)
 	}
 
 	if include_url {
-		fmt.Println(req.URL)
+		fmt.Fprintln(w, req.URL)
 	}
 
 	if include_headers {
-		req.Header.Write(os.Stdout)
-		fmt.Println()
+		req.Header.Write(w)
+		fmt.Fprintln(w)
 	}
 
-	fmt.Println(string(body))
+	fmt.Fprintln(w, string(body))
+
+	return nil
 }
 
-func PrintResponse(resp *http.Response, include_headers bool, include_status bool) {
+func PrintResponse(w io.Writer, resp *http.Response, include_headers bool, include_status bool) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	if include_status {
-		fmt.Println(resp.StatusCode)
+		fmt.Fprintln(w, resp.StatusCode)
 	}
 
 	if include_headers {
-		resp.Header.Write(os.Stdout)
-		fmt.Println()
+		resp.Header.Write(w)
+		fmt.Fprintln(w)
 	}
 
-	fmt.Println(string(body))
+	fmt.Fprintln(w, string(body))
+
+	return nil
 }
