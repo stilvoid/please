@@ -40,7 +40,7 @@ func Parse(input []byte, format string) (interface{}, string, error) {
 	parser, ok := Parsers[format]
 
 	if !ok {
-		return nil, "", fmt.Errorf("Unknown format: %s", format)
+		return nil, "", fmt.Errorf("No such parser: %s", format)
 	}
 
 	output, err := parser(input)
