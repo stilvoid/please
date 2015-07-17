@@ -1,5 +1,7 @@
 # ToDo
 
+* Tidy up help text - separate input/output params
+
 * Write some tests!
 
 * Fix stdin/stdout usage

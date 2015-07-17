@@ -25,6 +25,7 @@ type responder struct {
 
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	err := util.PrintRequest(os.Stdout, req, h.include_method, h.include_url, h.include_headers)
+	os.Stdout.Close()
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
