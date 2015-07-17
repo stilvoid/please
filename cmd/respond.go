@@ -68,11 +68,11 @@ func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func Respond(args []string) {
 	// Flags
-	headers_included := getopt.Bool('i', "Output headers with the response")
+	headers_included := getopt.Bool('i', "Include headers from input")
 
-	include_headers := getopt.Bool('h', "Include headers in output")
-	include_method := getopt.Bool('m', "Include method in output")
-	include_url := getopt.Bool('u', "Include URL in output")
+	include_headers := getopt.Bool('h', "Output headers with the response")
+	include_method := getopt.Bool('m', "Output the request method")
+	include_url := getopt.Bool('u', "Output the requested URL")
 
 	// Cheat because it's better than writing *another* arg parser
 	getopt.SetParameters("<status> [<address>[:<port>]]")
