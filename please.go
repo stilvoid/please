@@ -7,7 +7,6 @@ import (
 )
 
 var commands map[string]func([]string)
-var aliases map[string]string
 
 func init() {
 	commands = map[string]func([]string){
@@ -15,23 +14,17 @@ func init() {
 		"respond": cmd.Respond,
 		"parse":   cmd.Parse,
 	}
-
-	aliases = map[string]string{
-		"get":    "request",
-		"post":   "request",
-		"put":    "request",
-		"delete": "request",
-	}
 }
 
 func printHelp() {
-	fmt.Println("Usage: please <command> [options...]")
+	fmt.Println("Usage: please <COMMAND> [arg...]")
 	fmt.Println()
 	fmt.Println("Commands:")
-	fmt.Println("    go request")
-	fmt.Println("    go respond")
-	fmt.Println("    go parse")
+	fmt.Println("    request    Make a web request")
+	fmt.Println("    respond    Listen for a web request and respond to it")
+	fmt.Println("    parse      Get values from structured data and convert between formats")
 	fmt.Println()
+	fmt.Println("Run 'please COMMAND' for more information on a command.")
 }
 
 func main() {
@@ -44,7 +37,7 @@ func main() {
 
 	args := os.Args[1:]
 
-	if alias, ok := aliases[command]; ok {
+	if alias, ok := cmd.RequestAliases[command]; ok {
 		new_args := make([]string, 1)
 		new_args[0] = alias
 

@@ -86,7 +86,7 @@ func PrintResponse(w io.Writer, resp *http.Response, include_headers bool, inclu
 	}
 
 	if include_status {
-		fmt.Fprintln(w, resp.StatusCode)
+		fmt.Fprintln(w, resp.Status)
 	}
 
 	if include_headers {

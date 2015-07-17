@@ -7,21 +7,47 @@ import (
 	"github.com/stilvoid/please/util"
 	"net/http"
 	"os"
-	"path"
 )
+
+var RequestAliases map[string]string
+
+func init() {
+	RequestAliases = map[string]string{
+		"get":    "request",
+		"post":   "request",
+		"put":    "request",
+		"delete": "request",
+	}
+}
+
+func requestHelp() {
+	fmt.Println("Usage: please request <METHOD> [option...] <URL>")
+	fmt.Println()
+	fmt.Println("Makes a web request to URL using METHOD")
+	fmt.Println()
+	fmt.Println("Shortcut aliases:")
+	for alias := range RequestAliases {
+		fmt.Printf("    please %s\n", alias)
+	}
+	fmt.Println()
+	fmt.Println("Input options:")
+	fmt.Println("    -i    Include headers from input")
+	fmt.Println()
+	fmt.Println("Output options:")
+	fmt.Println("    -s    Output HTTP status line")
+	fmt.Println("    -h    Output headers")
+}
 
 func Request(args []string) {
 	// Flags
-	headers_included := getopt.Bool('i', "Include headers from input")
+	headers_included := getopt.Bool('i')
 
-	include_headers := getopt.Bool('h', "Output headers with the response")
-	include_status := getopt.Bool('s', "Output HTTP status line with the response")
-
-	// Cheat because it's better than writing *another* arg parser
-	getopt.SetParameters("<url>")
-	getopt.SetProgram(fmt.Sprintf("%s <method>", path.Base(os.Args[0])))
+	include_headers := getopt.Bool('h')
+	include_status := getopt.Bool('s')
 
 	opts := getopt.CommandLine
+
+	opts.SetUsage(requestHelp)
 
 	// Get the command
 	opts.Parse(args)

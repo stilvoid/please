@@ -11,10 +11,11 @@ import (
 	"net/http"
 	"net/textproto"
 	"os"
+	"strconv"
 )
 
 type responder struct {
-	status           string
+	status           int
 	include_headers  bool
 	include_method   bool
 	include_url      bool
@@ -23,7 +24,25 @@ type responder struct {
 	data             io.ReadSeeker
 }
 
+func respondHelp() {
+	fmt.Println("Usage: please respond [option...] <STATUS> [<ADDRESS>[:<PORT>]]")
+	fmt.Println()
+	fmt.Println("Listens on the specified address and port and responds with the chosen status code.")
+	fmt.Println("Any data on stdin will be used as the body of the response.")
+	fmt.Println("The request body will be printed to stdout.")
+	fmt.Println()
+	fmt.Println("Input options:")
+	fmt.Println("    -i    Include headers from input")
+	fmt.Println()
+	fmt.Println("Output options:")
+	fmt.Println("    -m    Output the request method")
+	fmt.Println("    -u    Output the requested path")
+	fmt.Println("    -h    Output headers with the request")
+}
+
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	defer h.listener.Close()
+
 	err := util.PrintRequest(os.Stdout, req, h.include_method, h.include_url, h.include_headers)
 	os.Stdout.Close()
 
@@ -60,25 +79,24 @@ func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	w.WriteHeader(h.status)
+
 	if h.data != nil {
 		io.Copy(w, input_reader)
 	}
-
-	h.listener.Close()
 }
 
 func Respond(args []string) {
 	// Flags
-	headers_included := getopt.Bool('i', "Include headers from input")
+	headers_included := getopt.Bool('i')
 
-	include_headers := getopt.Bool('h', "Output headers with the response")
-	include_method := getopt.Bool('m', "Output the request method")
-	include_url := getopt.Bool('u', "Output the requested URL")
-
-	// Cheat because it's better than writing *another* arg parser
-	getopt.SetParameters("<status> [<address>[:<port>]]")
+	include_headers := getopt.Bool('h')
+	include_method := getopt.Bool('m')
+	include_url := getopt.Bool('u')
 
 	opts := getopt.CommandLine
+
+	opts.SetUsage(respondHelp)
 
 	// Deal with flags and get the url
 	opts.Parse(args)
@@ -87,7 +105,12 @@ func Respond(args []string) {
 		os.Exit(1)
 	}
 
-	status := opts.Arg(0)
+	status, err := strconv.Atoi(opts.Arg(0))
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Invalid status code: %s\n", opts.Arg(0))
+		os.Exit(1)
+	}
 
 	address := "0.0.0.0:8000"
 

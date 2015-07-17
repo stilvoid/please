@@ -7,6 +7,7 @@ import (
 type Parser func([]byte) (interface{}, error)
 
 var Parsers = map[string]Parser{
+	"auto": nil,
 	"csv":  Csv,
 	"html": Html,
 	"json": Json,

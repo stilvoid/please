@@ -9,25 +9,32 @@ import (
 	"github.com/stilvoid/please/util"
 	"io/ioutil"
 	"os"
-	"strings"
 )
+
+func parseHelp() {
+	fmt.Println("Usage: please parse [-i <INPUT FORMAT>] [-o <OUTPUT FORMAT>] [path.to.extract]")
+	fmt.Println()
+	fmt.Println("If omitted, the input type defaults to \"auto\". The output type defaults to \"bash\".")
+	fmt.Println()
+	fmt.Println("Input types:")
+	for _, format := range util.SortKeys(parser.Parsers) {
+		fmt.Printf("    %s\n", format)
+	}
+	fmt.Println()
+	fmt.Println("Output types:")
+	for _, format := range util.SortKeys(formatter.Formatters) {
+		fmt.Printf("    %s\n", format)
+	}
+}
 
 func Parse(args []string) {
 	// Flags
-	in_format := getopt.String('i', "auto", "Parse the input as 'types'", "type")
-	out_format := getopt.String('o', "bash", "Use 'type' as the output format", "type")
+	in_format := getopt.String('i', "auto")
+	out_format := getopt.String('o', "bash")
 
 	opts := getopt.CommandLine
 
-	opts.SetUsage(func() {
-		getopt.CommandLine.PrintUsage(os.Stderr)
-
-		fmt.Println()
-
-		fmt.Printf(" Input types: %s\n", strings.Join(util.SortKeys(parser.Parsers), ", "))
-
-		fmt.Printf(" Output types: %s\n", strings.Join(util.SortKeys(formatter.Formatters), ", "))
-	})
+	opts.SetUsage(parseHelp)
 
 	opts.Parse(args)
 
