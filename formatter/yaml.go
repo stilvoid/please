@@ -16,3 +16,7 @@ func Yaml(in interface{}) (out string) {
 
 	return string(bytes)
 }
+
+func init() {
+	Formatters["yaml"] = Yaml
+}

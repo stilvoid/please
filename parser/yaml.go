@@ -11,3 +11,10 @@ func Yaml(input []byte) (interface{}, error) {
 
 	return parsed, err
 }
+
+func init() {
+	Parsers["yaml"] = parser{
+		parse:   Yaml,
+		prefers: []string{"json", "xml"},
+	}
+}

@@ -5,15 +5,9 @@ import (
 	"github.com/stilvoid/please/util"
 )
 
-type Formatter func(interface{}) string
+type formatterFunc func(interface{}) string
 
-var Formatters = map[string]Formatter{
-	"bash": Bash,
-	"dot":  Dot,
-	"json": Json,
-	"xml":  Xml,
-	"yaml": Yaml,
-}
+var Formatters = make(map[string]formatterFunc)
 
 func Format(input interface{}, format string) (string, error) {
 	formatter, ok := Formatters[format]

@@ -14,6 +14,18 @@ type node struct {
 	value interface{}   `xml:",any"`
 }
 
+func Html(input []byte) (interface{}, error) {
+	var parsed interface{}
+
+	doc, err := html.Parse(bytes.NewReader(input))
+
+	if err == nil {
+		parsed = formatHtml(doc)
+	}
+
+	return parsed, err
+}
+
 func formatHtml(n *html.Node) map[string]interface{} {
 	out := make(map[string]interface{})
 
@@ -56,14 +68,9 @@ func formatHtml(n *html.Node) map[string]interface{} {
 	return out
 }
 
-func Html(input []byte) (interface{}, error) {
-	var parsed interface{}
-
-	doc, err := html.Parse(bytes.NewReader(input))
-
-	if err == nil {
-		parsed = formatHtml(doc)
+func init() {
+	Parsers["html"] = parser{
+		parse:   Html,
+		prefers: []string{"xml", "yaml"},
 	}
-
-	return parsed, err
 }

@@ -49,3 +49,7 @@ func Bash(in interface{}) (out string) {
 		return fmt.Sprint(in)
 	}
 }
+
+func init() {
+	Formatters["bash"] = Bash
+}

@@ -53,7 +53,7 @@ func Parse(args []string) {
 	}
 
 	// Try parsing
-	parsed, _, err := parser.Parse(input, *in_format)
+	parsed, err := parser.Parse(input, *in_format)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

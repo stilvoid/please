@@ -4,47 +4,21 @@ import (
 	"fmt"
 )
 
-type Parser func([]byte) (interface{}, error)
+type parserFunc func([]byte) (interface{}, error)
 
-var Parsers = map[string]Parser{
-	"auto": nil,
-	"csv":  Csv,
-	"html": Html,
-	"json": Json,
-	"mime": Mime,
-	"xml":  Xml,
-	"yaml": Yaml,
+type parser struct {
+	parse   parserFunc
+	prefers []string
 }
 
-var preference = []string{
-	"json",
-	"xml",
-	"yaml",
-	"csv",
-	"html",
-	"mime",
-}
+var Parsers = make(map[string]parser)
 
-func Parse(input []byte, format string) (interface{}, string, error) {
-	if format == "auto" {
-		for _, name := range preference {
-			parsed, err := Parsers[name](input)
-
-			if err == nil {
-				return parsed, name, err
-			}
-		}
-
-		return nil, "", fmt.Errorf("Input format could not be identified")
-	}
-
+func Parse(input []byte, format string) (interface{}, error) {
 	parser, ok := Parsers[format]
 
 	if !ok {
-		return nil, "", fmt.Errorf("No such parser: %s", format)
+		return nil, fmt.Errorf("No such parser: %s", format)
 	}
 
-	output, err := parser(input)
-
-	return output, format, err
+	return parser.parse(input)
 }

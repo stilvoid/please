@@ -16,3 +16,7 @@ func Xml(in interface{}) (out string) {
 
 	return string(bytes)
 }
+
+func init() {
+	Formatters["xml"] = Xml
+}

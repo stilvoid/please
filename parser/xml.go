@@ -11,3 +11,10 @@ func Xml(input []byte) (interface{}, error) {
 
 	return parsed, err
 }
+
+func init() {
+	Parsers["xml"] = parser{
+		parse:   Xml,
+		prefers: []string{"json"},
+	}
+}

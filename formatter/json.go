@@ -24,3 +24,7 @@ func Json(in interface{}) (out string) {
 
 	return string(bytes)
 }
+
+func init() {
+	Formatters["json"] = Json
+}

@@ -11,3 +11,9 @@ func Json(input []byte) (interface{}, error) {
 
 	return parsed, err
 }
+
+func init() {
+	Parsers["json"] = parser{
+		parse: Json,
+	}
+}

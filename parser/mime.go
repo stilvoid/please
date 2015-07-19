@@ -33,3 +33,10 @@ func Mime(input []byte) (interface{}, error) {
 
 	return message, nil
 }
+
+func init() {
+	Parsers["mime"] = parser{
+		parse:   Mime,
+		prefers: []string{"html", "yaml"},
+	}
+}
