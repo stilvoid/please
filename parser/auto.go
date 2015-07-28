@@ -2,9 +2,9 @@ package parser
 
 import "fmt"
 
-func Auto(input []byte) (interface{}, error) {
+func auto(input []byte) (interface{}, error) {
 	for _, name := range parseOrder() {
-		if parsed, err := Parsers[name].parse(input); err == nil {
+		if parsed, err := parsers[name].parse(input); err == nil {
 			return parsed, err
 		}
 	}
@@ -13,7 +13,7 @@ func Auto(input []byte) (interface{}, error) {
 }
 
 func parseOrder() []string {
-	order := make([]string, 0, len(Parsers))
+	order := make([]string, 0, len(parsers))
 
 	tried := make(map[string]bool)
 
@@ -24,7 +24,7 @@ func parseOrder() []string {
 			return
 		}
 
-		for _, pref := range Parsers[name].prefers {
+		for _, pref := range parsers[name].prefers {
 			tryParser(pref)
 		}
 
@@ -32,7 +32,7 @@ func parseOrder() []string {
 		tried[name] = true
 	}
 
-	for name := range Parsers {
+	for name := range parsers {
 		if name != "auto" {
 			tryParser(name)
 		}
@@ -42,7 +42,7 @@ func parseOrder() []string {
 }
 
 func init() {
-	Parsers["auto"] = parser{
-		parse: Auto,
+	parsers["auto"] = parser{
+		parse: auto,
 	}
 }

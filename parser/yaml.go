@@ -4,7 +4,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func Yaml(input []byte) (interface{}, error) {
+func parseYaml(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	err := yaml.Unmarshal(input, &parsed)
@@ -13,8 +13,8 @@ func Yaml(input []byte) (interface{}, error) {
 }
 
 func init() {
-	Parsers["yaml"] = parser{
-		parse:   Yaml,
+	parsers["yaml"] = parser{
+		parse:   parseYaml,
 		prefers: []string{"json", "xml"},
 	}
 }

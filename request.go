@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"fmt"
@@ -9,14 +9,18 @@ import (
 	"os"
 )
 
-var RequestAliases map[string]string
+var requestAliases = []string{
+	"get",
+	"post",
+	"put",
+	"delete",
+}
 
 func init() {
-	RequestAliases = map[string]string{
-		"get":    "request",
-		"post":   "request",
-		"put":    "request",
-		"delete": "request",
+	commands["request"] = requestCommand
+
+	for _, alias := range requestAliases {
+		aliases[alias] = "request"
 	}
 }
 
@@ -26,7 +30,7 @@ func requestHelp() {
 	fmt.Println("Makes a web request to URL using METHOD")
 	fmt.Println()
 	fmt.Println("Shortcut aliases:")
-	for alias := range RequestAliases {
+	for _, alias := range requestAliases {
 		fmt.Printf("    please %s\n", alias)
 	}
 	fmt.Println()
@@ -38,7 +42,7 @@ func requestHelp() {
 	fmt.Println("    -h    Output headers")
 }
 
-func Request(args []string) {
+func requestCommand(args []string) {
 	// Flags
 	headers_included := getopt.Bool('i')
 

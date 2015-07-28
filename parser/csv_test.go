@@ -16,7 +16,7 @@ func TestCsv(t *testing.T) {
 		[]string{"2-1", "2-2"},
 	}
 
-	actual, err := Csv([]byte(input))
+	actual, err := parseCsv([]byte(input))
 
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)

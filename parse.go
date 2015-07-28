@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"fmt"
@@ -6,10 +6,13 @@ import (
 	"github.com/pborman/getopt"
 	"github.com/stilvoid/please/formatter"
 	"github.com/stilvoid/please/parser"
-	"github.com/stilvoid/please/util"
 	"io/ioutil"
 	"os"
 )
+
+func init() {
+	commands["parse"] = parseCommand
+}
 
 func parseHelp() {
 	fmt.Println("Usage: please parse [-i <INPUT FORMAT>] [-o <OUTPUT FORMAT>] [path.to.extract]")
@@ -17,17 +20,17 @@ func parseHelp() {
 	fmt.Println("If omitted, the input type defaults to \"auto\". The output type defaults to \"bash\".")
 	fmt.Println()
 	fmt.Println("Input types:")
-	for _, format := range util.SortKeys(parser.Parsers) {
+	for _, format := range parser.Names() {
 		fmt.Printf("    %s\n", format)
 	}
 	fmt.Println()
 	fmt.Println("Output types:")
-	for _, format := range util.SortKeys(formatter.Formatters) {
+	for _, format := range formatter.Names() {
 		fmt.Printf("    %s\n", format)
 	}
 }
 
-func Parse(args []string) {
+func parseCommand(args []string) {
 	// Flags
 	in_format := getopt.String('i', "auto")
 	out_format := getopt.String('o', "bash")
@@ -62,7 +65,7 @@ func Parse(args []string) {
 
 	// Path
 	if getopt.NArgs() > 0 {
-		parsed, err = util.Filter(parsed, getopt.Arg(0))
+		parsed, err = parser.Filter(parsed, getopt.Arg(0))
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)

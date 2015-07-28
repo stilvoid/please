@@ -26,7 +26,7 @@ func wrap(in string) string {
 	return out
 }
 
-func Dot(in interface{}) (out string) {
+func formatDot(in interface{}) (out string) {
 	nodes, links := flatten(in, "root")
 
 	nodes = append(nodes, node{
@@ -126,5 +126,5 @@ func flatten(in interface{}, current_path string) ([]node, []link) {
 }
 
 func init() {
-	Formatters["dot"] = Dot
+	formatters["dot"] = formatDot
 }

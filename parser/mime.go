@@ -7,7 +7,7 @@ import (
 	"net/textproto"
 )
 
-func Mime(input []byte) (interface{}, error) {
+func parseMime(input []byte) (interface{}, error) {
 	input_reader := bufio.NewReader(bytes.NewReader(input))
 
 	reader := textproto.NewReader(input_reader)
@@ -35,8 +35,8 @@ func Mime(input []byte) (interface{}, error) {
 }
 
 func init() {
-	Parsers["mime"] = parser{
-		parse:   Mime,
+	parsers["mime"] = parser{
+		parse:   parseMime,
 		prefers: []string{"html", "yaml"},
 	}
 }

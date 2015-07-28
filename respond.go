@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"bufio"
@@ -22,6 +22,10 @@ type responder struct {
 	headers_included bool
 	listener         net.Listener
 	data             io.ReadSeeker
+}
+
+func init() {
+	commands["respond"] = respondCommand
 }
 
 func respondHelp() {
@@ -86,7 +90,7 @@ func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func Respond(args []string) {
+func respondCommand(args []string) {
 	// Flags
 	headers_included := getopt.Bool('i')
 

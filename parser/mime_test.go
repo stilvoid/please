@@ -20,7 +20,7 @@ func TestMime(t *testing.T) {
 		"body": "This is the body.",
 	}
 
-	actual, err := Mime([]byte(input))
+	actual, err := parseMime([]byte(input))
 
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)

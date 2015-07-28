@@ -14,7 +14,7 @@ type node struct {
 	value interface{}   `xml:",any"`
 }
 
-func Html(input []byte) (interface{}, error) {
+func parseHtml(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	doc, err := html.Parse(bytes.NewReader(input))
@@ -69,8 +69,8 @@ func formatHtml(n *html.Node) map[string]interface{} {
 }
 
 func init() {
-	Parsers["html"] = parser{
-		parse:   Html,
+	parsers["html"] = parser{
+		parse:   parseHtml,
 		prefers: []string{"xml", "yaml"},
 	}
 }

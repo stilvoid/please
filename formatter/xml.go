@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func Xml(in interface{}) (out string) {
+func formatXml(in interface{}) (out string) {
 	bytes, err := anyxml.XmlIndent(in, "", "  ")
 
 	if err != nil {
@@ -18,5 +18,5 @@ func Xml(in interface{}) (out string) {
 }
 
 func init() {
-	Formatters["xml"] = Xml
+	formatters["xml"] = formatXml
 }

@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func Yaml(in interface{}) (out string) {
+func formatYaml(in interface{}) (out string) {
 	bytes, err := yaml.Marshal(in)
 
 	if err != nil {
@@ -18,5 +18,5 @@ func Yaml(in interface{}) (out string) {
 }
 
 func init() {
-	Formatters["yaml"] = Yaml
+	formatters["yaml"] = formatYaml
 }

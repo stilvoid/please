@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-func Json(input []byte) (interface{}, error) {
+func parseJson(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	err := json.Unmarshal(input, &parsed)
@@ -13,7 +13,7 @@ func Json(input []byte) (interface{}, error) {
 }
 
 func init() {
-	Parsers["json"] = parser{
-		parse: Json,
+	parsers["json"] = parser{
+		parse: parseJson,
 	}
 }

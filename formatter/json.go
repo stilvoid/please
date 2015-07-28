@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func Json(in interface{}) (out string) {
+func formatJson(in interface{}) (out string) {
 	in_map, ok := in.(map[string]interface{})
 
 	if !ok {
@@ -26,5 +26,5 @@ func Json(in interface{}) (out string) {
 }
 
 func init() {
-	Formatters["json"] = Json
+	formatters["json"] = formatJson
 }

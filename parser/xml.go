@@ -4,7 +4,7 @@ import (
 	"github.com/clbanning/x2j"
 )
 
-func Xml(input []byte) (interface{}, error) {
+func parseXml(input []byte) (interface{}, error) {
 	parsed := make(map[string]interface{})
 
 	err := x2j.Unmarshal(input, &parsed)
@@ -13,8 +13,8 @@ func Xml(input []byte) (interface{}, error) {
 }
 
 func init() {
-	Parsers["xml"] = parser{
-		parse:   Xml,
+	parsers["xml"] = parser{
+		parse:   parseXml,
 		prefers: []string{"json"},
 	}
 }

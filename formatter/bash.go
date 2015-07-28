@@ -7,7 +7,7 @@ import (
 )
 
 func wrapObj(in interface{}) string {
-	out := Bash(in)
+	out := formatBash(in)
 	out = strings.Replace(out, "\\", "\\\\", -1)
 	out = strings.Replace(out, "\"", "\\\"", -1)
 	out = strings.Replace(out, "\n", "\\n", -1)
@@ -17,7 +17,7 @@ func wrapObj(in interface{}) string {
 	return out
 }
 
-func Bash(in interface{}) (out string) {
+func formatBash(in interface{}) (out string) {
 
 	if in == nil {
 		return ""
@@ -51,5 +51,5 @@ func Bash(in interface{}) (out string) {
 }
 
 func init() {
-	Formatters["bash"] = Bash
+	formatters["bash"] = formatBash
 }

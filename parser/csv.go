@@ -5,13 +5,13 @@ import (
 	"encoding/csv"
 )
 
-func Csv(input []byte) (interface{}, error) {
+func parseCsv(input []byte) (interface{}, error) {
 	return csv.NewReader(bytes.NewReader(input)).ReadAll()
 }
 
 func init() {
-	Parsers["csv"] = parser{
-		parse:   Csv,
+	parsers["csv"] = parser{
+		parse:   parseCsv,
 		prefers: []string{"yaml"},
 	}
 }
