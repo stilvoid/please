@@ -5,7 +5,6 @@ import "fmt"
 func Auto(input []byte) (interface{}, error) {
 	for _, name := range parseOrder() {
 		if parsed, err := Parsers[name].parse(input); err == nil {
-			fmt.Println("IT WAS: ", name)
 			return parsed, err
 		}
 	}
@@ -38,8 +37,6 @@ func parseOrder() []string {
 			tryParser(name)
 		}
 	}
-
-	fmt.Println("ORDER:", order)
 
 	return order
 }
