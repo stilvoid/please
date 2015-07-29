@@ -1,3 +1,4 @@
+// Package util provides some utility functions for dealing with HTTP requests and responses
 package util
 
 import (
@@ -11,7 +12,8 @@ import (
 	"strings"
 )
 
-func CreateRequest(method string, url string, input io.Reader, headers_included bool) (*http.Request, error) {
+// CreateRequest performs an HTTP request based on the information provided
+func MakeRequest(method string, url string, input io.Reader, headersIncluded bool) (*http.Response, error) {
 	var req *http.Request
 	var headers map[string][]string
 	var err error
@@ -20,12 +22,12 @@ func CreateRequest(method string, url string, input io.Reader, headers_included 
 
 	if input == nil {
 		req, err = http.NewRequest(method, url, nil)
-	} else if !headers_included {
+	} else if !headersIncluded {
 		req, err = http.NewRequest(method, url, input)
 	} else {
-		input_reader := bufio.NewReader(input)
+		inputReader := bufio.NewReader(input)
 
-		reader := textproto.NewReader(input_reader)
+		reader := textproto.NewReader(inputReader)
 
 		headers, err = reader.ReadMIMEHeader()
 
@@ -33,7 +35,7 @@ func CreateRequest(method string, url string, input io.Reader, headers_included 
 			return nil, err
 		}
 
-		body, err := ioutil.ReadAll(input_reader)
+		body, err := ioutil.ReadAll(inputReader)
 
 		if err != nil {
 			return nil, err
@@ -44,14 +46,11 @@ func CreateRequest(method string, url string, input io.Reader, headers_included 
 		req.Header = headers
 	}
 
-	return req, err
-}
-
-func GetResponse(req *http.Request) (*http.Response, error) {
 	return http.DefaultClient.Do(req)
 }
 
-func PrintRequest(w io.Writer, req *http.Request, include_method bool, include_url bool, include_headers bool) error {
+// WriteRequest writes an http.Request to the specified writer
+func WriteRequest(w io.Writer, req *http.Request, includeMethod bool, includeUrl bool, includeHeaders bool) error {
 	body, err := ioutil.ReadAll(req.Body)
 	req.Body.Close()
 
@@ -59,15 +58,15 @@ func PrintRequest(w io.Writer, req *http.Request, include_method bool, include_u
 		return err
 	}
 
-	if include_method {
+	if includeMethod {
 		fmt.Fprintln(w, req.Method)
 	}
 
-	if include_url {
+	if includeUrl {
 		fmt.Fprintln(w, req.URL)
 	}
 
-	if include_headers {
+	if includeHeaders {
 		req.Header.Write(w)
 		fmt.Fprintln(w)
 	}
@@ -77,7 +76,8 @@ func PrintRequest(w io.Writer, req *http.Request, include_method bool, include_u
 	return nil
 }
 
-func PrintResponse(w io.Writer, resp *http.Response, include_headers bool, include_status bool) error {
+// WriteResponse writes an http.Response to the specified writer
+func WriteResponse(w io.Writer, resp *http.Response, includeHeaders bool, includeStatus bool) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
@@ -85,11 +85,11 @@ func PrintResponse(w io.Writer, resp *http.Response, include_headers bool, inclu
 		return err
 	}
 
-	if include_status {
+	if includeStatus {
 		fmt.Fprintln(w, resp.Status)
 	}
 
-	if include_headers {
+	if includeHeaders {
 		resp.Header.Write(w)
 		fmt.Fprintln(w)
 	}

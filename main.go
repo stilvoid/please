@@ -34,20 +34,20 @@ func main() {
 
 	// Deal with aliases
 	if alias, ok := aliases[command]; ok {
-		new_args := make([]string, 1, len(args)+1)
-		new_args[0] = alias
+		newArgs := make([]string, 1, len(args)+1)
+		newArgs[0] = alias
 
-		args = append(new_args, args...)
+		args = append(newArgs, args...)
 
 		command = alias
 	}
 
-	command_func, ok := commands[command]
+	commandFunc, ok := commands[command]
 
 	if !ok {
 		printHelp()
 		os.Exit(1)
 	}
 
-	command_func(args)
+	commandFunc(args)
 }

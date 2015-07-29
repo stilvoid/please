@@ -15,13 +15,13 @@ import (
 )
 
 type responder struct {
-	status           int
-	include_headers  bool
-	include_method   bool
-	include_url      bool
-	headers_included bool
-	listener         net.Listener
-	data             io.ReadSeeker
+	status          int
+	includeHeaders  bool
+	includeMethod   bool
+	includeUrl      bool
+	headersIncluded bool
+	listener        net.Listener
+	data            io.ReadSeeker
 }
 
 func init() {
@@ -47,7 +47,7 @@ func respondHelp() {
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	defer h.listener.Close()
 
-	err := util.PrintRequest(os.Stdout, req, h.include_method, h.include_url, h.include_headers)
+	err := util.WriteRequest(os.Stdout, req, h.includeMethod, h.includeUrl, h.includeHeaders)
 	os.Stdout.Close()
 
 	if err != nil {
@@ -55,16 +55,16 @@ func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		os.Exit(1)
 	}
 
-	input_reader := bufio.NewReader(h.data)
+	inputReader := bufio.NewReader(h.data)
 
-	if h.headers_included {
+	if h.headersIncluded {
 		if h.data == nil {
 			fmt.Println("Error reading headers")
 			os.Exit(1)
 		}
 
 		// Parse headers from input
-		reader := textproto.NewReader(input_reader)
+		reader := textproto.NewReader(inputReader)
 		headers, err := reader.ReadMIMEHeader()
 
 		if err != nil {
@@ -86,17 +86,17 @@ func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(h.status)
 
 	if h.data != nil {
-		io.Copy(w, input_reader)
+		io.Copy(w, inputReader)
 	}
 }
 
 func respondCommand(args []string) {
 	// Flags
-	headers_included := getopt.Bool('i')
+	headersIncluded := getopt.Bool('i')
 
-	include_headers := getopt.Bool('h')
-	include_method := getopt.Bool('m')
-	include_url := getopt.Bool('u')
+	includeHeaders := getopt.Bool('h')
+	includeMethod := getopt.Bool('m')
+	includeUrl := getopt.Bool('u')
 
 	opts := getopt.CommandLine
 
@@ -123,11 +123,11 @@ func respondCommand(args []string) {
 	}
 
 	handler := responder{
-		status:           status,
-		include_headers:  *include_headers,
-		include_method:   *include_method,
-		include_url:      *include_url,
-		headers_included: *headers_included,
+		status:          status,
+		includeHeaders:  *includeHeaders,
+		includeMethod:   *includeMethod,
+		includeUrl:      *includeUrl,
+		headersIncluded: *headersIncluded,
 	}
 
 	listener, err := net.Listen("tcp", address)

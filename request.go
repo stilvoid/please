@@ -5,7 +5,7 @@ import (
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
 	"github.com/stilvoid/please/util"
-	"net/http"
+	"io"
 	"os"
 )
 
@@ -44,10 +44,10 @@ func requestHelp() {
 
 func requestCommand(args []string) {
 	// Flags
-	headers_included := getopt.Bool('i')
+	headersIncluded := getopt.Bool('i')
 
-	include_headers := getopt.Bool('h')
-	include_status := getopt.Bool('s')
+	includeHeaders := getopt.Bool('h')
+	includeStatus := getopt.Bool('s')
 
 	opts := getopt.CommandLine
 
@@ -69,30 +69,20 @@ func requestCommand(args []string) {
 	}
 	url := opts.Arg(0)
 
-	var (
-		req *http.Request
-		err error
-	)
+	var input io.Reader
 
-	if termutil.Isatty(os.Stdin.Fd()) {
-		req, err = util.CreateRequest(method, url, nil, *headers_included)
-	} else {
-		req, err = util.CreateRequest(method, url, os.Stdin, *headers_included)
+	if !termutil.Isatty(os.Stdin.Fd()) {
+		input = os.Stdin
 	}
+
+	resp, err := util.MakeRequest(method, url, input, *headersIncluded)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	resp, err := util.GetResponse(req)
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	err = util.PrintResponse(os.Stdout, resp, *include_headers, *include_status)
+	err = util.WriteResponse(os.Stdout, resp, *includeHeaders, *includeStatus)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
