@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-// CreateRequest performs an HTTP request based on the information provided
+// MakeRequest performs an HTTP request based on the information provided
 func MakeRequest(method string, url string, input io.Reader, headersIncluded bool) (*http.Response, error) {
 	var req *http.Request
 	var headers map[string][]string
