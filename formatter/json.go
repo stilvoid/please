@@ -2,6 +2,7 @@ package formatter
 
 import (
 	"fmt"
+
 	"github.com/nytlabs/mxj"
 )
 

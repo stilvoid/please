@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"os"
+
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
 	"github.com/stilvoid/please/util"
-	"io"
-	"os"
 )
 
 var requestAliases = []string{

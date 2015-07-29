@@ -4,6 +4,8 @@
 
 # Run tests first
 
+go vet ./... || exit 1
+
 go test ./... || exit 1
 
 declare -A platforms=([linux]=linux [darwin]=osx [windows]=windows)

@@ -3,15 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/andrew-d/go-termutil"
-	"github.com/pborman/getopt"
-	"github.com/stilvoid/please/util"
 	"io"
 	"net"
 	"net/http"
 	"net/textproto"
 	"os"
 	"strconv"
+
+	"github.com/andrew-d/go-termutil"
+	"github.com/pborman/getopt"
+	"github.com/stilvoid/please/util"
 )
 
 type responder struct {

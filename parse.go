@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
 	"github.com/stilvoid/please/formatter"
 	"github.com/stilvoid/please/parser"
-	"io/ioutil"
-	"os"
 )
 
 func init() {

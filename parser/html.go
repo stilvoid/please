@@ -3,9 +3,10 @@ package parser
 import (
 	"bytes"
 	"fmt"
-	"golang.org/x/net/html"
 	"reflect"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
 type node struct {
