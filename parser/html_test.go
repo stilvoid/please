@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestHtml(t *testing.T) {
+func TestHTML(t *testing.T) {
 	input := `<html>
 		<head>
 			<title>Test</title>
@@ -32,13 +32,13 @@ func TestHtml(t *testing.T) {
 		},
 	}
 
-	actual, err := parseHtml([]byte(input))
+	actual, err := parseHTML([]byte(input))
 
 	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
+		t.Errorf("unexpected error: %v", err)
 	}
 
 	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("Unexpected response:\n%#v\nvs\n%#v", actual, expected)
+		t.Errorf("unexpected response:\n%#v\nvs\n%#v", actual, expected)
 	}
 }

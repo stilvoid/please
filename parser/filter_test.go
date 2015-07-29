@@ -30,7 +30,7 @@ func TestFilter(t *testing.T) {
 		}
 
 		if expected != actual {
-			t.Errorf("Case failed: %v vs %v", expected, actual)
+			t.Errorf("case failed: %v vs %v", expected, actual)
 		}
 	}
 }
@@ -42,7 +42,7 @@ func TestFilterBadKey(t *testing.T) {
 
 	val, err := Filter(input, "not foo")
 
-	if err == nil || err.Error() != "Key does not exist: not foo" {
-		t.Errorf("Unexpected return values: %v, %v", val, err)
+	if err == nil || err.Error() != "key does not exist: not foo" {
+		t.Errorf("unexpected return values: %v, %v", val, err)
 	}
 }

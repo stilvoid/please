@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCsv(t *testing.T) {
+func TestCSV(t *testing.T) {
 	input := "col1,col2\n" +
 		"\"1-1\",\"1-2\"\n" +
 		"2-1,2-2"
@@ -16,13 +16,13 @@ func TestCsv(t *testing.T) {
 		[]string{"2-1", "2-2"},
 	}
 
-	actual, err := parseCsv([]byte(input))
+	actual, err := parseCSV([]byte(input))
 
 	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
+		t.Errorf("unexpected error: %v", err)
 	}
 
 	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("Unexpected response:\n%#v\nvs\n%#v", actual, expected)
+		t.Errorf("unexpected response:\n%#v\nvs\n%#v", actual, expected)
 	}
 }

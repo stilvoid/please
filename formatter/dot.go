@@ -126,5 +126,7 @@ func flatten(in interface{}, currentPath string) ([]node, []link) {
 }
 
 func init() {
-	formatters["dot"] = formatDot
+	formatters["dot"] = func(in interface{}) (string, error) {
+		return formatDot(in), nil
+	}
 }

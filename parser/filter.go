@@ -45,5 +45,5 @@ func Filter(in interface{}, path string) (interface{}, error) {
 		return Filter(val.Index(index).Interface(), nextPath)
 	}
 
-	return nil, fmt.Errorf("Key does not exist: %s", thisPath)
+	return nil, fmt.Errorf("key does not exist: %s", thisPath)
 }

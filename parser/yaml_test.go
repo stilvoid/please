@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestYaml(t *testing.T) {
+func TestYAML(t *testing.T) {
 	inputs := []string{
 		"foo: bar\nbaz: 123\nquux:\n  - 1\n  - 2\n  - - 3\n    - 4\n  - {a: false}",
 		"I am a fish",
@@ -47,14 +47,14 @@ func TestYaml(t *testing.T) {
 		input := inputs[i]
 		expected := expecteds[i]
 
-		actual, err := parseYaml([]byte(input))
+		actual, err := parseYAML([]byte(input))
 
 		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
+			t.Errorf("unexpected error: %v", err)
 		}
 
 		if !reflect.DeepEqual(actual, expected) {
-			t.Errorf("Unexpected response:\n%#v\nvs\n%#v", actual, expected)
+			t.Errorf("unexpected response:\n%#v\nvs\n%#v", actual, expected)
 		}
 	}
 }

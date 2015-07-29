@@ -9,7 +9,7 @@ func auto(input []byte) (interface{}, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("Input format could not be identified")
+	return nil, fmt.Errorf("input format could not be identified")
 }
 
 func parseOrder() []string {

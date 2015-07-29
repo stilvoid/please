@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestXml(t *testing.T) {
+func TestXML(t *testing.T) {
 	input := `<things>
 		<item id="1">Foo</item>
 		<item id="2">
@@ -30,26 +30,26 @@ func TestXml(t *testing.T) {
 		},
 	}
 
-	actual, err := parseXml([]byte(input))
+	actual, err := parseXML([]byte(input))
 
 	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
+		t.Errorf("unexpected error: %v", err)
 	}
 
 	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("Unexpected response:\n%#v\nvs\n%#v", actual, expected)
+		t.Errorf("unexpected response:\n%#v\nvs\n%#v", actual, expected)
 	}
 }
 
-func TestXmlBadInput(t *testing.T) {
+func TestXMLBadInput(t *testing.T) {
 	input := `<things>
 		<item id="1">Foo</item>
 		</item>
 	</things>`
 
-	_, err := parseXml([]byte(input))
+	_, err := parseXML([]byte(input))
 
 	if err == nil {
-		t.Errorf("Expected error")
+		t.Errorf("expected error")
 	}
 }

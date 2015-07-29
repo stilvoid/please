@@ -14,19 +14,19 @@ type node struct {
 	value interface{}   `xml:",any"`
 }
 
-func parseHtml(input []byte) (interface{}, error) {
+func parseHTML(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	doc, err := html.Parse(bytes.NewReader(input))
 
 	if err == nil {
-		parsed = formatHtml(doc)
+		parsed = formatHTML(doc)
 	}
 
 	return parsed, err
 }
 
-func formatHtml(n *html.Node) map[string]interface{} {
+func formatHTML(n *html.Node) map[string]interface{} {
 	out := make(map[string]interface{})
 
 	for _, a := range n.Attr {
@@ -43,7 +43,7 @@ func formatHtml(n *html.Node) map[string]interface{} {
 		} else {
 			existingValue, exists := out[c.Data]
 
-			newValue := formatHtml(c)
+			newValue := formatHTML(c)
 
 			if !exists {
 				out[c.Data] = newValue
@@ -70,7 +70,7 @@ func formatHtml(n *html.Node) map[string]interface{} {
 
 func init() {
 	parsers["html"] = parser{
-		parse:   parseHtml,
+		parse:   parseHTML,
 		prefers: []string{"xml", "yaml"},
 	}
 }

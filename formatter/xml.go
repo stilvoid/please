@@ -1,22 +1,19 @@
 package formatter
 
 import (
-	"fmt"
 	"github.com/clbanning/anyxml"
-	"os"
 )
 
-func formatXml(in interface{}) (out string) {
+func formatXML(in interface{}) (string, error) {
 	bytes, err := anyxml.XmlIndent(in, "", "  ")
 
 	if err != nil {
-		fmt.Println("Error generating XML:", err)
-		os.Exit(1)
+		return "", err
 	}
 
-	return string(bytes)
+	return string(bytes), nil
 }
 
 func init() {
-	formatters["xml"] = formatXml
+	formatters["xml"] = formatXML
 }

@@ -17,7 +17,7 @@ func wrapObj(in interface{}) string {
 	return out
 }
 
-func formatBash(in interface{}) (out string) {
+func formatBash(in interface{}) string {
 
 	if in == nil {
 		return ""
@@ -51,5 +51,7 @@ func formatBash(in interface{}) (out string) {
 }
 
 func init() {
-	formatters["bash"] = formatBash
+	formatters["bash"] = func(in interface{}) (string, error) {
+		return formatBash(in), nil
+	}
 }

@@ -3,14 +3,13 @@ package formatter
 import (
 	"fmt"
 	"github.com/nytlabs/mxj"
-	"os"
 )
 
-func formatJson(in interface{}) (out string) {
+func formatJSON(in interface{}) (string, error) {
 	inMap, ok := in.(map[string]interface{})
 
 	if !ok {
-		return fmt.Sprintf("\"%s\"", in)
+		return fmt.Sprintf("\"%s\"", in), nil
 	}
 
 	m := mxj.Map(inMap)
@@ -18,13 +17,12 @@ func formatJson(in interface{}) (out string) {
 	bytes, err := m.JsonIndent("", "  ")
 
 	if err != nil {
-		fmt.Println("Error generating JSON:", err)
-		os.Exit(1)
+		return "", err
 	}
 
-	return string(bytes)
+	return string(bytes), nil
 }
 
 func init() {
-	formatters["json"] = formatJson
+	formatters["json"] = formatJSON
 }

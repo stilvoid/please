@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-type formatterFunc func(interface{}) string
+type formatterFunc func(interface{}) (string, error)
 
 var formatters = make(map[string]formatterFunc)
 
@@ -28,7 +28,7 @@ func Format(input interface{}, format string) (string, error) {
 	formatter, ok := formatters[format]
 
 	if !ok {
-		return "", fmt.Errorf("No such formatter: %s", format)
+		return "", fmt.Errorf("no such formatter: %s", format)
 	}
 
 	if format != "yaml" {
@@ -36,5 +36,5 @@ func Format(input interface{}, format string) (string, error) {
 		input = forceStringKeys(input)
 	}
 
-	return formatter(input), nil
+	return formatter(input)
 }

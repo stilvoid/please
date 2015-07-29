@@ -1,22 +1,19 @@
 package formatter
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v2"
-	"os"
 )
 
-func formatYaml(in interface{}) (out string) {
+func formatYAML(in interface{}) (string, error) {
 	bytes, err := yaml.Marshal(in)
 
 	if err != nil {
-		fmt.Println("Error generating YAML:", err)
-		os.Exit(1)
+		return "", err
 	}
 
-	return string(bytes)
+	return string(bytes), nil
 }
 
 func init() {
-	formatters["yaml"] = formatYaml
+	formatters["yaml"] = formatYAML
 }

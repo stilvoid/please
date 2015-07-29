@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMime(t *testing.T) {
+func TestMIME(t *testing.T) {
 	input := "Test:    123\n" +
 		"Multiple-header: value1\n" +
 		"multiple-Header: Value2\n" +
@@ -20,13 +20,13 @@ func TestMime(t *testing.T) {
 		"body": "This is the body.",
 	}
 
-	actual, err := parseMime([]byte(input))
+	actual, err := parseMIME([]byte(input))
 
 	if err != nil {
-		t.Errorf("Unexpected error: %v", err)
+		t.Errorf("unexpected error: %v", err)
 	}
 
 	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("Unexpected response:\n%#v\nvs\n%#v", actual, expected)
+		t.Errorf("unexpected response:\n%#v\nvs\n%#v", actual, expected)
 	}
 }
