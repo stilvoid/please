@@ -7,13 +7,13 @@ import (
 )
 
 func formatJson(in interface{}) (out string) {
-	in_map, ok := in.(map[string]interface{})
+	inMap, ok := in.(map[string]interface{})
 
 	if !ok {
 		return fmt.Sprintf("\"%s\"", in)
 	}
 
-	m := mxj.Map(in_map)
+	m := mxj.Map(inMap)
 
 	bytes, err := m.JsonIndent("", "  ")
 

@@ -41,25 +41,25 @@ func formatHtml(n *html.Node) map[string]interface{} {
 				out["#text"] = c.Data
 			}
 		} else {
-			existing_value, exists := out[c.Data]
+			existingValue, exists := out[c.Data]
 
-			new_value := formatHtml(c)
+			newValue := formatHtml(c)
 
 			if !exists {
-				out[c.Data] = new_value
+				out[c.Data] = newValue
 			} else {
-				val := reflect.ValueOf(existing_value)
+				val := reflect.ValueOf(existingValue)
 
 				kind := val.Kind()
 
 				if kind != reflect.Array && kind != reflect.Slice {
 					out[c.Data] = []interface{}{
-						existing_value,
-						new_value,
+						existingValue,
+						newValue,
 					}
 				} else {
 					// *this* is sick
-					out[c.Data] = reflect.Append(val, reflect.ValueOf(new_value)).Interface().([]interface{})
+					out[c.Data] = reflect.Append(val, reflect.ValueOf(newValue)).Interface().([]interface{})
 				}
 			}
 		}

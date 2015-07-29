@@ -32,8 +32,8 @@ func parseHelp() {
 
 func parseCommand(args []string) {
 	// Flags
-	in_format := getopt.String('i', "auto")
-	out_format := getopt.String('o', "bash")
+	inFormat := getopt.String('i', "auto")
+	outFormat := getopt.String('o', "bash")
 
 	opts := getopt.CommandLine
 
@@ -56,7 +56,7 @@ func parseCommand(args []string) {
 	}
 
 	// Try parsing
-	parsed, err := parser.Parse(input, *in_format)
+	parsed, err := parser.Parse(input, *inFormat)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -74,7 +74,7 @@ func parseCommand(args []string) {
 	}
 
 	// ...and format back out :)
-	output, err := formatter.Format(parsed, *out_format)
+	output, err := formatter.Format(parsed, *outFormat)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

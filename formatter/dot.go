@@ -47,7 +47,7 @@ func formatDot(in interface{}) (out string) {
 	return fmt.Sprintf("graph{\n%s}", buf.String())
 }
 
-func flatten(in interface{}, current_path string) ([]node, []link) {
+func flatten(in interface{}, currentPath string) ([]node, []link) {
 	var nodes []node
 	var links []link
 
@@ -62,24 +62,24 @@ func flatten(in interface{}, current_path string) ([]node, []link) {
 		vv := in.(map[string]interface{})
 
 		for key, value := range vv {
-			target := current_path + "-" + key
+			target := currentPath + "-" + key
 
 			nodes = append(nodes, node{
 				name:  target,
 				label: key,
 			})
 
-			if current_path != "" {
+			if currentPath != "" {
 				links = append(links, link{
-					left:  current_path,
+					left:  currentPath,
 					right: target,
 				})
 			}
 
-			new_nodes, new_links := flatten(value, target)
+			newNodes, newLinks := flatten(value, target)
 
-			nodes = append(nodes, new_nodes...)
-			links = append(links, new_links...)
+			nodes = append(nodes, newNodes...)
+			links = append(links, newLinks...)
 		}
 
 		return nodes, links
@@ -87,29 +87,29 @@ func flatten(in interface{}, current_path string) ([]node, []link) {
 		for index := 0; index < val.Len(); index++ {
 			value := val.Index(index).Interface()
 
-			target := current_path + "-" + fmt.Sprint(index)
+			target := currentPath + "-" + fmt.Sprint(index)
 
 			nodes = append(nodes, node{
 				name:  target,
 				label: fmt.Sprintf("[%d]", index),
 			})
 
-			if current_path != "" {
+			if currentPath != "" {
 				links = append(links, link{
-					left:  current_path,
+					left:  currentPath,
 					right: target,
 				})
 			}
 
-			new_nodes, new_links := flatten(value, target)
+			newNodes, newLinks := flatten(value, target)
 
-			nodes = append(nodes, new_nodes...)
-			links = append(links, new_links...)
+			nodes = append(nodes, newNodes...)
+			links = append(links, newLinks...)
 		}
 
 		return nodes, links
 	default:
-		target := current_path + "=content"
+		target := currentPath + "=content"
 
 		nodes = append(nodes, node{
 			name:  target,
@@ -117,7 +117,7 @@ func flatten(in interface{}, current_path string) ([]node, []link) {
 		})
 
 		links = append(links, link{
-			left:  current_path,
+			left:  currentPath,
 			right: target,
 		})
 

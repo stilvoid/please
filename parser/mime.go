@@ -8,28 +8,28 @@ import (
 )
 
 func parseMime(input []byte) (interface{}, error) {
-	input_reader := bufio.NewReader(bytes.NewReader(input))
+	inputReader := bufio.NewReader(bytes.NewReader(input))
 
-	reader := textproto.NewReader(input_reader)
+	reader := textproto.NewReader(inputReader)
 
 	headers, err := reader.ReadMIMEHeader()
 	if err != nil {
 		return nil, err
 	}
 
-	bytes_body, err := ioutil.ReadAll(input_reader)
+	bytesBody, err := ioutil.ReadAll(inputReader)
 	if err != nil {
 		return nil, err
 	}
 
-	message_headers := make(map[string]interface{})
+	messageHeaders := make(map[string]interface{})
 	for key, value := range headers {
-		message_headers[key] = value
+		messageHeaders[key] = value
 	}
 
 	message := make(map[string]interface{})
-	message["headers"] = message_headers
-	message["body"] = string(bytes_body)
+	message["headers"] = messageHeaders
+	message["body"] = string(bytesBody)
 
 	return message, nil
 }

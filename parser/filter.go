@@ -14,13 +14,13 @@ func Filter(in interface{}, path string) (interface{}, error) {
 		return in, nil
 	}
 
-	split_path := strings.SplitN(path, ".", 2)
+	splitPath := strings.SplitN(path, ".", 2)
 
-	this_path := split_path[0]
-	var next_path string
+	thisPath := splitPath[0]
+	var nextPath string
 
-	if len(split_path) > 1 {
-		next_path = split_path[1]
+	if len(splitPath) > 1 {
+		nextPath = splitPath[1]
 	}
 
 	val := reflect.ValueOf(in)
@@ -28,22 +28,22 @@ func Filter(in interface{}, path string) (interface{}, error) {
 	switch val.Kind() {
 	case reflect.Map:
 		for _, key := range val.MapKeys() {
-			if fmt.Sprint(key.Interface()) == this_path {
+			if fmt.Sprint(key.Interface()) == thisPath {
 				value := val.MapIndex(key).Interface()
-				return Filter(value, next_path)
+				return Filter(value, nextPath)
 			}
 		}
 
 		break
 	case reflect.Array, reflect.Slice:
-		index, err := strconv.Atoi(this_path)
+		index, err := strconv.Atoi(thisPath)
 
 		if err != nil || index < 0 || index >= val.Len() {
 			break
 		}
 
-		return Filter(val.Index(index).Interface(), next_path)
+		return Filter(val.Index(index).Interface(), nextPath)
 	}
 
-	return nil, fmt.Errorf("Key does not exist: %s", this_path)
+	return nil, fmt.Errorf("Key does not exist: %s", thisPath)
 }
