@@ -10,6 +10,7 @@ func wrapObj(in interface{}) string {
 	out := formatBash(in)
 	out = strings.Replace(out, "\\", "\\\\", -1)
 	out = strings.Replace(out, "\"", "\\\"", -1)
+	out = strings.Replace(out, "`", "\\`", -1)
 	out = strings.Replace(out, "\n", "\\n", -1)
 	out = strings.Replace(out, "$", "\\$", -1)
 	out = fmt.Sprintf("\"%s\"", out)
