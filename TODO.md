@@ -1,22 +1,5 @@
 # ToDo
 
-* Allow * in path filtering, e.g.:
-
-    Given the data:
-
-        [
-            {
-                "id": 1
-            },
-            {
-                "id": 2
-            }
-        ]
-
-    `please parse *.id` would result in:
-
-        [1, 2]
-
 * Tidy up help text - separate input/output params
 
     Use [optional] and <value goes here> conventions
