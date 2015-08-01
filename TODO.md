@@ -1,15 +1,15 @@
 # ToDo
 
-* Tidy up help text - separate input/output params
-
-    Use [optional] and <value goes here> conventions
-
-    Replace [parameters...] in parse with something a bit more descriptive
-
 * Split docs up and use readthedocs
 
-* Write some tests!
+* Write some more tests!
 
-* Fix stdin/stdout usage
+* Fix stdin/stdout/stderr usage
+
+    * Make sure all errors go to stderr
 
 * Make indenting optional across all formatters (but not bash I guess)
+
+* Add a preferences thing for storing headers etc?
+
+    Could store commonly used headers for a domain, e.g. auth
