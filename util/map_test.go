@@ -1,4 +1,4 @@
-package formatter
+package util
 
 import (
 	"reflect"
@@ -34,7 +34,7 @@ func TestForceStringKeys(t *testing.T) {
 		},
 	}
 
-	actual := forceStringKeys(input)
+	actual := ForceStringKeys(input)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("unexpected result:\n%#v\nvs\n%#v\n", actual, expected)

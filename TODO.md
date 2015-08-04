@@ -1,5 +1,9 @@
 # ToDo
 
+* Add an optional `FILE` parameter to everything
+
+* Mention expectations of data on stdin in help text
+
 * Split docs up and use readthedocs
 
 * Write some more tests!

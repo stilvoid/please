@@ -4,6 +4,8 @@ package formatter
 import (
 	"fmt"
 	"sort"
+
+	"github.com/stilvoid/please/util"
 )
 
 type formatterFunc func(interface{}) (string, error)
@@ -33,7 +35,7 @@ func Format(input interface{}, format string) (string, error) {
 
 	if format != "yaml" {
 		// Pretty much everything hates non-string keys :S
-		input = forceStringKeys(input)
+		input = util.ForceStringKeys(input)
 	}
 
 	return formatter(input)

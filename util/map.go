@@ -1,11 +1,12 @@
-package formatter
+package util
 
 import (
 	"fmt"
 	"reflect"
 )
 
-func forceStringKeys(in interface{}) interface{} {
+// ForceStringKeys creates a copy of the provided interface{}, with all maps changed to have string keys for use by serialisers that expect string keys
+func ForceStringKeys(in interface{}) interface{} {
 	val := reflect.ValueOf(in)
 
 	switch val.Kind() {
@@ -14,7 +15,7 @@ func forceStringKeys(in interface{}) interface{} {
 
 		for _, key := range val.MapKeys() {
 			stringKey := fmt.Sprint(key.Interface())
-			newMap[stringKey] = forceStringKeys(val.MapIndex(key).Interface())
+			newMap[stringKey] = ForceStringKeys(val.MapIndex(key).Interface())
 		}
 
 		return newMap
@@ -23,7 +24,7 @@ func forceStringKeys(in interface{}) interface{} {
 
 		for i := 0; i < val.Len(); i++ {
 			value := val.Index(i).Interface()
-			newSlice[i] = forceStringKeys(value)
+			newSlice[i] = ForceStringKeys(value)
 		}
 
 		return newSlice

@@ -10,9 +10,9 @@ import (
 )
 
 type node struct {
-	node  interface{}   `xml:",any"`
-	list  []interface{} `xml:",any"`
-	value interface{}   `xml:",any"`
+	Node  interface{}   `xml:",any"`
+	List  []interface{} `xml:",any"`
+	Value interface{}   `xml:",any"`
 }
 
 func parseHTML(input []byte) (interface{}, error) {
