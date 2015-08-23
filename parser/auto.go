@@ -2,6 +2,20 @@ package parser
 
 import "fmt"
 
+// Identify tries to figure out the format of the structured data passed in
+// If the data format could not be identified, an error will be returned
+func Identify(input []byte) (string, error) {
+	for _, name := range parseOrder() {
+		if parsed, err := parsers[name].parse(input); err == nil {
+			fmt.Println(name, parsed)
+
+			return name, nil
+		}
+	}
+
+	return "", fmt.Errorf("input format could not be identified")
+}
+
 func auto(input []byte) (interface{}, error) {
 	for _, name := range parseOrder() {
 		if parsed, err := parsers[name].parse(input); err == nil {
