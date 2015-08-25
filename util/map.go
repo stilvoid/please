@@ -6,6 +6,7 @@ import (
 )
 
 // ForceStringKeys creates a copy of the provided interface{}, with all maps changed to have string keys for use by serialisers that expect string keys
+// This is particularly useful for formatters where the target serialisation format only allows string keys
 func ForceStringKeys(in interface{}) interface{} {
 	val := reflect.ValueOf(in)
 

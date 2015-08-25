@@ -4,13 +4,12 @@ package formatter
 import (
 	"fmt"
 	"sort"
-
-	"github.com/stilvoid/please/util"
 )
 
-type formatterFunc func(interface{}) (string, error)
+// Type Formatter is a function that takes an interface{} and attempts to format it as a string
+type Formatter func(interface{}) (string, error)
 
-var formatters = make(map[string]formatterFunc)
+var formatters = make(map[string]Formatter)
 
 // Names returns a sorted list of valid options for the "format" parameter of Format
 func Names() []string {
@@ -25,18 +24,13 @@ func Names() []string {
 	return names
 }
 
-// Parse takes a Go interface{} and serialises it into the format specified.
-func Format(input interface{}, format string) (string, error) {
-	formatter, ok := formatters[format]
+// Get returns a Formatter function by name. If the named formatter is not found, an error will be returned.
+func Get(name string) (Formatter, error) {
+	formatter, ok := formatters[name]
 
 	if !ok {
-		return "", fmt.Errorf("no such formatter: %s", format)
+		return nil, fmt.Errorf("no such formatter: %s", name)
 	}
 
-	if format != "yaml" {
-		// Pretty much everything hates non-string keys :S
-		input = util.ForceStringKeys(input)
-	}
-
-	return formatter(input)
+	return formatter, nil
 }

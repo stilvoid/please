@@ -6,10 +6,11 @@ import (
 	"sort"
 )
 
-type parserFunc func([]byte) (interface{}, error)
+// Type Parser is a function that takes a byte slice and attempts to parse it into a structure format in an interface{}
+type Parser func([]byte) (interface{}, error)
 
 type parser struct {
-	parse   parserFunc
+	parse   Parser
 	prefers []string
 }
 
@@ -28,14 +29,13 @@ func Names() []string {
 	return names
 }
 
-// Parse takes serialised data and parses it into a Go interface{}.
-// The format can be supplied explicitly or can be set to "auto" in which case Parse will attempt to automatically identify the serialisation format.
-func Parse(input []byte, format string) (interface{}, error) {
-	parser, ok := parsers[format]
+// Get returns a Parser function by name. If the named parser is not found, an error will be returned.
+func Get(name string) (Parser, error) {
+	parser, ok := parsers[name]
 
 	if !ok {
-		return nil, fmt.Errorf("No such parser: %s", format)
+		return nil, fmt.Errorf("No such parser: %s", name)
 	}
 
-	return parser.parse(input)
+	return parser.parse, nil
 }

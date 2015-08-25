@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	commands["parse"] = parseCommand
+	Commands["parse"] = parseCommand
 }
 
 func parseHelp() {
@@ -57,7 +57,14 @@ func parseCommand(args []string) {
 	}
 
 	// Try parsing
-	parsed, err := parser.Parse(input, *inFormat)
+	parseFunc, err := parser.Get(*inFormat)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	parsed, err := parseFunc(input)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -75,7 +82,14 @@ func parseCommand(args []string) {
 	}
 
 	// ...and format back out :)
-	output, err := formatter.Format(parsed, *outFormat)
+	formatFunc, err := formatter.Get(*outFormat)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	output, err := formatFunc(parsed)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/stilvoid/please/util"
 )
 
 type node struct {
@@ -127,6 +129,8 @@ func flatten(in interface{}, currentPath string) ([]node, []link) {
 
 func init() {
 	formatters["dot"] = func(in interface{}) (string, error) {
+		in = util.ForceStringKeys(in)
+
 		return formatDot(in), nil
 	}
 }

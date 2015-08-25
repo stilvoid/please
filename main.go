@@ -3,13 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/stilvoid/please/cmd"
 )
-
-type command func([]string)
-
-var commands = make(map[string]command)
-
-var aliases = make(map[string]string)
 
 func printHelp() {
 	fmt.Println("Usage: please <COMMAND> [arg...]")
@@ -33,7 +29,7 @@ func main() {
 	args := os.Args[1:]
 
 	// Deal with aliases
-	if alias, ok := aliases[command]; ok {
+	if alias, ok := cmd.Aliases[command]; ok {
 		newArgs := make([]string, 1, len(args)+1)
 		newArgs[0] = alias
 
@@ -42,7 +38,7 @@ func main() {
 		command = alias
 	}
 
-	commandFunc, ok := commands[command]
+	commandFunc, ok := cmd.Commands[command]
 
 	if !ok {
 		printHelp()

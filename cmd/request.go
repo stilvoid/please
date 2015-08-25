@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -18,10 +18,10 @@ var requestAliases = []string{
 }
 
 func init() {
-	commands["request"] = requestCommand
+	Commands["request"] = requestCommand
 
 	for _, alias := range requestAliases {
-		aliases[alias] = "request"
+		Aliases[alias] = "request"
 	}
 }
 

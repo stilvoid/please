@@ -9,7 +9,9 @@ func ExampleFormat() {
 		"Hello": "world!",
 	}
 
-	output, _ := Format(input, "json")
+	formatter, _ := Get("json")
+
+	output, _ := formatter(input)
 
 	fmt.Println(output)
 	// Output:

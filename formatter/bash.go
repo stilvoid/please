@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/stilvoid/please/util"
 )
 
 func wrapObj(in interface{}) string {
@@ -19,7 +21,6 @@ func wrapObj(in interface{}) string {
 }
 
 func formatBash(in interface{}) string {
-
 	if in == nil {
 		return ""
 	}
@@ -53,6 +54,8 @@ func formatBash(in interface{}) string {
 
 func init() {
 	formatters["bash"] = func(in interface{}) (string, error) {
+		in = util.ForceStringKeys(in)
+
 		return formatBash(in), nil
 	}
 }

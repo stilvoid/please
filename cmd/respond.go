@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"bufio"
@@ -26,7 +26,7 @@ type responder struct {
 }
 
 func init() {
-	commands["respond"] = respondCommand
+	Commands["respond"] = respondCommand
 }
 
 func respondHelp() {

@@ -4,9 +4,12 @@ import (
 	"fmt"
 
 	"github.com/nytlabs/mxj"
+	"github.com/stilvoid/please/util"
 )
 
 func formatJSON(in interface{}) (string, error) {
+	in = util.ForceStringKeys(in)
+
 	inMap, ok := in.(map[string]interface{})
 
 	if !ok {
