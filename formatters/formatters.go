@@ -16,6 +16,7 @@ func init() {
 	Register("json", formatJSON)
 	Register("xml", formatXML)
 	Register("yaml", formatYAML)
+	Register("query", formatQuery)
 }
 
 // Names returns a sorted list of valid options for the "format" parameter of Format
