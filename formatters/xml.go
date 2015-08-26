@@ -1,11 +1,11 @@
-package formatter
+package formatters
 
 import (
 	"github.com/clbanning/anyxml"
 	"github.com/stilvoid/please/util"
 )
 
-func formatXML(in interface{}) (string, error) {
+func XML(in interface{}) (string, error) {
 	in = util.ForceStringKeys(in)
 
 	bytes, err := anyxml.XmlIndent(in, "", "  ")
@@ -15,8 +15,4 @@ func formatXML(in interface{}) (string, error) {
 	}
 
 	return string(bytes), nil
-}
-
-func init() {
-	formatters["xml"] = formatXML
 }

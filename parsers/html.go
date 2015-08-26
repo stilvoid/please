@@ -1,4 +1,4 @@
-package parser
+package parsers
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ type node struct {
 	Value interface{}   `xml:",any"`
 }
 
-func parseHTML(input []byte) (interface{}, error) {
+func HTML(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	doc, err := html.Parse(bytes.NewReader(input))
@@ -67,11 +67,4 @@ func formatHTML(n *html.Node) map[string]interface{} {
 	}
 
 	return out
-}
-
-func init() {
-	parsers["html"] = parser{
-		parse:   parseHTML,
-		prefers: []string{"xml", "yaml"},
-	}
 }

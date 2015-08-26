@@ -1,5 +1,4 @@
-// Package formatter provides function to format structured data into a variety of serialisation formats
-package formatter
+package formatters
 
 import (
 	"fmt"
@@ -10,6 +9,14 @@ import (
 type Formatter func(interface{}) (string, error)
 
 var formatters = make(map[string]Formatter)
+
+func init() {
+	Register("bash", Bash)
+	Register("dot", Dot)
+	Register("json", JSON)
+	Register("xml", XML)
+	Register("yaml", YAML)
+}
 
 // Names returns a sorted list of valid options for the "format" parameter of Format
 func Names() []string {
@@ -24,7 +31,18 @@ func Names() []string {
 	return names
 }
 
-// Get returns a Formatter function by name. If the named formatter is not found, an error will be returned.
+// Registerassigns a Formatter function to a name. If the name has already been registered, an error will be returned.
+func Register(name string, formatter Formatter) error {
+	if _, ok := formatters[name]; ok {
+		return fmt.Errorf("Formatter '%s' already exists", name)
+	}
+
+	formatters[name] = formatter
+
+	return nil
+}
+
+// Getreturns a Formatter function by name. If the named formatter is not found, an error will be returned.
 func Get(name string) (Formatter, error) {
 	formatter, ok := formatters[name]
 

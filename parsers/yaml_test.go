@@ -1,4 +1,4 @@
-package parser
+package parsers
 
 import (
 	"reflect"
@@ -47,7 +47,7 @@ func TestYAML(t *testing.T) {
 		input := inputs[i]
 		expected := expecteds[i]
 
-		actual, err := parseYAML([]byte(input))
+		actual, err := YAML([]byte(input))
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

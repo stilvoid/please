@@ -1,4 +1,4 @@
-package parser
+package parsers
 
 import (
 	"reflect"
@@ -20,7 +20,7 @@ func TestMIME(t *testing.T) {
 		"body": "This is the body.",
 	}
 
-	actual, err := parseMIME([]byte(input))
+	actual, err := MIME([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

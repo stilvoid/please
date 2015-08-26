@@ -1,4 +1,4 @@
-package parser
+package parsers
 
 import (
 	"reflect"
@@ -30,7 +30,7 @@ func TestXML(t *testing.T) {
 		},
 	}
 
-	actual, err := parseXML([]byte(input))
+	actual, err := XML([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
@@ -47,7 +47,7 @@ func TestXMLBadInput(t *testing.T) {
 		</item>
 	</things>`
 
-	_, err := parseXML([]byte(input))
+	_, err := XML([]byte(input))
 
 	if err == nil {
 		t.Errorf("expected error")

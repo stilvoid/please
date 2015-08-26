@@ -1,4 +1,4 @@
-package parser
+package parsers
 
 import (
 	"reflect"
@@ -32,7 +32,7 @@ func TestHTML(t *testing.T) {
 		},
 	}
 
-	actual, err := parseHTML([]byte(input))
+	actual, err := HTML([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

@@ -1,4 +1,4 @@
-package formatter
+package formatters
 
 import (
 	"fmt"
@@ -52,10 +52,8 @@ func formatBash(in interface{}) string {
 	}
 }
 
-func init() {
-	formatters["bash"] = func(in interface{}) (string, error) {
-		in = util.ForceStringKeys(in)
+func Bash(in interface{}) (string, error) {
+	in = util.ForceStringKeys(in)
 
-		return formatBash(in), nil
-	}
+	return formatBash(in), nil
 }

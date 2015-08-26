@@ -7,7 +7,7 @@ package cmd
 type Command func([]string)
 
 // Commands stores a mapping of command names to their functions
-var Commands map[string]Command
+var Commands = make(map[string]Command)
 
 // Aliases stores a mapping of command aliases to command names
-var Aliases map[string]string
+var Aliases = make(map[string]string)

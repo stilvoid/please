@@ -1,11 +1,11 @@
-package formatter
+package formatters
 
 import (
 	"github.com/stilvoid/please/util"
 	"gopkg.in/yaml.v2"
 )
 
-func formatYAML(in interface{}) (string, error) {
+func YAML(in interface{}) (string, error) {
 	in = util.ForceStringKeys(in)
 
 	bytes, err := yaml.Marshal(in)
@@ -15,8 +15,4 @@ func formatYAML(in interface{}) (string, error) {
 	}
 
 	return string(bytes), nil
-}
-
-func init() {
-	formatters["yaml"] = formatYAML
 }

@@ -1,4 +1,4 @@
-package formatter
+package formatters
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/stilvoid/please/util"
 )
 
-func formatJSON(in interface{}) (string, error) {
+func JSON(in interface{}) (string, error) {
 	in = util.ForceStringKeys(in)
 
 	inMap, ok := in.(map[string]interface{})
@@ -25,8 +25,4 @@ func formatJSON(in interface{}) (string, error) {
 	}
 
 	return string(bytes), nil
-}
-
-func init() {
-	formatters["json"] = formatJSON
 }

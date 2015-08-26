@@ -1,4 +1,4 @@
-package formatter
+package formatters
 
 import (
 	"bytes"
@@ -127,10 +127,8 @@ func flatten(in interface{}, currentPath string) ([]node, []link) {
 	}
 }
 
-func init() {
-	formatters["dot"] = func(in interface{}) (string, error) {
-		in = util.ForceStringKeys(in)
+func Dot(in interface{}) (string, error) {
+	in = util.ForceStringKeys(in)
 
-		return formatDot(in), nil
-	}
+	return formatDot(in), nil
 }
