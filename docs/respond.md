@@ -4,13 +4,19 @@
 
 ## Usage
 
-    please respond [options...] <status> [<address>[:<port>]]
+    please respond [option...] <STATUS> [<ADDRESS>[:<PORT>]]
 
-    -i    Headers included in the input
+    Listens on the specified address and port and responds with the chosen status code.
+    Any data on stdin will be used as the body of the response.
+    The request body will be printed to stdout.
 
-    -m    Include request method in output
-    -u    Include URL in output
-    -h    Include headers in output
+    Input options:
+        -i    Include headers from input
+
+    Output options:
+        -m    Output the request method
+        -u    Output the requested path
+        -h    Output headers with the request
 
 ## Examples
 

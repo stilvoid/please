@@ -14,6 +14,10 @@ It is comprised of three sub-commands:
 
     acts as a one-shot web server - useful in testing you applications
 
+* `please identify`
+
+    given structured data on standard input, this will output the format used (e.g. "json", "yaml")
+
 * `please parse`
 
     understands the data exchange formats of the web and can translate between them

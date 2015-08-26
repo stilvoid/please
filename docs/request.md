@@ -6,25 +6,22 @@ Probably the most important thing you will need to do with a web service is to c
 
 ## Usage
 
-    please request <method> [options...] <url>
+    please request <METHOD> [option...] <URL>
 
-    -i    Headers included in the input
+    Makes a web request to URL using METHOD
 
-    -s    Output HTTP status line with the response
-    -h    Output headers with the response
+    Shortcut aliases:
+        please get
+        please post
+        please put
+        please delete
 
-    There are aliases for the most common methods:
+    Input options:
+        -i    Include headers from input
 
-        please get <url>
-        please post <url>
-        please put <url>
-        please delete <url>
-
-    For any other methods, you will need to specify the method directly:
-
-        please request head <url>
-        please request info <url>
-        please request patch <url>
+    Output options:
+        -s    Output HTTP status line
+        -h    Output headers
 
 ## Examples
 
