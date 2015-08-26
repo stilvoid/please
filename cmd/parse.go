@@ -17,16 +17,21 @@ func init() {
 }
 
 func parseHelp() {
-	fmt.Println("Usage: please parse [-i <INPUT FORMAT>] [-o <OUTPUT FORMAT>] [path.to.extract]")
+	fmt.Println("Usage: please parse [-i <INPUT FORMAT>] [-o <OUTPUT FORMAT>] [PATH]")
 	fmt.Println()
-	fmt.Println("If omitted, the input type defaults to \"auto\". The output type defaults to \"bash\".")
+	fmt.Println("If INPUT TYPE is omitted, it defaults to \"auto\".")
 	fmt.Println()
-	fmt.Println("Input types:")
+	fmt.Println("If OUTPUT TYPE is omitted, it will default to the same as the input type - effectively acting as a pretty-printer.")
+	fmt.Println()
+	fmt.Println("If PATH is provided, it should be given in dot-notation, e.g. orders.*.id")
+	fmt.Println()
+	fmt.Println("Available input types:")
+	fmt.Printf("    auto\n")
 	for _, format := range parsers.Names() {
 		fmt.Printf("    %s\n", format)
 	}
 	fmt.Println()
-	fmt.Println("Output types:")
+	fmt.Println("Available output types:")
 	for _, format := range formatters.Names() {
 		fmt.Printf("    %s\n", format)
 	}
@@ -35,7 +40,7 @@ func parseHelp() {
 func parseCommand(args []string) {
 	// Flags
 	inFormat := getopt.String('i', "auto")
-	outFormat := getopt.String('o', "bash")
+	outFormat := getopt.String('o', "auto")
 
 	opts := getopt.CommandLine
 
@@ -58,14 +63,22 @@ func parseCommand(args []string) {
 	}
 
 	// Try parsing
-	parseFunc, err := parsers.Get(*inFormat)
+	var parsed interface{}
 
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+	// Deal with format detection
+	if *inFormat == "auto" {
+		*inFormat, parsed, err = parsers.Identify(input)
+	} else {
+		// Try parsing
+		parser, innerErr := parsers.Get(*inFormat)
+
+		if innerErr != nil {
+			fmt.Fprintln(os.Stderr, innerErr)
+			os.Exit(1)
+		}
+
+		parsed, err = parser(input)
 	}
-
-	parsed, err := parseFunc(input)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -80,6 +93,10 @@ func parseCommand(args []string) {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+	}
+
+	if *outFormat == "auto" {
+		*outFormat = *inFormat
 	}
 
 	// ...and format back out :)
