@@ -32,7 +32,7 @@ func Names() []string {
 	return names
 }
 
-// Registerassigns a Parser function to a name. If the name has already been registered, an error will be returned.
+// Register assigns a Parser function to a name. If the name has already been registered, an error will be returned.
 func Register(name string, parser Parser) error {
 	if _, ok := parsers[name]; ok {
 		return fmt.Errorf("Parser %s already exists", name)
@@ -43,7 +43,7 @@ func Register(name string, parser Parser) error {
 	return nil
 }
 
-// Getreturns a Parser function by name. If the named parser is not found, an error will be returned.
+// Get returns a Parser function by name. If the named parser is not found, an error will be returned.
 func Get(name string) (Parser, error) {
 	parser, ok := parsers[name]
 

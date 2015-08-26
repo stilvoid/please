@@ -31,7 +31,7 @@ func Names() []string {
 	return names
 }
 
-// Registerassigns a Formatter function to a name. If the name has already been registered, an error will be returned.
+// Register assigns a Formatter function to a name. If the name has already been registered, an error will be returned.
 func Register(name string, formatter Formatter) error {
 	if _, ok := formatters[name]; ok {
 		return fmt.Errorf("Formatter '%s' already exists", name)
@@ -42,7 +42,7 @@ func Register(name string, formatter Formatter) error {
 	return nil
 }
 
-// Getreturns a Formatter function by name. If the named formatter is not found, an error will be returned.
+// Get returns a Formatter function by name. If the named formatter is not found, an error will be returned.
 func Get(name string) (Formatter, error) {
 	formatter, ok := formatters[name]
 
