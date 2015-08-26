@@ -17,6 +17,7 @@ func init() {
 	Register("mime", parseMIME)
 	Register("xml", parseXML)
 	Register("yaml", parseYAML)
+	Register("query", parseQuery)
 }
 
 // Names returns a sorted list of valid options for the "format" parameter of Parse
