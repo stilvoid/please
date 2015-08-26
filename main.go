@@ -11,6 +11,7 @@ func printHelp() {
 	fmt.Println("Usage: please <COMMAND> [arg...]")
 	fmt.Println()
 	fmt.Println("Commands:")
+	fmt.Println("    identify   Identify the structured data on stdin")
 	fmt.Println("    request    Make a web request and output the result")
 	fmt.Println("    respond    Listen for a web request and respond to it")
 	fmt.Println("    parse      Get values from structured data and convert between formats")
