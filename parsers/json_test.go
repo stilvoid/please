@@ -47,7 +47,7 @@ func TestJSON(t *testing.T) {
 		input := inputs[i]
 		expected := expecteds[i]
 
-		actual, err := JSON([]byte(input))
+		actual, err := parseJSON([]byte(input))
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

@@ -5,7 +5,7 @@ import (
 	"github.com/stilvoid/please/util"
 )
 
-func XML(in interface{}) (string, error) {
+func formatXML(in interface{}) (string, error) {
 	in = util.ForceStringKeys(in)
 
 	bytes, err := anyxml.XmlIndent(in, "", "  ")

@@ -5,7 +5,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func YAML(in interface{}) (string, error) {
+func formatYAML(in interface{}) (string, error) {
 	in = util.ForceStringKeys(in)
 
 	bytes, err := yaml.Marshal(in)

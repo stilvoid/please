@@ -7,7 +7,7 @@ import (
 	"github.com/stilvoid/please/util"
 )
 
-func JSON(in interface{}) (string, error) {
+func formatJSON(in interface{}) (string, error) {
 	in = util.ForceStringKeys(in)
 
 	inMap, ok := in.(map[string]interface{})

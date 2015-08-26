@@ -11,12 +11,12 @@ type Parser func([]byte) (interface{}, error)
 var parsers = make(map[string]Parser)
 
 func init() {
-	Register("csv", CSV)
-	Register("html", HTML)
-	Register("json", JSON)
-	Register("mime", MIME)
-	Register("xml", XML)
-	Register("yaml", YAML)
+	Register("csv", parseCSV)
+	Register("html", parseHTML)
+	Register("json", parseJSON)
+	Register("mime", parseMIME)
+	Register("xml", parseXML)
+	Register("yaml", parseYAML)
 }
 
 // Names returns a sorted list of valid options for the "format" parameter of Parse

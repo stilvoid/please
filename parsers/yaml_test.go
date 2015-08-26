@@ -47,7 +47,7 @@ func TestYAML(t *testing.T) {
 		input := inputs[i]
 		expected := expecteds[i]
 
-		actual, err := YAML([]byte(input))
+		actual, err := parseYAML([]byte(input))
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

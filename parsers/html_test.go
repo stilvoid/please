@@ -32,7 +32,7 @@ func TestHTML(t *testing.T) {
 		},
 	}
 
-	actual, err := HTML([]byte(input))
+	actual, err := parseHTML([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

@@ -30,7 +30,7 @@ func TestXML(t *testing.T) {
 		},
 	}
 
-	actual, err := XML([]byte(input))
+	actual, err := parseXML([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
@@ -47,7 +47,7 @@ func TestXMLBadInput(t *testing.T) {
 		</item>
 	</things>`
 
-	_, err := XML([]byte(input))
+	_, err := parseXML([]byte(input))
 
 	if err == nil {
 		t.Errorf("expected error")

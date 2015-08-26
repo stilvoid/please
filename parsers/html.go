@@ -15,7 +15,7 @@ type node struct {
 	Value interface{}   `xml:",any"`
 }
 
-func HTML(input []byte) (interface{}, error) {
+func parseHTML(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	doc, err := html.Parse(bytes.NewReader(input))

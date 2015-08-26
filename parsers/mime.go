@@ -7,7 +7,7 @@ import (
 	"net/textproto"
 )
 
-func MIME(input []byte) (interface{}, error) {
+func parseMIME(input []byte) (interface{}, error) {
 	inputReader := bufio.NewReader(bytes.NewReader(input))
 
 	reader := textproto.NewReader(inputReader)

@@ -28,27 +28,6 @@ func wrap(in string) string {
 	return out
 }
 
-func formatDot(in interface{}) (out string) {
-	nodes, links := flatten(in, "root")
-
-	nodes = append(nodes, node{
-		name:  "root",
-		label: "[Root]",
-	})
-
-	var buf bytes.Buffer
-
-	for _, node := range nodes {
-		buf.WriteString(fmt.Sprintf("%s [label=%s];\n", wrap(node.name), wrap(node.label)))
-	}
-
-	for _, link := range links {
-		buf.WriteString(fmt.Sprintf("%s -- %s;\n", wrap(link.left), wrap(link.right)))
-	}
-
-	return fmt.Sprintf("graph{\n%s}", buf.String())
-}
-
 func flatten(in interface{}, currentPath string) ([]node, []link) {
 	var nodes []node
 	var links []link
@@ -127,8 +106,25 @@ func flatten(in interface{}, currentPath string) ([]node, []link) {
 	}
 }
 
-func Dot(in interface{}) (string, error) {
+func formatDot(in interface{}) (string, error) {
 	in = util.ForceStringKeys(in)
 
-	return formatDot(in), nil
+	nodes, links := flatten(in, "root")
+
+	nodes = append(nodes, node{
+		name:  "root",
+		label: "[Root]",
+	})
+
+	var buf bytes.Buffer
+
+	for _, node := range nodes {
+		buf.WriteString(fmt.Sprintf("%s [label=%s];\n", wrap(node.name), wrap(node.label)))
+	}
+
+	for _, link := range links {
+		buf.WriteString(fmt.Sprintf("%s -- %s;\n", wrap(link.left), wrap(link.right)))
+	}
+
+	return fmt.Sprintf("graph{\n%s}", buf.String()), nil
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func wrapObj(in interface{}) string {
-	out := formatBash(in)
+	out := formatBashInternal(in)
 	out = strings.Replace(out, "\\", "\\\\", -1)
 	out = strings.Replace(out, "\"", "\\\"", -1)
 	out = strings.Replace(out, "`", "\\`", -1)
@@ -20,7 +20,7 @@ func wrapObj(in interface{}) string {
 	return out
 }
 
-func formatBash(in interface{}) string {
+func formatBashInternal(in interface{}) string {
 	if in == nil {
 		return ""
 	}
@@ -52,8 +52,8 @@ func formatBash(in interface{}) string {
 	}
 }
 
-func Bash(in interface{}) (string, error) {
+func formatBash(in interface{}) (string, error) {
 	in = util.ForceStringKeys(in)
 
-	return formatBash(in), nil
+	return formatBashInternal(in), nil
 }
