@@ -1,14 +1,14 @@
 # ToDo
 
-* Add form data/url encoded as an in/out option to parse
+* Add some custom types to hide up all the interface{} crap
 
 * Add an optional `FILE` parameter to everything
 
 * Mention expectations of data on stdin in help text
 
-* Split docs up and use readthedocs
-
 * Write some more tests!
+
+    * Particularly for the commands
 
 * Fix stdin/stdout/stderr usage
 
