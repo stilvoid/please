@@ -1,18 +1,10 @@
 package formatters
 
-import (
-	"github.com/stilvoid/please/util"
-	"gopkg.in/yaml.v2"
-)
+import "gopkg.in/yaml.v2"
 
 func formatYAML(in interface{}) (string, error) {
-	in = util.ForceStringKeys(in)
-
 	bytes, err := yaml.Marshal(in)
 
-	if err != nil {
-		return "", err
-	}
-
-	return string(bytes), nil
+	// We strip off the trailing newline that yaml.v2 seems to insist on
+	return string(bytes[:len(bytes)-1]), err
 }

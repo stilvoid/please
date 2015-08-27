@@ -6,7 +6,7 @@ import (
 )
 
 func TestForceStringKeys(t *testing.T) {
-	input := map[int]interface{}{
+	input := map[interface{}]interface{}{
 		13: []interface{}{
 			"foo",
 			map[int]interface{}{
@@ -18,6 +18,7 @@ func TestForceStringKeys(t *testing.T) {
 			1: []interface{}{"foo", "bar"},
 			2: "two",
 		},
+		nil: "derf",
 	}
 
 	expected := map[string]interface{}{
@@ -32,6 +33,7 @@ func TestForceStringKeys(t *testing.T) {
 			"1": []interface{}{"foo", "bar"},
 			"2": "two",
 		},
+		"null": "derf",
 	}
 
 	actual := ForceStringKeys(input)

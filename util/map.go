@@ -14,8 +14,15 @@ func ForceStringKeys(in interface{}) interface{} {
 	case reflect.Map:
 		newMap := make(map[string]interface{}, val.Len())
 
+		var stringKey string
+
 		for _, key := range val.MapKeys() {
-			stringKey := fmt.Sprint(key.Interface())
+			if reflect.TypeOf(key.Interface()) == nil {
+				stringKey = "null"
+			} else {
+				stringKey = fmt.Sprint(key.Interface())
+			}
+
 			newMap[stringKey] = ForceStringKeys(val.MapIndex(key).Interface())
 		}
 

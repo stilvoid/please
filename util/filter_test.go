@@ -12,17 +12,22 @@ func TestFilter(t *testing.T) {
 		"top": "I am the top",
 		"bottom": map[int]interface{}{
 			16: "left",
-			13: []string{
+			13: []interface{}{
 				"right 1",
-				"right 2",
+				map[string]interface{}{
+					"deeper": "we go",
+				},
 			},
 		},
 	}
 
 	cases := map[string]interface{}{
 		"top":         "I am the top",
-		"bottom.16":   "left",
-		"bottom.13.1": "right 2",
+		"bottom":      input["bottom"],
+		"bottom.16":   input["bottom"].(map[int]interface{})[16],
+		"bottom.13":   input["bottom"].(map[int]interface{})[13],
+		"bottom.13.0": input["bottom"].(map[int]interface{})[13].([]interface{})[0],
+		"bottom.13.1": input["bottom"].(map[int]interface{})[13].([]interface{})[1],
 	}
 
 	for path, expected := range cases {
@@ -32,7 +37,7 @@ func TestFilter(t *testing.T) {
 			t.Fail()
 		}
 
-		if expected != actual {
+		if !reflect.DeepEqual(actual, expected) {
 			t.Errorf("case failed: %v vs %v", expected, actual)
 		}
 	}
