@@ -18,7 +18,7 @@ func TestXML(t *testing.T) {
 	}
 
 	if len(expecteds) != len(testCases) {
-		//t.Fatalf("insufficient test cases implemented")
+		t.Fatalf("insufficient test cases implemented")
 	}
 
 	for i, expected := range expecteds {

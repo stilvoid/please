@@ -2,7 +2,7 @@ package formatters
 
 import "testing"
 
-func TestQuery(t *testing.T) {
+func TestBash(t *testing.T) {
 	expecteds := []string{
 		"123",
 		"456.789",
@@ -10,11 +10,11 @@ func TestQuery(t *testing.T) {
 		"true",
 		"false",
 		"",
-		"0=123&1=abc",
-		"foo=bar",
-		"123=0%3Dbaz%261%3Dquux",
-		"true=null%3D",
-		"0=456&1=def&2=3%3D4",
+		"([0]=\"123\" [1]=\"abc\")",
+		"([foo]=\"bar\")",
+		"([123]=\"([0]=\\\"baz\\\" [1]=\\\"quux\\\")\")",
+		"([true]=\"([null]=\\\"\\\")\")",
+		"([0]=\"456\" [1]=\"def\" [2]=\"([3]=\\\"4\\\")\")",
 	}
 
 	if len(expecteds) != len(testCases) {
@@ -24,7 +24,7 @@ func TestQuery(t *testing.T) {
 	for i, expected := range expecteds {
 		testCase := testCases[i]
 
-		actual, err := formatQuery(testCase)
+		actual, err := formatBash(testCase)
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

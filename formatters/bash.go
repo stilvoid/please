@@ -2,7 +2,6 @@ package formatters
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/stilvoid/please/util"
@@ -25,25 +24,14 @@ func formatBashInternal(in interface{}) string {
 		return ""
 	}
 
-	val := reflect.ValueOf(in)
+	switch v := in.(type) {
+	case map[string]interface{}:
+		keys := util.SortedKeys(v)
 
-	switch val.Kind() {
-	case reflect.Map:
-		parts := make([]string, val.Len())
+		parts := make([]string, len(v))
 
-		for i, key := range val.MapKeys() {
-			value := val.MapIndex(key).Interface()
-			parts[i] = fmt.Sprintf("[%s]=%s", key.String(), wrapObj(value))
-		}
-
-		return fmt.Sprintf("(%s)", strings.Join(parts, " "))
-	case reflect.Array, reflect.Slice:
-		parts := make([]string, val.Len())
-
-		for i := 0; i < val.Len(); i++ {
-			value := val.Index(i).Interface()
-
-			parts[i] = fmt.Sprintf("[%d]=%s", i, wrapObj(value))
+		for i, key := range keys {
+			parts[i] = fmt.Sprintf("[%s]=%s", key, wrapObj(v[key.(string)]))
 		}
 
 		return fmt.Sprintf("(%s)", strings.Join(parts, " "))
@@ -53,6 +41,7 @@ func formatBashInternal(in interface{}) string {
 }
 
 func formatBash(in interface{}) (string, error) {
+	in = util.ArraysToMaps(in)
 	in = util.ForceStringKeys(in)
 
 	return formatBashInternal(in), nil
