@@ -22,6 +22,14 @@ It is comprised of three sub-commands:
 
     understands the data exchange formats of the web and can translate between them
 
+## Installing
+
+**Go users**: Simply `go install github.com/stilvoid/please`.
+
+**Arch Linux**: There's a [please package in the AUR](https://aur4.archlinux.org/packages/please/).
+
+**Anyone else**: Grab the appropriate download from the [latest release](https://github.com/stilvoid/please/releases) and put it somewhere in your path.
+
 ## Examples
 
 There are some examples in the examples folder.
