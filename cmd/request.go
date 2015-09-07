@@ -7,7 +7,7 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
-	"github.com/stilvoid/please/util"
+	"github.com/stilvoid/please/common"
 )
 
 var requestAliases = []string{
@@ -76,14 +76,14 @@ func requestCommand(args []string) {
 		input = os.Stdin
 	}
 
-	resp, err := util.MakeRequest(method, url, input, *headersIncluded)
+	resp, err := common.MakeRequest(method, url, input, *headersIncluded)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	err = util.WriteResponse(os.Stdout, resp, *includeHeaders, *includeStatus)
+	err = common.WriteResponse(os.Stdout, resp, *includeHeaders, *includeStatus)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

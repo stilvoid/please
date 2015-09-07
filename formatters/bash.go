@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/stilvoid/please/util"
+	"github.com/stilvoid/please/common"
 )
 
 func wrapObj(in interface{}) string {
@@ -26,7 +26,7 @@ func formatBashInternal(in interface{}) string {
 
 	switch v := in.(type) {
 	case map[string]interface{}:
-		keys := util.SortedKeys(v)
+		keys := common.SortedKeys(v)
 
 		parts := make([]string, len(v))
 
@@ -41,8 +41,8 @@ func formatBashInternal(in interface{}) string {
 }
 
 func formatBash(in interface{}) (string, error) {
-	in = util.ArraysToMaps(in)
-	in = util.ForceStringKeys(in)
+	in = common.ArraysToMaps(in)
+	in = common.ForceStringKeys(in)
 
 	return formatBashInternal(in), nil
 }

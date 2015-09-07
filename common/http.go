@@ -1,5 +1,5 @@
-// Package util provides some utility functions for dealing with HTTP requests and responses
-package util
+// Package common provides some utility functions for dealing with HTTP requests and responses
+package common
 
 import (
 	"bufio"
@@ -46,7 +46,9 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 		req.Header = headers
 	}
 
-	return http.DefaultClient.Do(req)
+	//return http.DefaultClient.Do(req)
+
+	return http.DefaultTransport.RoundTrip(req)
 }
 
 // WriteRequest writes an http.Request to the specified writer

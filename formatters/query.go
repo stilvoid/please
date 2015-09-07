@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/stilvoid/please/util"
+	"github.com/stilvoid/please/common"
 )
 
 func formatQueryInternal(in interface{}) string {
@@ -37,8 +37,8 @@ func formatQueryInternal(in interface{}) string {
 }
 
 func formatQuery(in interface{}) (string, error) {
-	in = util.ArraysToMaps(in)
-	in = util.ForceStringKeys(in)
+	in = common.ArraysToMaps(in)
+	in = common.ForceStringKeys(in)
 
 	return formatQueryInternal(in), nil
 }

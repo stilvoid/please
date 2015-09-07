@@ -7,9 +7,9 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
+	"github.com/stilvoid/please/common"
 	"github.com/stilvoid/please/formatters"
 	"github.com/stilvoid/please/parsers"
-	"github.com/stilvoid/please/util"
 )
 
 func init() {
@@ -87,7 +87,7 @@ func parseCommand(args []string) {
 
 	// Path
 	if getopt.NArgs() > 0 {
-		parsed, err = util.Filter(parsed, getopt.Arg(0))
+		parsed, err = common.Filter(parsed, getopt.Arg(0))
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)

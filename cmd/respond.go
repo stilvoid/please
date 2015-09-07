@@ -12,7 +12,7 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
-	"github.com/stilvoid/please/util"
+	"github.com/stilvoid/please/common"
 )
 
 type responder struct {
@@ -48,7 +48,7 @@ func respondHelp() {
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	defer h.listener.Close()
 
-	err := util.WriteRequest(os.Stdout, req, h.includeMethod, h.includeUrl, h.includeHeaders)
+	err := common.WriteRequest(os.Stdout, req, h.includeMethod, h.includeUrl, h.includeHeaders)
 	os.Stdout.Close()
 
 	if err != nil {

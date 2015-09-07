@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/stilvoid/please/util"
+	"github.com/stilvoid/please/common"
 )
 
 type node struct {
@@ -107,7 +107,7 @@ func flatten(in interface{}, currentPath string) ([]node, []link) {
 }
 
 func formatDot(in interface{}) (string, error) {
-	in = util.ForceStringKeys(in)
+	in = common.ForceStringKeys(in)
 
 	nodes, links := flatten(in, "root")
 
