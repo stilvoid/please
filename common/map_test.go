@@ -85,8 +85,8 @@ func TestSortedKeys(t *testing.T) {
 		{
 			"up": 0,
 			1:    1,
-			true: 2,
-			nil:  3,
+			nil:  2,
+			true: 3,
 		},
 	}
 

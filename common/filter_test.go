@@ -1,7 +1,6 @@
 package common
 
 import (
-	"fmt"
 	"reflect"
 	"sort"
 	"testing"
@@ -115,7 +114,6 @@ func TestStarFilterMap(t *testing.T) {
 		intActual := make([]int, val.Len())
 
 		for i := 0; i < val.Len(); i++ {
-			fmt.Println(val.Index(i))
 			intActual[i] = val.Index(i).Interface().(int)
 		}
 
