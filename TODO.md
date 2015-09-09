@@ -1,6 +1,6 @@
 # ToDo
 
-* Add some custom types to hide up all the interface{} crap
+* Add benchmarks for stuff in common
 
 * Add an optional `FILE` parameter to everything
 
@@ -9,6 +9,8 @@
 * Write some more tests!
 
     * Particularly for the commands
+
+    * Cover all formatters and parsers
 
 * Fix stdin/stdout/stderr usage
 
