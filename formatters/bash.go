@@ -1,42 +1,52 @@
 package formatters
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 
 	"github.com/stilvoid/please/common"
 )
 
-func wrapObj(in interface{}) string {
-	out := formatBashInternal(in)
-	out = strings.Replace(out, "\\", "\\\\", -1)
-	out = strings.Replace(out, "\"", "\\\"", -1)
+func wrapObj(in string) string {
+	out := strings.Replace(in, `\`, `\\`, -1)
+	out = strings.Replace(out, `"`, `\"`, -1)
 	out = strings.Replace(out, "`", "\\`", -1)
-	out = strings.Replace(out, "\n", "\\n", -1)
-	out = strings.Replace(out, "$", "\\$", -1)
-	out = fmt.Sprintf("\"%s\"", out)
+	out = strings.Replace(out, "\n", `\n`, -1)
+	out = strings.Replace(out, `$`, `\$`, -1)
 
-	return out
+	return "\"" + out + "\""
 }
 
-func formatBashInternal(in interface{}) string {
+func formatBashInternal(in interface{}, buf *bytes.Buffer) {
 	if in == nil {
-		return ""
+		return
 	}
 
 	switch v := in.(type) {
 	case map[string]interface{}:
 		keys := common.SortedKeys(v)
 
-		parts := make([]string, len(v))
+		buf.WriteByte('(')
 
 		for i, key := range keys {
-			parts[i] = fmt.Sprintf("[%s]=%s", key, wrapObj(v[key.(string)]))
+			var innerBuf bytes.Buffer
+
+			formatBashInternal(v[key.(string)], &innerBuf)
+
+			buf.WriteByte('[')
+			buf.WriteString(key.(string))
+			buf.WriteString("]=")
+			buf.WriteString(wrapObj(innerBuf.String()))
+
+			if i != len(keys)-1 {
+				buf.WriteByte(' ')
+			}
 		}
 
-		return fmt.Sprintf("(%s)", strings.Join(parts, " "))
+		buf.WriteByte(')')
 	default:
-		return fmt.Sprint(in)
+		buf.WriteString(fmt.Sprint(in))
 	}
 }
 
@@ -44,5 +54,9 @@ func formatBash(in interface{}) (string, error) {
 	in = common.ArraysToMaps(in)
 	in = common.ForceStringKeys(in)
 
-	return formatBashInternal(in), nil
+	var buf bytes.Buffer
+
+	formatBashInternal(in, &buf)
+
+	return buf.String(), nil
 }
