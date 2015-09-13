@@ -29,48 +29,70 @@ func dotNode(name string, label string) string {
 	return wrap(name) + " [label=" + wrap(label) + "];\n"
 }
 
-func dotLink(left string, right string) string {
+func dotLink(left string, right string, note ...string) string {
+	if len(note) > 0 {
+		return wrap(left) + " -- " + wrap(right) + " [label=" + wrap(fmt.Sprint(note)) + "];\n"
+	}
+
 	return wrap(left) + " -- " + wrap(right) + ";\n"
 }
 
-func flatten(in interface{}, currentPath string, buf *bytes.Buffer) {
-	if in == nil {
-		return
-	}
-
+func flatten(in interface{}, parent string, name string, buf *bytes.Buffer) {
 	switch vv := in.(type) {
 	case map[string]interface{}:
-		for key, value := range vv {
-			target := currentPath + "-" + key
+		if parent != "" {
+			buf.WriteString(dotLink(parent, name))
+		}
 
+		buf.WriteString(dotNode(name, "[map]"))
+
+		parent = name
+
+		i := 0
+
+		for key, value := range vv {
+			target := parent + "-map-" + fmt.Sprint(i)
+
+			buf.WriteString(dotLink(parent, target))
 			buf.WriteString(dotNode(target, key))
 
-			if currentPath != "" {
-				buf.WriteString(dotLink(currentPath, target))
-			}
+			contentTarget := target + "=content"
 
-			flatten(value, target, buf)
+			flatten(value, target, contentTarget, buf)
+
+			i++
+		}
+	case []interface{}:
+		if parent != "" {
+			buf.WriteString(dotLink(parent, name))
+		}
+
+		buf.WriteString(dotNode(name, "[array]"))
+
+		parent = name
+
+		for i, value := range vv {
+			target := name + "-array-" + fmt.Sprint(i)
+
+			flatten(value, parent, target, buf)
 		}
 	default:
-		target := currentPath + "=content"
+		if parent != "" {
+			buf.WriteString(dotLink(parent, name))
+		}
 
-		buf.WriteString(dotNode(target, fmt.Sprint(in)))
-
-		buf.WriteString(dotLink(currentPath, target))
+		buf.WriteString(dotNode(name, fmt.Sprint(in)))
 	}
 }
 
 func formatDot(in interface{}) (string, error) {
-	in = common.ArraysToMaps(in)
 	in = common.ForceStringKeys(in)
 
 	var buf bytes.Buffer
 
 	buf.WriteString("graph{\n")
 
-	buf.WriteString(dotNode("root", "[Root]"))
-
-	flatten(in, "root", &buf)
+	flatten(in, "", "root", &buf)
 
 	buf.WriteByte('}')
 

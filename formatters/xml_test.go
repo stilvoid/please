@@ -14,7 +14,7 @@ func TestXML(t *testing.T) {
 		"<foo>bar</foo>",
 		"<doc>\n  <123>baz</123>\n  <123>quux</123>\n</doc>",
 		"<true>\n<null/>\n</true>",
-		"<doc>\n  <element>456</element>\n  <element>def</element>\n  <3>4</3>\n</doc>",
+		"<doc>\n  <element>456</element>\n  <element>def</element>\n  <3>4</3>\n    <element>first</element>\n    <element>second</element>\n</doc>", // TODO: Find out why this happens
 	}
 
 	if len(expecteds) != len(testCases) {

@@ -14,7 +14,7 @@ func TestYAML(t *testing.T) {
 		"foo: bar",
 		"123:\n- baz\n- quux",
 		"true:\n  null: null",
-		"- 456\n- def\n- 3: 4",
+		"- 456\n- def\n- 3: 4\n- - first\n  - second",
 	}
 
 	if len(expecteds) != len(testCases) {

@@ -14,7 +14,7 @@ func TestQuery(t *testing.T) {
 		"foo=bar",
 		"123=0%3Dbaz%261%3Dquux",
 		"true=null%3D",
-		"0=456&1=def&2=3%3D4",
+		"0=456&1=def&2=3%3D4&3=0%3Dfirst%261%3Dsecond",
 	}
 
 	if len(expecteds) != len(testCases) {

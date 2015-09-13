@@ -14,7 +14,7 @@ func TestJSON(t *testing.T) {
 		"{\n  \"foo\": \"bar\"\n}",
 		"{\n  \"123\": [\n    \"baz\",\n    \"quux\"\n  ]\n}",
 		"{\n  \"true\": {\n    \"null\": null\n  }\n}",
-		"[\n  456,\n  \"def\",\n  {\n    \"3\": 4\n  }\n]",
+		"[\n  456,\n  \"def\",\n  {\n    \"3\": 4\n  },\n  [\n    \"first\",\n    \"second\"\n  ]\n]",
 	}
 
 	if len(expecteds) != len(testCases) {

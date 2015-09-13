@@ -25,5 +25,9 @@ var testCases = []interface{}{
 		map[interface{}]interface{}{ // With a map
 			3: 4,
 		},
+		[]interface{}{ // And another array
+			"first",
+			"second",
+		},
 	},
 }
