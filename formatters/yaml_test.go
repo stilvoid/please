@@ -14,7 +14,7 @@ func TestYAML(t *testing.T) {
 		"foo: bar",
 		"123:\n- baz\n- quux",
 		"true:\n  null: null",
-		"- 456\n- def\n- 3: 4\n- - first\n  - second",
+		"- 456\n- def\n- 3: 4\n- - first\n  - second\n  - - deeper",
 	}
 
 	if len(expecteds) != len(testCases) {
@@ -31,7 +31,7 @@ func TestYAML(t *testing.T) {
 		}
 
 		if actual != expected {
-			t.Errorf("unexpected '%v', want '%v'", actual, expected)
+			t.Errorf("unexpected:\n'%v'\nwant:\n'%v'", actual, expected)
 		}
 	}
 }

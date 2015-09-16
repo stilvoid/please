@@ -14,7 +14,7 @@ func TestQuery(t *testing.T) {
 		"foo=bar",
 		"123=0%3Dbaz%261%3Dquux",
 		"true=null%3D",
-		"0=456&1=def&2=3%3D4&3=0%3Dfirst%261%3Dsecond",
+		"0=456&1=def&2=3%3D4&3=0%3Dfirst%261%3Dsecond%262%3D0%253Ddeeper",
 	}
 
 	if len(expecteds) != len(testCases) {
@@ -31,7 +31,7 @@ func TestQuery(t *testing.T) {
 		}
 
 		if actual != expected {
-			t.Errorf("unexpected '%v', want '%v'", actual, expected)
+			t.Errorf("unexpected:\n'%v'\nwant:\n'%v'", actual, expected)
 		}
 	}
 }

@@ -28,6 +28,9 @@ var testCases = []interface{}{
 		[]interface{}{ // And another array
 			"first",
 			"second",
+			[]interface{}{ // Triply embedded array
+				"deeper",
+			},
 		},
 	},
 }

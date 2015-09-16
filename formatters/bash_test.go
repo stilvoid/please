@@ -14,7 +14,7 @@ func TestBash(t *testing.T) {
 		"([foo]=\"bar\")",
 		"([123]=\"([0]=\\\"baz\\\" [1]=\\\"quux\\\")\")",
 		"([true]=\"([null]=\\\"\\\")\")",
-		"([0]=\"456\" [1]=\"def\" [2]=\"([3]=\\\"4\\\")\" [3]=\"([0]=\\\"first\\\" [1]=\\\"second\\\")\")",
+		"([0]=\"456\" [1]=\"def\" [2]=\"([3]=\\\"4\\\")\" [3]=\"([0]=\\\"first\\\" [1]=\\\"second\\\" [2]=\\\"([0]=\\\\\\\"deeper\\\\\\\")\\\")\")",
 	}
 
 	if len(expecteds) != len(testCases) {
@@ -31,7 +31,7 @@ func TestBash(t *testing.T) {
 		}
 
 		if actual != expected {
-			t.Errorf("unexpected '%v', want '%v'", actual, expected)
+			t.Errorf("unexpected:\n'%v'\nvs\n'%v'", actual, expected)
 		}
 	}
 }
