@@ -1,5 +1,27 @@
 # ToDo
 
+* Add filtering to parse
+
+        e.g. echo mystuff.json | please parse person.name=steve
+
+        i.e. if there's an equals, it's a filter
+
+        if there's no equals, it restricts output
+
+        there can only be one output restriction
+
+        there can be multiple filters
+
+        filters are OR'ed
+
+        filtering is case-insensitive
+
+* Add regex filters
+
+    e.g. echo mystuff.com | please parse person.name~^steve
+
+    case-insensitive
+
 * Add benchmarks for stuff in common
 
 * Add an optional `FILE` parameter to everything
