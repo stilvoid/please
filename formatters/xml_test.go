@@ -3,26 +3,69 @@ package formatters
 import "testing"
 
 func TestXML(t *testing.T) {
+	xmlTestCases := append(testCases, map[interface{}]interface{}{ // XML style
+		"top": map[interface{}]interface{}{
+			"#text":      []interface{}{"Some text", "more text"},
+			"-attribute": "value",
+			"child": map[interface{}]interface{}{
+				"#text": "child text",
+				"-type": "clever",
+			},
+		},
+	})
+
 	expecteds := []string{
-		"<doc>123</doc>",
-		"<doc>456.789</doc>",
-		"<doc>abc</doc>",
-		"<doc>true</doc>",
-		"<doc>false</doc>",
-		"<doc></doc>",
-		"<doc>\n  <element>123</element>\n  <element>abc</element>\n</doc>",
-		"<foo>bar</foo>",
-		"<doc>\n  <123>baz</123>\n  <123>quux</123>\n</doc>",
-		"<true>\n<null/>\n</true>",
-		"<doc>\n  <element>456</element>\n  <element>def</element>\n  <3>4</3>\n    <element>first</element>\n    <element>second</element>\n</doc>", // TODO: Find out why this happens
+		"<root>123</root>",
+		"<root>456.789</root>",
+		"<root>abc</root>",
+		"<root>true</root>",
+		"<root>false</root>",
+		"<root>&lt;nil&gt;</root>",
+		`<root>
+  <tag>123</tag>
+  <tag>abc</tag>
+</root>`,
+		`<root>
+  <foo>bar</foo>
+</root>`,
+		`<root>
+  <_23>baz</_23>
+  <_23>quux</_23>
+</root>`,
+		`<root>
+  <true>
+    <null>&lt;nil&gt;</null>
+  </true>
+</root>`,
+		`<root>
+  <tag>456</tag>
+  <tag>def</tag>
+  <tag>
+    <_>4</_>
+  </tag>
+  <tag>
+    <tag>first</tag>
+    <tag>second</tag>
+    <tag>
+      <tag>deeper</tag>
+    </tag>
+  </tag>
+</root>`,
+		`<root>
+  <top attribute="value">
+    Some text
+    more text
+    <child type="clever">child text</child>
+  </top>
+</root>`,
 	}
 
-	if len(expecteds) != len(testCases) {
+	if len(expecteds) != len(xmlTestCases) {
 		t.Fatalf("insufficient test cases implemented")
 	}
 
 	for i, expected := range expecteds {
-		testCase := testCases[i]
+		testCase := xmlTestCases[i]
 
 		actual, err := formatXML(testCase)
 
@@ -31,7 +74,7 @@ func TestXML(t *testing.T) {
 		}
 
 		if actual != expected {
-			t.Errorf("unexpected '%v', want '%v'", actual, expected)
+			t.Errorf("unexpected:\n'%v'\nwant:\n'%v'", actual, expected)
 		}
 	}
 }
