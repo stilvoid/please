@@ -5,6 +5,12 @@ import (
 	"reflect"
 )
 
+var interfaceType reflect.Type
+
+func init() {
+	interfaceType = reflect.ValueOf(make([]interface{}, 0)).Type().Elem()
+}
+
 type FilterFunc func(reflect.Value, reflect.Value)
 
 func Munge(left, right interface{}) interface{} {
@@ -27,9 +33,15 @@ func munge(left, right reflect.Value, f FilterFunc) reflect.Value {
 	if left.Kind() == right.Kind() {
 		switch left.Kind() {
 		case reflect.Slice, reflect.Array:
+			var out reflect.Value
+
 			max := int(math.Max(float64(left.Len()), float64(right.Len())))
 
-			out := reflect.ValueOf(make([]interface{}, max, max))
+			if right.Type().Elem().AssignableTo(left.Type().Elem()) {
+				out = reflect.MakeSlice(left.Type(), max, max)
+			} else {
+				out = reflect.ValueOf(make([]interface{}, max, max))
+			}
 
 			for i := 0; i < max; i++ {
 				if i >= left.Len() {
@@ -43,7 +55,23 @@ func munge(left, right reflect.Value, f FilterFunc) reflect.Value {
 
 			return out
 		case reflect.Map:
-			out := reflect.ValueOf(make(map[interface{}]interface{}))
+			var keyType, valueType reflect.Type
+
+			// Check if the keys are compatible
+			if right.Type().Key().AssignableTo(left.Type().Key()) {
+				keyType = right.Type().Key()
+			} else {
+				keyType = interfaceType
+			}
+
+			// Check if the values are compatible
+			if right.Type().Elem().AssignableTo(left.Type().Elem()) {
+				valueType = right.Type().Elem()
+			} else {
+				valueType = interfaceType
+			}
+
+			out := reflect.MakeMap(reflect.MapOf(keyType, valueType))
 
 			for _, key := range left.MapKeys() {
 				out.SetMapIndex(key, left.MapIndex(key))

@@ -27,39 +27,39 @@ func TestMunge(t *testing.T) {
 		{
 			[]string{},
 			[]string{"foo"},
-			[]interface{}{"foo"},
+			[]string{"foo"},
 		},
 		{
 			[]string{"foo"},
 			[]string{"foo", "bar"},
-			[]interface{}{"foo", "bar"},
+			[]string{"foo", "bar"},
 		},
 		{
 			[]string{"foo", "bar"},
 			[]string{"baz"},
-			[]interface{}{"baz", "bar"},
+			[]string{"baz", "bar"},
 		},
 		{
 			[]interface{}{"foo", []string{"bar", "baz"}},
 			[]interface{}{"quux", []string{"mooz"}},
-			[]interface{}{"quux", []interface{}{"mooz", "baz"}},
+			[]interface{}{"quux", []string{"mooz", "baz"}},
 		},
 
 		// Maps
 		{
 			map[string]string{},
 			map[string]string{"foo": "bar"},
-			map[interface{}]interface{}{"foo": "bar"},
+			map[string]string{"foo": "bar"},
 		},
 		{
 			map[string]string{"foo": "bar"},
 			map[string]string{},
-			map[interface{}]interface{}{"foo": "bar"},
+			map[string]string{"foo": "bar"},
 		},
 		{
 			map[string]string{"foo": "bar"},
 			map[string]interface{}{"foo": map[string]string{"bar": "baz"}},
-			map[interface{}]interface{}{"foo": map[string]string{"bar": "baz"}},
+			map[string]interface{}{"foo": map[string]string{"bar": "baz"}},
 		},
 	}
 
@@ -80,15 +80,15 @@ func TestFilteredMunge(t *testing.T) {
 	cases := []mungeCase{
 		// No foo
 		{
-			map[string]interface{}{"no foo": "no bar"},
-			map[string]interface{}{"foo": "bar"},
-			map[interface{}]interface{}{"no foo": "no bar", "foo": "bar"},
+			map[string]string{"no foo": "no bar"},
+			map[string]string{"foo": "bar"},
+			map[string]string{"no foo": "no bar", "foo": "bar"},
 		},
 
 		{
-			map[string]interface{}{"foo": "baz"},
-			map[string]interface{}{"foo": "quux"},
-			map[interface{}]interface{}{"foo": "baz"},
+			map[string]string{"foo": "baz"},
+			map[string]string{"foo": "quux"},
+			map[string]string{"foo": "baz"},
 		},
 	}
 
