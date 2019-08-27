@@ -9,7 +9,7 @@ type mungeCase struct {
 	left, right, expected interface{}
 }
 
-func TestSuccess(t *testing.T) {
+func TestMunge(t *testing.T) {
 	cases := []mungeCase{
 		// Matching types
 		{"foo", "bar", "bar"},
@@ -65,6 +65,46 @@ func TestSuccess(t *testing.T) {
 
 	for _, testCase := range cases {
 		actual := Munge(testCase.left, testCase.right)
+
+		if !reflect.DeepEqual(actual, testCase.expected) {
+			t.Errorf("Falsely munged %T '%v' and %T '%v' into %T '%v'",
+				testCase.left, testCase.left,
+				testCase.right, testCase.right,
+				actual, actual,
+			)
+		}
+	}
+}
+
+func TestFilteredMunge(t *testing.T) {
+	cases := []mungeCase{
+		// No foo
+		{
+			map[string]interface{}{"no foo": "no bar"},
+			map[string]interface{}{"foo": "bar"},
+			map[interface{}]interface{}{"no foo": "no bar", "foo": "bar"},
+		},
+
+		{
+			map[string]interface{}{"foo": "baz"},
+			map[string]interface{}{"foo": "quux"},
+			map[interface{}]interface{}{"foo": "baz"},
+		},
+	}
+
+	// The filter protects the key 'foo' from being overwritten
+	// But allows a new 'foo' to be added if there wasn't one before
+	specialKey := reflect.ValueOf("foo")
+	myFilter := func(left, right reflect.Value) {
+		if left.Kind() == reflect.Map && right.Kind() == reflect.Map {
+			if left.MapIndex(specialKey).IsValid() && right.MapIndex(specialKey).IsValid() {
+				right.SetMapIndex(specialKey, reflect.Value{})
+			}
+		}
+	}
+
+	for _, testCase := range cases {
+		actual := MungeWithFilter(testCase.left, testCase.right, myFilter)
 
 		if !reflect.DeepEqual(actual, testCase.expected) {
 			t.Errorf("Falsely munged %T '%v' and %T '%v' into %T '%v'",

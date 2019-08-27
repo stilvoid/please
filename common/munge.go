@@ -5,14 +5,24 @@ import (
 	"reflect"
 )
 
+type FilterFunc func(reflect.Value, reflect.Value)
+
 func Munge(left, right interface{}) interface{} {
-	return munge(reflect.ValueOf(left), reflect.ValueOf(right)).Interface()
+	return munge(reflect.ValueOf(left), reflect.ValueOf(right), nil).Interface()
 }
 
-func munge(left, right reflect.Value) reflect.Value {
+func MungeWithFilter(left, right interface{}, f FilterFunc) interface{} {
+	return munge(reflect.ValueOf(left), reflect.ValueOf(right), f).Interface()
+}
+
+func munge(left, right reflect.Value, f FilterFunc) reflect.Value {
 	// Reload in case we've been previously munged
 	left = reflect.ValueOf(left.Interface())
 	right = reflect.ValueOf(right.Interface())
+
+	if f != nil {
+		f(left, right)
+	}
 
 	if left.Kind() == right.Kind() {
 		switch left.Kind() {
@@ -27,7 +37,7 @@ func munge(left, right reflect.Value) reflect.Value {
 				} else if i >= right.Len() {
 					out.Index(i).Set(left.Index(i))
 				} else {
-					out.Index(i).Set(munge(left.Index(i), right.Index(i)))
+					out.Index(i).Set(munge(left.Index(i), right.Index(i), f))
 				}
 			}
 
@@ -46,7 +56,7 @@ func munge(left, right reflect.Value) reflect.Value {
 				if !l.IsValid() {
 					out.SetMapIndex(key, r)
 				} else {
-					out.SetMapIndex(key, munge(l, r))
+					out.SetMapIndex(key, munge(l, r, f))
 				}
 			}
 
