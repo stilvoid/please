@@ -7,6 +7,7 @@ require (
 	github.com/clbanning/x2j v0.0.0-20180326210544-5e605d46809c
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3
+	github.com/spf13/cobra v0.0.5
 	golang.org/x/net v0.0.0-20190921015927-1a5e07d1ff72
 	gopkg.in/yaml.v2 v2.2.2
 )

@@ -4,115 +4,99 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/jmespath/go-jmespath"
-	"github.com/pborman/getopt"
+	"github.com/spf13/cobra"
 	"github.com/stilvoid/please/formatters"
 	"github.com/stilvoid/please/parsers"
 )
 
-func init() {
-	Commands["parse"] = parseCommand
-}
+var inFormat string
+var outFormat string
+var filter string
 
-func parseHelp() {
-	fmt.Println("Usage: please parse [-i <INPUT FORMAT>] [-o <OUTPUT FORMAT>] [PATH]")
-	fmt.Println()
-	fmt.Println("If INPUT TYPE is omitted, it defaults to \"auto\".")
-	fmt.Println()
-	fmt.Println("If OUTPUT TYPE is omitted, it will default to the same as the input type - effectively acting as a pretty-printer.")
-	fmt.Println()
-	fmt.Println("PATH, if provided, is a JMESPath query, e.g. orders.*.id")
-	fmt.Println()
-	fmt.Println("Available input types:")
-	fmt.Printf("    auto\n")
-	for _, format := range parsers.Names() {
-		fmt.Printf("    %s\n", format)
-	}
-	fmt.Println()
-	fmt.Println("Available output types:")
-	for _, format := range formatters.Names() {
-		fmt.Printf("    %s\n", format)
-	}
-}
+var parseCmd = &cobra.Command{
+	Use:   "parse",
+	Short: "Pretty-print, convert, and filter data structures",
+	Long: fmt.Sprintf(`Pretty-print, convert, and filter data structures.
+Data will be read from stdin and output will be written to stdout.
 
-func parseCommand(args []string) {
-	// Flags
-	inFormat := getopt.String('i', "auto")
-	outFormat := getopt.String('o', "auto")
+Supported input formats:
+  auto
+  %s
 
-	opts := getopt.CommandLine
-
-	opts.SetUsage(parseHelp)
-
-	opts.Parse(args)
-
-	if termutil.Isatty(os.Stdin.Fd()) {
-		getopt.Usage()
-		os.Exit(1)
-	}
-
-	var err error
-
-	// Read from stdin
-	input, err := ioutil.ReadAll(os.Stdin)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error reading input")
-		os.Exit(1)
-	}
-
-	// Try parsing
-	var parsed interface{}
-
-	// Deal with format detection
-	if *inFormat == "auto" {
-		*inFormat, parsed, err = parsers.Identify(input)
-	} else {
-		// Try parsing
-		parser, innerErr := parsers.Get(*inFormat)
-
-		if innerErr != nil {
-			fmt.Fprintln(os.Stderr, innerErr)
-			os.Exit(1)
+Supported output formats:
+  auto
+  %s`, strings.Join(parsers.Names(), "\n  "), strings.Join(formatters.Names(), "\n  ")),
+	Run: func(cmd *cobra.Command, args []string) {
+		// Parse the filter
+		var jp *jmespath.JMESPath
+		if filter != "" {
+			jp = jmespath.MustCompile(filter)
 		}
 
-		parsed, err = parser(input)
-	}
+		if termutil.Isatty(os.Stdin.Fd()) {
+			panic("No data on stdin.")
+		}
 
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+		// Read the input
+		input, err := ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			panic(fmt.Errorf("Unable to read input: %s", err.Error()))
+		}
 
-	// Path
-	if getopt.NArgs() > 0 {
-		parsed, err = jmespath.Search(getopt.Arg(0), parsed)
+		// Try parsing
+		var parsed interface{}
+
+		// Deal with format detection
+		if inFormat == "auto" {
+			inFormat, parsed, err = parsers.Identify(input)
+		} else {
+			// Try parsing
+			parser, err := parsers.Get(inFormat)
+			if err != nil {
+				panic(err)
+			}
+
+			parsed, err = parser(input)
+		}
 
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			panic(err)
 		}
-	}
 
-	if *outFormat == "auto" {
-		*outFormat = *inFormat
-	}
+		// Path
+		if jp != nil {
+			parsed, err = jp.Search(parsed)
+			if err != nil {
+				panic(err)
+			}
+		}
 
-	// ...and format back out :)
-	formatter, err := formatters.Get(*outFormat)
+		if outFormat == "auto" {
+			outFormat = inFormat
+		}
 
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+		// ...and format back out :)
+		formatter, err := formatters.Get(outFormat)
+		if err != nil {
+			panic(err)
+		}
 
-	output, err := formatter(parsed)
+		output, err := formatter(parsed)
+		if err != nil {
+			panic(err)
+		}
 
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+		fmt.Println(output)
+	},
+}
 
-	fmt.Println(output)
+func init() {
+	parseCmd.Flags().StringVarP(&inFormat, "input", "i", "auto", "Input format.")
+	parseCmd.Flags().StringVarP(&outFormat, "output", "o", "auto", "Output format.")
+	parseCmd.Flags().StringVarP(&filter, "filter", "f", "", "A JMESPath query to perform before outputting.")
+	Root.AddCommand(parseCmd)
 }

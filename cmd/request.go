@@ -6,87 +6,57 @@ import (
 	"os"
 
 	"github.com/andrew-d/go-termutil"
-	"github.com/pborman/getopt"
+	"github.com/spf13/cobra"
 	"github.com/stilvoid/please/common"
 )
 
-var requestAliases = []string{
-	"get",
-	"post",
-	"put",
-	"delete",
+var requestHeadersIncluded bool
+var requestIncludeHeaders bool
+var requestIncludeStatus bool
+
+var requestCmd = &cobra.Command{
+	Use:     "request <METHOD> <URL>",
+	Aliases: []string{"get", "post", "put", "delete"},
+	Short:   "Make a web request to URL using METHOD",
+	Long: `Make a web request to URL using METHOD.
+Data on stdin will be passed as the request body.
+Request output will be written to stdout.
+
+If you use one of the aliases for this command, METHOD is taken from the name of the alias.
+For example: 'please get URL' is equivalent to 'please request GET URL'.`,
+	Args: cobra.RangeArgs(1, 2),
+	Run: func(cmd *cobra.Command, args []string) {
+		method := cmd.CalledAs()
+
+		if len(args) == 2 {
+			method = args[0]
+		} else if method == "request" {
+			panic("You must supply both a method and a url")
+		}
+
+		url := args[len(args)-1]
+
+		var input io.Reader
+		if !termutil.Isatty(os.Stdin.Fd()) {
+			input = os.Stdin
+		}
+
+		resp, err := common.MakeRequest(method, url, input, requestHeadersIncluded)
+		if err != nil {
+			panic(fmt.Errorf("Unable to make request: %s", err.Error()))
+		}
+
+		err = common.WriteResponse(os.Stdout, resp, requestIncludeHeaders, requestIncludeStatus)
+		if err != nil {
+			panic(fmt.Errorf("Unable to output response: %s", err.Error()))
+		}
+	},
 }
 
 func init() {
-	Commands["request"] = requestCommand
+	requestCmd.Flags().BoolVarP(&requestHeadersIncluded, "included-headers", "i", false, "Flag that the input data already includes HTTP headers.")
+	requestCmd.Flags().BoolVarP(&requestIncludeHeaders, "headers", "H", false, "Include HTTP headers in the output.")
+	requestCmd.Flags().BoolVarP(&requestIncludeStatus, "status", "s", false, "Include the HTTP status code in the output.")
 
-	for _, alias := range requestAliases {
-		Aliases[alias] = "request"
-	}
-}
-
-func requestHelp() {
-	fmt.Println("Usage: please request <METHOD> [option...] <URL>")
-	fmt.Println()
-	fmt.Println("Makes a web request to URL using METHOD")
-	fmt.Println()
-	fmt.Println("Shortcut aliases:")
-	for _, alias := range requestAliases {
-		fmt.Printf("    please %s\n", alias)
-	}
-	fmt.Println()
-	fmt.Println("Input options:")
-	fmt.Println("    -i    Include headers from input")
-	fmt.Println()
-	fmt.Println("Output options:")
-	fmt.Println("    -s    Output HTTP status line")
-	fmt.Println("    -h    Output headers")
-}
-
-func requestCommand(args []string) {
-	// Flags
-	headersIncluded := getopt.Bool('i')
-
-	includeHeaders := getopt.Bool('h')
-	includeStatus := getopt.Bool('s')
-
-	opts := getopt.CommandLine
-
-	opts.SetUsage(requestHelp)
-
-	// Get the command
-	opts.Parse(args)
-	if opts.NArgs() < 1 {
-		getopt.Usage()
-		os.Exit(1)
-	}
-	method := opts.Arg(0)
-
-	// Deal with flags and get the url
-	opts.Parse(opts.Args())
-	if opts.NArgs() < 1 {
-		getopt.Usage()
-		os.Exit(1)
-	}
-	url := opts.Arg(0)
-
-	var input io.Reader
-
-	if !termutil.Isatty(os.Stdin.Fd()) {
-		input = os.Stdin
-	}
-
-	resp, err := common.MakeRequest(method, url, input, *headersIncluded)
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	err = common.WriteResponse(os.Stdout, resp, *includeHeaders, *includeStatus)
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+	Root.AddCommand(requestCmd)
 }
