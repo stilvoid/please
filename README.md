@@ -24,7 +24,7 @@ It is comprised of three sub-commands:
 
 ## Installing
 
-**Go users**: Simply `go install github.com/stilvoid/please`.
+**Go users**: Simply `go get github.com/stilvoid/please`.
 
 **Arch Linux**: There's a [please package in the AUR](https://aur4.archlinux.org/packages/please/).
 

@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/andrew-d/go-termutil"
+	"github.com/jmespath/go-jmespath"
 	"github.com/pborman/getopt"
-	"github.com/stilvoid/please/common"
 	"github.com/stilvoid/please/formatters"
 	"github.com/stilvoid/please/parsers"
 )
@@ -23,7 +23,7 @@ func parseHelp() {
 	fmt.Println()
 	fmt.Println("If OUTPUT TYPE is omitted, it will default to the same as the input type - effectively acting as a pretty-printer.")
 	fmt.Println()
-	fmt.Println("If PATH is provided, it should be given in dot-notation, e.g. orders.*.id")
+	fmt.Println("PATH, if provided, is a JMESPath query, e.g. orders.*.id")
 	fmt.Println()
 	fmt.Println("Available input types:")
 	fmt.Printf("    auto\n")
@@ -87,7 +87,7 @@ func parseCommand(args []string) {
 
 	// Path
 	if getopt.NArgs() > 0 {
-		parsed, err = common.Filter(parsed, getopt.Arg(0))
+		parsed, err = jmespath.Search(getopt.Arg(0), parsed)
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
