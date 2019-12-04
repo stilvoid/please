@@ -6,8 +6,6 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
-
-	"github.com/stilvoid/please/common"
 )
 
 const INDENT = "  "
@@ -132,7 +130,7 @@ func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buf
 }
 
 func formatXML(in interface{}) (string, error) {
-	in = common.ForceStringKeys(in)
+	in = forceStringKeys(in)
 
 	if _, ok := in.([]interface{}); ok {
 		in = map[string]interface{}{

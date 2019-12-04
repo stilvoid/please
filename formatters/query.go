@@ -3,8 +3,6 @@ package formatters
 import (
 	"fmt"
 	"net/url"
-
-	"github.com/stilvoid/please/common"
 )
 
 func formatQueryInternal(in interface{}) string {
@@ -37,8 +35,8 @@ func formatQueryInternal(in interface{}) string {
 }
 
 func formatQuery(in interface{}) (string, error) {
-	in = common.ArraysToMaps(in)
-	in = common.ForceStringKeys(in)
+	in = arraysToMaps(in)
+	in = forceStringKeys(in)
 
 	return formatQueryInternal(in), nil
 }

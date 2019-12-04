@@ -1,20 +1,18 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
-	"net"
 	"net/http"
 	"os"
 	"strconv"
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/spf13/cobra"
+	httplease "github.com/stilvoid/please/http"
 )
 
-var respondHeadersIncluded bool
-var respondIncludeMethod bool
-var respondIncludePath bool
-var respondIncludeHeaders bool
+var respondOptions httplease.Options
 
 var respondCmd = &cobra.Command{
 	Use:   "respond <STATUS> [[<ADDRESS>:]<PORT>]",
@@ -37,38 +35,41 @@ If you do not supply AdDRESS, it defaults to 0.0.0.0.`,
 			address = args[1]
 		}
 
-		handler := responder{
-			status:          status,
-			includeHeaders:  respondIncludeHeaders,
-			includeMethod:   respondIncludeMethod,
-			includeUrl:      respondIncludePath,
-			headersIncluded: respondHeadersIncluded,
+		handler := httplease.Responder{
+			Status:  status,
+			Options: respondOptions,
+			Stop:    make(chan bool),
 		}
-
-		listener, err := net.Listen("tcp", address)
-		if err != nil {
-			panic(fmt.Errorf("Unable to start HTTP listener: %s", err.Error()))
-		}
-
-		handler.listener = listener
 
 		if termutil.Isatty(os.Stdin.Fd()) {
-			handler.data = nil
+			// Don't try to read from the terminal
+			handler.Data = nil
 		} else {
-			handler.data = os.Stdin
+			handler.Data = os.Stdin
 		}
 
-		server := &http.Server{Addr: address, Handler: handler}
+		server := &http.Server{
+			Addr:    address,
+			Handler: handler,
+		}
 
-		server.Serve(listener)
+		go func() {
+			<-handler.Stop
+			server.Shutdown(context.TODO())
+		}()
+
+		fmt.Printf("Listening on %s...\n", address)
+		if err = server.ListenAndServe(); err != http.ErrServerClosed {
+			panic(err)
+		}
 	},
 }
 
 func init() {
-	respondCmd.Flags().BoolVarP(&respondHeadersIncluded, "included-headers", "i", false, "Flag that the input data includes HTTP headers.")
-	respondCmd.Flags().BoolVarP(&respondIncludeMethod, "method", "m", false, "Include the HTTP request method in the output.")
-	respondCmd.Flags().BoolVarP(&respondIncludePath, "path", "p", false, "Include the requested path in the output.")
-	respondCmd.Flags().BoolVarP(&respondIncludeHeaders, "headers", "H", false, "Include HTTP request headers in the output.")
+	respondCmd.Flags().BoolVarP(&respondOptions.HeadersIncluded, "included-headers", "i", false, "Flag that the input data includes HTTP headers.")
+	respondCmd.Flags().BoolVarP(&respondOptions.IncludeMethod, "method", "m", false, "Include the HTTP request method in the output.")
+	respondCmd.Flags().BoolVarP(&respondOptions.IncludePath, "path", "p", false, "Include the requested path in the output.")
+	respondCmd.Flags().BoolVarP(&respondOptions.IncludeHeaders, "headers", "H", false, "Include HTTP request headers in the output.")
 
 	Root.AddCommand(respondCmd)
 }

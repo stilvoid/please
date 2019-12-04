@@ -38,6 +38,7 @@ Supported output formats:
 		}
 
 		if termutil.Isatty(os.Stdin.Fd()) {
+			// Don't try to read from the terminal
 			panic("No data on stdin.")
 		}
 

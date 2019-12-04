@@ -7,12 +7,10 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/spf13/cobra"
-	"github.com/stilvoid/please/common"
+	"github.com/stilvoid/please/http"
 )
 
-var requestHeadersIncluded bool
-var requestIncludeHeaders bool
-var requestIncludeStatus bool
+var requestOptions http.Options
 
 var requestCmd = &cobra.Command{
 	Use:     "request <METHOD> <URL>",
@@ -41,22 +39,24 @@ For example: 'please get URL' is equivalent to 'please request GET URL'.`,
 			input = os.Stdin
 		}
 
-		resp, err := common.MakeRequest(method, url, input, requestHeadersIncluded)
+		resp, err := http.MakeRequest(method, url, input, requestOptions)
 		if err != nil {
 			panic(fmt.Errorf("Unable to make request: %s", err.Error()))
 		}
 
-		err = common.WriteResponse(os.Stdout, resp, requestIncludeHeaders, requestIncludeStatus)
+		respStr, err := http.FormatResponse(resp, requestOptions)
 		if err != nil {
 			panic(fmt.Errorf("Unable to output response: %s", err.Error()))
 		}
+
+		fmt.Println(respStr)
 	},
 }
 
 func init() {
-	requestCmd.Flags().BoolVarP(&requestHeadersIncluded, "included-headers", "i", false, "Flag that the input data already includes HTTP headers.")
-	requestCmd.Flags().BoolVarP(&requestIncludeHeaders, "headers", "H", false, "Include HTTP headers in the output.")
-	requestCmd.Flags().BoolVarP(&requestIncludeStatus, "status", "s", false, "Include the HTTP status code in the output.")
+	requestCmd.Flags().BoolVarP(&requestOptions.HeadersIncluded, "included-headers", "i", false, "Flag that the input data already includes HTTP headers.")
+	requestCmd.Flags().BoolVarP(&requestOptions.IncludeHeaders, "headers", "H", false, "Include HTTP headers in the output.")
+	requestCmd.Flags().BoolVarP(&requestOptions.IncludeStatus, "status", "s", false, "Include the HTTP status code in the output.")
 
 	Root.AddCommand(requestCmd)
 }

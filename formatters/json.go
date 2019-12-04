@@ -2,12 +2,10 @@ package formatters
 
 import (
 	"encoding/json"
-
-	"github.com/stilvoid/please/common"
 )
 
 func formatJSON(in interface{}) (string, error) {
-	in = common.ForceStringKeys(in)
+	in = forceStringKeys(in)
 
 	bytes, err := json.MarshalIndent(in, "", "  ")
 

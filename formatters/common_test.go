@@ -1,4 +1,4 @@
-package common
+package formatters
 
 import (
 	"reflect"
@@ -36,7 +36,7 @@ func TestForceStringKeys(t *testing.T) {
 		"null": "derf",
 	}
 
-	actual := ForceStringKeys(input)
+	actual := forceStringKeys(input)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("unexpected result:\n%#v\nvs\n%#v\n", actual, expected)
@@ -63,7 +63,7 @@ func TestArraysToMaps(t *testing.T) {
 		},
 	}
 
-	actual := ArraysToMaps(input)
+	actual := arraysToMaps(input)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("unexpected:\n%#v\nwant:\n%#v", actual, expected)
@@ -97,7 +97,7 @@ func TestSortedKeys(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		actual := SortedKeys(input)
+		actual := sortedKeys(input)
 
 		expected := expecteds[i]
 

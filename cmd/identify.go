@@ -21,6 +21,7 @@ Supported formats:
 	Args: cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if termutil.Isatty(os.Stdin.Fd()) {
+			// Don't try to read from the terminal
 			panic("No data on stdin.")
 		}
 

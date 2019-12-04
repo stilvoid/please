@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
-
-	"github.com/stilvoid/please/common"
 )
 
 func wrapObj(in string) string {
@@ -25,7 +23,7 @@ func formatBashInternal(in interface{}, buf *bytes.Buffer) {
 
 	switch v := in.(type) {
 	case map[string]interface{}:
-		keys := common.SortedKeys(v)
+		keys := sortedKeys(v)
 
 		buf.WriteByte('(')
 
@@ -51,8 +49,8 @@ func formatBashInternal(in interface{}, buf *bytes.Buffer) {
 }
 
 func formatBash(in interface{}) (string, error) {
-	in = common.ArraysToMaps(in)
-	in = common.ForceStringKeys(in)
+	in = arraysToMaps(in)
+	in = forceStringKeys(in)
 
 	var buf bytes.Buffer
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-please respond -muh 200 localhost:8000 &
+please respond -mpH 200 localhost:8000 &
 
 sleep 0.5s
 
@@ -10,4 +10,4 @@ sleep 0.5s
     echo User-Agent: Please
     echo
     cat example.json
-) | please post -i http://localhost:8000/headers?true >/dev/null
+) | please post -i "http://localhost:8000/headers?true" >/dev/null

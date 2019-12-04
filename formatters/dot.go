@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	"github.com/stilvoid/please/common"
 )
 
 var escapeRe *regexp.Regexp
@@ -86,7 +84,7 @@ func flatten(in interface{}, parent string, name string, buf *bytes.Buffer) {
 }
 
 func formatDot(in interface{}) (string, error) {
-	in = common.ForceStringKeys(in)
+	in = forceStringKeys(in)
 
 	var buf bytes.Buffer
 

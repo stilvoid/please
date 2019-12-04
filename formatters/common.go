@@ -1,4 +1,4 @@
-package common
+package formatters
 
 import (
 	"fmt"
@@ -15,9 +15,9 @@ func toString(in interface{}) string {
 	return fmt.Sprint(in)
 }
 
-// ForceStringKeys creates a copy of the provided interface{}, with all maps changed to have string keys for use by serialisers that expect string keys
+// forceStringKeys creates a copy of the provided interface{}, with all maps changed to have string keys for use by serialisers that expect string keys
 // This is useful for formatters where the target serialisation format only allows string keys
-func ForceStringKeys(in interface{}) interface{} {
+func forceStringKeys(in interface{}) interface{} {
 	val := reflect.ValueOf(in)
 
 	switch val.Kind() {
@@ -28,7 +28,7 @@ func ForceStringKeys(in interface{}) interface{} {
 			key := toString(keyVal.Interface())
 			value := val.MapIndex(keyVal).Interface()
 
-			newMap[key] = ForceStringKeys(value)
+			newMap[key] = forceStringKeys(value)
 		}
 
 		return newMap
@@ -37,7 +37,7 @@ func ForceStringKeys(in interface{}) interface{} {
 
 		for i := 0; i < val.Len(); i++ {
 			value := val.Index(i).Interface()
-			newSlice[i] = ForceStringKeys(value)
+			newSlice[i] = forceStringKeys(value)
 		}
 
 		return newSlice
@@ -46,9 +46,9 @@ func ForceStringKeys(in interface{}) interface{} {
 	}
 }
 
-// ArraysToMaps creates a copy of the provided interface{}, with all arrays converted into maps where the keys are the array indices, starting at 0.
+// arraysToMaps creates a copy of the provided interface{}, with all arrays converted into maps where the keys are the array indices, starting at 0.
 // This is useful for formatters where the target serialisation format does not have a means of representing arrays
-func ArraysToMaps(in interface{}) interface{} {
+func arraysToMaps(in interface{}) interface{} {
 	val := reflect.ValueOf(in)
 
 	switch val.Kind() {
@@ -58,7 +58,7 @@ func ArraysToMaps(in interface{}) interface{} {
 		for _, key := range val.MapKeys() {
 			value := val.MapIndex(key).Interface()
 
-			newMap[key.Interface()] = ArraysToMaps(value)
+			newMap[key.Interface()] = arraysToMaps(value)
 		}
 
 		return newMap
@@ -68,7 +68,7 @@ func ArraysToMaps(in interface{}) interface{} {
 		for i := 0; i < val.Len(); i++ {
 			value := val.Index(i).Interface()
 
-			newMap[interface{}(i)] = ArraysToMaps(value)
+			newMap[interface{}(i)] = arraysToMaps(value)
 		}
 
 		return newMap
@@ -77,7 +77,7 @@ func ArraysToMaps(in interface{}) interface{} {
 	}
 }
 
-func SortedKeys(in interface{}) []interface{} {
+func sortedKeys(in interface{}) []interface{} {
 	val := reflect.ValueOf(in)
 
 	if val.Kind() != reflect.Map {
