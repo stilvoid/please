@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stilvoid/please/cmd"
+	"github.com/stilvoid/please/internal/cmd"
 )
 
 func printHelp() {
