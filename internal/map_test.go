@@ -1,8 +1,10 @@
-package internal
+package internal_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/internal"
 )
 
 func TestForceStringKeys(t *testing.T) {
@@ -36,7 +38,7 @@ func TestForceStringKeys(t *testing.T) {
 		"null": "derf",
 	}
 
-	actual := ForceStringKeys(input)
+	actual := internal.ForceStringKeys(input)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("unexpected result:\n%#v\nvs\n%#v\n", actual, expected)
@@ -63,7 +65,7 @@ func TestArraysToMaps(t *testing.T) {
 		},
 	}
 
-	actual := ArraysToMaps(input)
+	actual := internal.ArraysToMaps(input)
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("unexpected:\n%#v\nwant:\n%#v", actual, expected)
@@ -97,7 +99,7 @@ func TestSortedKeys(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		actual := SortedKeys(input)
+		actual := internal.SortedKeys(input)
 
 		expected := expecteds[i]
 

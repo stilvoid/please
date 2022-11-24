@@ -1,8 +1,10 @@
-package internal
+package internal_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/internal"
 )
 
 type mungeCase struct {
@@ -64,7 +66,7 @@ func TestMunge(t *testing.T) {
 	}
 
 	for _, testCase := range cases {
-		actual := Munge(testCase.left, testCase.right)
+		actual := internal.Munge(testCase.left, testCase.right)
 
 		if !reflect.DeepEqual(actual, testCase.expected) {
 			t.Errorf("Falsely munged %T '%v' and %T '%v' into %T '%v'",
@@ -104,7 +106,7 @@ func TestFilteredMunge(t *testing.T) {
 	}
 
 	for _, testCase := range cases {
-		actual := MungeWithFilter(testCase.left, testCase.right, myFilter)
+		actual := internal.MungeWithFilter(testCase.left, testCase.right, myFilter)
 
 		if !reflect.DeepEqual(actual, testCase.expected) {
 			t.Errorf("Falsely munged %T '%v' and %T '%v' into %T '%v'",

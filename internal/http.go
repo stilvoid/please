@@ -35,8 +35,8 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 			return nil, err
 		}
 
-		body, err := ioutil.ReadAll(inputReader)
-
+		var body []byte
+		body, err = ioutil.ReadAll(inputReader)
 		if err != nil {
 			return nil, err
 		}
@@ -44,6 +44,10 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 		req, err = http.NewRequest(method, url, bytes.NewReader(body))
 
 		req.Header = headers
+	}
+
+	if err != nil {
+		return nil, err
 	}
 
 	//return http.DefaultClient.Do(req)
