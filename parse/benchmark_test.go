@@ -1,6 +1,10 @@
-package parse
+package parse_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stilvoid/please/parse"
+)
 
 const jsonInput = `{
     "description": "some example json",
@@ -42,30 +46,30 @@ const queryInput = `an+array=0%3Dfirst%2Bentry%261%3Dnested%253Dobject%262%3D0%2
 
 func BenchmarkJSON(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		parseJSON([]byte(jsonInput))
+		parse.Json([]byte(jsonInput))
 	}
 }
 
 func BenchmarkYAML(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		parseYAML([]byte(yamlInput))
+		parse.Yaml([]byte(yamlInput))
 	}
 }
 
 func BenchmarkXML(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		parseXML([]byte(xmlInput))
+		parse.Xml([]byte(xmlInput))
 	}
 }
 
 func BenchmarkQuery(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		parseQuery([]byte(queryInput))
+		parse.Query([]byte(queryInput))
 	}
 }
 
 func BenchmarkHTML(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		parseHTML([]byte(xmlInput))
+		parse.Html([]byte(xmlInput))
 	}
 }

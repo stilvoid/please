@@ -9,13 +9,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-type node struct {
-	Node  interface{}   `xml:",any"`
-	List  []interface{} `xml:",any"`
-	Value interface{}   `xml:",any"`
-}
-
-func parseHTML(input []byte) (interface{}, error) {
+func Html(input []byte) (interface{}, error) {
 	var parsed interface{}
 
 	doc, err := html.Parse(bytes.NewReader(input))

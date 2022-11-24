@@ -1,8 +1,10 @@
-package parse
+package parse_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/parse"
 )
 
 func TestHTML(t *testing.T) {
@@ -32,7 +34,7 @@ func TestHTML(t *testing.T) {
 		},
 	}
 
-	actual, err := parseHTML([]byte(input))
+	actual, err := parse.Html([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

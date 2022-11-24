@@ -1,8 +1,10 @@
-package parse
+package parse_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/parse"
 )
 
 func TestJSON(t *testing.T) {
@@ -47,7 +49,7 @@ func TestJSON(t *testing.T) {
 		input := inputs[i]
 		expected := expecteds[i]
 
-		actual, err := parseJSON([]byte(input))
+		actual, err := parse.Json([]byte(input))
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

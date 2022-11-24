@@ -11,20 +11,20 @@ type Parser func([]byte) (interface{}, error)
 var parsers = make(map[string]Parser)
 
 func init() {
-	Register("csv", parseCSV)
-	Register("html", parseHTML)
-	Register("json", parseJSON)
-	Register("mime", parseMIME)
-	Register("xml", parseXML)
-	Register("yaml", parseYAML)
-	Register("query", parseQuery)
+	Register("csv", Csv)
+	Register("html", Html)
+	Register("json", Json)
+	Register("mime", Mime)
+	Register("xml", Xml)
+	Register("yaml", Yaml)
+	Register("query", Query)
 }
 
 // Names returns a sorted list of valid options for the "format" parameter of Parse
 func Names() []string {
 	names := make([]string, 0, len(parsers))
 
-	for name, _ := range parsers {
+	for name := range parsers {
 		names = append(names, name)
 	}
 
@@ -36,7 +36,7 @@ func Names() []string {
 // Register assigns a Parser function to a name. If the name has already been registered, an error will be returned.
 func Register(name string, parser Parser) error {
 	if _, ok := parsers[name]; ok {
-		return fmt.Errorf("Parser %s already exists", name)
+		return fmt.Errorf("parser %s already exists", name)
 	}
 
 	parsers[name] = parser
@@ -49,7 +49,7 @@ func Get(name string) (Parser, error) {
 	parser, ok := parsers[name]
 
 	if !ok {
-		return nil, fmt.Errorf("No such parser: %s", name)
+		return nil, fmt.Errorf("no such parser: %s", name)
 	}
 
 	return parser, nil

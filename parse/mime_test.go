@@ -1,8 +1,10 @@
-package parse
+package parse_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/parse"
 )
 
 func TestMIME(t *testing.T) {
@@ -20,7 +22,7 @@ func TestMIME(t *testing.T) {
 		"body": "This is the body.",
 	}
 
-	actual, err := parseMIME([]byte(input))
+	actual, err := parse.Mime([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

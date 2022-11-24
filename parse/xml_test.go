@@ -1,8 +1,10 @@
-package parse
+package parse_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/parse"
 )
 
 func TestXML(t *testing.T) {
@@ -30,7 +32,7 @@ func TestXML(t *testing.T) {
 		},
 	}
 
-	actual, err := parseXML([]byte(input))
+	actual, err := parse.Xml([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
@@ -47,7 +49,7 @@ func TestXMLBadInput(t *testing.T) {
 		</item>
 	</things>`
 
-	_, err := parseXML([]byte(input))
+	_, err := parse.Xml([]byte(input))
 
 	if err == nil {
 		t.Errorf("expected error")

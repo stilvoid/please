@@ -1,8 +1,10 @@
-package parse
+package parse_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/parse"
 )
 
 func TestQuery(t *testing.T) {
@@ -20,7 +22,7 @@ func TestQuery(t *testing.T) {
 	}
 
 	for input, expected := range cases {
-		actual, err := parseQuery([]byte(input))
+		actual, err := parse.Query([]byte(input))
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

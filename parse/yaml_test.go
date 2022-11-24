@@ -1,8 +1,10 @@
-package parse
+package parse_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/parse"
 )
 
 func TestYAML(t *testing.T) {
@@ -47,7 +49,7 @@ func TestYAML(t *testing.T) {
 		input := inputs[i]
 		expected := expecteds[i]
 
-		actual, err := parseYAML([]byte(input))
+		actual, err := parse.Yaml([]byte(input))
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

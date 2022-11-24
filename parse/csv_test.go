@@ -1,8 +1,10 @@
-package parse
+package parse_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stilvoid/please/parse"
 )
 
 func TestCSV(t *testing.T) {
@@ -11,12 +13,12 @@ func TestCSV(t *testing.T) {
 		"2-1,2-2"
 
 	expected := [][]string{
-		[]string{"col1", "col2"},
-		[]string{"1-1", "1-2"},
-		[]string{"2-1", "2-2"},
+		{"col1", "col2"},
+		{"1-1", "1-2"},
+		{"2-1", "2-2"},
 	}
 
-	actual, err := parseCSV([]byte(input))
+	actual, err := parse.Csv([]byte(input))
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

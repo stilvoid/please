@@ -1,11 +1,7 @@
 package parse
 
-import "github.com/clbanning/x2j"
+import "github.com/clbanning/mxj/x2j"
 
-func parseXML(input []byte) (interface{}, error) {
-	parsed := make(map[string]interface{})
-
-	err := x2j.Unmarshal(input, &parsed)
-
-	return parsed, err
+func Xml(input []byte) (interface{}, error) {
+	return x2j.XmlToMap(input)
 }
