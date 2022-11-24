@@ -131,7 +131,7 @@ func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buf
 	}
 }
 
-func formatXML(in interface{}) (string, error) {
+func Xml(in interface{}) (string, error) {
 	in = internal.ForceStringKeys(in)
 
 	if _, ok := in.([]interface{}); ok {

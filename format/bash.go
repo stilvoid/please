@@ -50,7 +50,7 @@ func formatBashInternal(in interface{}, buf *bytes.Buffer) {
 	}
 }
 
-func formatBash(in interface{}) (string, error) {
+func Bash(in interface{}) (string, error) {
 	in = internal.ArraysToMaps(in)
 	in = internal.ForceStringKeys(in)
 

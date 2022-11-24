@@ -1,4 +1,4 @@
-package format
+package format_test
 
 var testCases = []interface{}{
 	123,

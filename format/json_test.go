@@ -1,6 +1,10 @@
-package format
+package format_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stilvoid/please/format"
+)
 
 func TestJSON(t *testing.T) {
 	expecteds := []string{
@@ -24,7 +28,7 @@ func TestJSON(t *testing.T) {
 	for i, expected := range expecteds {
 		testCase := testCases[i]
 
-		actual, err := formatJSON(testCase)
+		actual, err := format.Json(testCase)
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

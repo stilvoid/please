@@ -1,6 +1,10 @@
-package format
+package format_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stilvoid/please/format"
+)
 
 func TestYAML(t *testing.T) {
 	expecteds := []string{
@@ -24,7 +28,7 @@ func TestYAML(t *testing.T) {
 	for i, expected := range expecteds {
 		testCase := testCases[i]
 
-		actual, err := formatYAML(testCase)
+		actual, err := format.Yaml(testCase)
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

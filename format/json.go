@@ -6,7 +6,7 @@ import (
 	"github.com/stilvoid/please/internal"
 )
 
-func formatJSON(in interface{}) (string, error) {
+func Json(in interface{}) (string, error) {
 	in = internal.ForceStringKeys(in)
 
 	bytes, err := json.MarshalIndent(in, "", "  ")

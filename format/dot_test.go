@@ -1,6 +1,10 @@
-package format
+package format_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stilvoid/please/format"
+)
 
 func TestDot(t *testing.T) {
 	expecteds := []string{
@@ -100,7 +104,7 @@ func TestDot(t *testing.T) {
 	for i, expected := range expecteds {
 		testCase := testCases[i]
 
-		actual, err := formatDot(testCase)
+		actual, err := format.Dot(testCase)
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

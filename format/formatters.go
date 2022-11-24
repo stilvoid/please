@@ -11,12 +11,12 @@ type Formatter func(interface{}) (string, error)
 var formatters = make(map[string]Formatter)
 
 func init() {
-	Register("bash", formatBash)
-	Register("dot", formatDot)
-	Register("json", formatJSON)
-	Register("xml", formatXML)
-	Register("yaml", formatYAML)
-	Register("query", formatQuery)
+	Register("bash", Bash)
+	Register("dot", Dot)
+	Register("json", Json)
+	Register("xml", Xml)
+	Register("yaml", Yaml)
+	Register("query", Query)
 }
 
 // Names returns a sorted list of valid options for the "format" parameter of Format

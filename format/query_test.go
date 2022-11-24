@@ -1,6 +1,10 @@
-package format
+package format_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stilvoid/please/format"
+)
 
 func TestQuery(t *testing.T) {
 	expecteds := []string{
@@ -24,7 +28,7 @@ func TestQuery(t *testing.T) {
 	for i, expected := range expecteds {
 		testCase := testCases[i]
 
-		actual, err := formatQuery(testCase)
+		actual, err := format.Query(testCase)
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

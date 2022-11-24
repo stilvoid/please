@@ -1,6 +1,10 @@
-package format
+package format_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stilvoid/please/format"
+)
 
 var input = map[interface{}]interface{}{
 	"description": "some example json",
@@ -18,36 +22,36 @@ var input = map[interface{}]interface{}{
 
 func BenchmarkBash(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		formatBash(input)
+		format.Bash(input)
 	}
 }
 
 func BenchmarkDot(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		formatDot(input)
+		format.Dot(input)
 	}
 }
 
 func BenchmarkJSON(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		formatJSON(input)
+		format.Json(input)
 	}
 }
 
 func BenchmarkQuery(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		formatQuery(input)
+		format.Query(input)
 	}
 }
 
 func BenchmarkXML(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		formatXML(input)
+		format.Xml(input)
 	}
 }
 
 func BenchmarkYAML(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		formatYAML(input)
+		format.Yaml(input)
 	}
 }

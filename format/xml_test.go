@@ -1,6 +1,10 @@
-package format
+package format_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stilvoid/please/format"
+)
 
 func TestXML(t *testing.T) {
 	xmlTestCases := append(testCases, map[interface{}]interface{}{ // XML style
@@ -67,7 +71,7 @@ func TestXML(t *testing.T) {
 	for i, expected := range expecteds {
 		testCase := xmlTestCases[i]
 
-		actual, err := formatXML(testCase)
+		actual, err := format.Xml(testCase)
 
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

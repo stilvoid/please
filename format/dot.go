@@ -76,7 +76,7 @@ func flatten(in interface{}, parent string, name string, buf *bytes.Buffer) {
 	}
 }
 
-func formatDot(in interface{}) (string, error) {
+func Dot(in interface{}) (string, error) {
 	in = internal.ForceStringKeys(in)
 
 	var buf bytes.Buffer
