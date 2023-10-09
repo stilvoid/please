@@ -7,6 +7,6 @@ require (
 	github.com/clbanning/mxj v1.8.4
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/pborman/getopt v1.1.0
-	golang.org/x/net v0.2.0
+	golang.org/x/net v0.16.0
 	gopkg.in/yaml.v2 v2.4.0
 )
