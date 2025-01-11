@@ -24,11 +24,15 @@ It is comprised of three sub-commands:
 
 ## Installing
 
-**Go users**: Simply `go get github.com/stilvoid/please`.
+`brew install stilvoid/tools/please`
 
-**Arch Linux**: There's a [please package in the AUR](https://aur4.archlinux.org/packages/please/).
+_or_
 
-**Anyone else**: Grab the appropriate download from the [latest release](https://github.com/stilvoid/please/releases) and put it somewhere in your path.
+Grab the appropriate download from the [release page](https://github.com/stilvoid/please/releases)
+
+_or_
+
+`go install github.com/stilvoid/please@latest`
 
 ## Examples
 
