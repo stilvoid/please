@@ -3,22 +3,65 @@ package format_test
 import (
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/stilvoid/please/format"
 )
 
 func TestJSON(t *testing.T) {
 	expecteds := []string{
-		"123",
-		"456.789",
-		"\"abc\"",
-		"true",
-		"false",
-		"null",
-		"[\n  123,\n  \"abc\"\n]",
-		"{\n  \"foo\": \"bar\"\n}",
-		"{\n  \"123\": [\n    \"baz\",\n    \"quux\"\n  ]\n}",
-		"{\n  \"true\": {\n    \"null\": null\n  }\n}",
-		"[\n  456,\n  \"def\",\n  {\n    \"3\": 4\n  },\n  [\n    \"first\",\n    \"second\",\n    [\n      \"deeper\"\n    ]\n  ]\n]",
+		`123`,
+		`456.789`,
+		`"abc"`,
+		`true`,
+		`false`,
+		`null`,
+		`[
+  123,
+  "abc"
+]`,
+		`{
+  "foo": "bar"
+}`,
+		`{
+  "123": [
+    "baz",
+    "quux"
+  ]
+}`,
+		`{
+  "true": {
+    "null": null
+  }
+}`,
+		`[
+  456,
+  "def",
+  {
+    "3": 4
+  },
+  [
+    "first",
+    "second",
+    [
+      "deeper"
+    ]
+  ]
+]`,
+		`{
+  "Array": [
+    "def",
+    456,
+    true,
+    false,
+    null
+  ],
+  "Map": {
+    "456": "def",
+    "foo": 123
+  },
+  "Name": "abc",
+  "Number": "(12+3i)"
+}`,
 	}
 
 	if len(expecteds) != len(testCases) {
@@ -34,8 +77,8 @@ func TestJSON(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 
-		if actual != expected {
-			t.Errorf("unexpected:\n'%v'\nwant:\n'%v'", actual, expected)
+		if d := cmp.Diff(expected, actual); d != "" {
+			t.Error(d)
 		}
 	}
 }

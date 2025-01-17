@@ -1,5 +1,5 @@
 // Package common provides some utility functions for dealing with HTTP requests and responses
-package internal
+package web
 
 import (
 	"bufio"

@@ -3,8 +3,11 @@ package format
 import (
 	"bytes"
 	"fmt"
+	"maps"
 	"reflect"
 	"regexp"
+	"slices"
+	"sort"
 	"strings"
 
 	"github.com/stilvoid/please/internal"
@@ -58,8 +61,13 @@ func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buf
 		children := make(map[string]interface{})
 		text := make([]interface{}, 0)
 
+		keys := slices.Collect(maps.Keys(v))
+		sort.Strings(keys)
+
 		// Gather attributes
-		for key, value := range v {
+		for _, key := range keys {
+			value := v[key]
+
 			if key[0] == '-' {
 				attributes[key[1:]] = fmt.Sprint(value)
 			} else if key == "#text" {
@@ -94,7 +102,12 @@ func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buf
 				buf.WriteString("\n")
 			}
 
-			for key, value := range children {
+			keys = slices.Collect(maps.Keys(children))
+			sort.Strings(keys)
+
+			for _, key := range keys {
+				value := children[key]
+
 				if _, ok := value.([]interface{}); ok && key == "root" {
 					key = "tag"
 				}
@@ -132,7 +145,7 @@ func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buf
 }
 
 func Xml(in interface{}) (string, error) {
-	in = internal.ForceStringKeys(in)
+	in = internal.Coerce(in, internal.Config{StringKeys: true})
 
 	if _, ok := in.([]interface{}); ok {
 		in = map[string]interface{}{

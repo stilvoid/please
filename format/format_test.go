@@ -33,4 +33,24 @@ var testCases = []interface{}{
 			},
 		},
 	},
+	struct {
+		Name   string
+		Number complex64
+		Array  []any
+		Map    map[any]any
+	}{
+		Name:   "abc",
+		Number: complex(12, 3),
+		Array: []any{
+			"def",
+			456,
+			true,
+			false,
+			nil,
+		},
+		Map: map[any]any{
+			"foo": 123,
+			456:   "def",
+		},
+	},
 }

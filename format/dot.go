@@ -3,6 +3,9 @@ package format
 import (
 	"bytes"
 	"fmt"
+	"maps"
+	"slices"
+	"sort"
 	"strings"
 
 	"github.com/stilvoid/please/internal"
@@ -28,9 +31,9 @@ func dotLink(left string, right string, note ...string) string {
 	return wrap(left) + " -- " + wrap(right) + ";\n"
 }
 
-func flatten(in interface{}, parent string, name string, buf *bytes.Buffer) {
+func flatten(in any, parent string, name string, buf *bytes.Buffer) {
 	switch vv := in.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		if parent != "" {
 			buf.WriteString(dotLink(parent, name))
 		}
@@ -41,7 +44,12 @@ func flatten(in interface{}, parent string, name string, buf *bytes.Buffer) {
 
 		i := 0
 
-		for key, value := range vv {
+		keys := slices.Collect(maps.Keys(vv))
+		sort.Strings(keys)
+
+		for _, key := range keys {
+			value := vv[key]
+
 			target := parent + "-map-" + fmt.Sprint(i)
 
 			buf.WriteString(dotLink(parent, target))
@@ -53,7 +61,7 @@ func flatten(in interface{}, parent string, name string, buf *bytes.Buffer) {
 
 			i++
 		}
-	case []interface{}:
+	case []any:
 		if parent != "" {
 			buf.WriteString(dotLink(parent, name))
 		}
@@ -76,8 +84,8 @@ func flatten(in interface{}, parent string, name string, buf *bytes.Buffer) {
 	}
 }
 
-func Dot(in interface{}) (string, error) {
-	in = internal.ForceStringKeys(in)
+func Dot(in any) (string, error) {
+	in = internal.Coerce(in, internal.Config{StringKeys: true})
 
 	var buf bytes.Buffer
 

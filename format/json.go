@@ -7,7 +7,7 @@ import (
 )
 
 func Json(in interface{}) (string, error) {
-	in = internal.ForceStringKeys(in)
+	in = internal.Coerce(in, internal.Config{StringKeys: true})
 
 	bytes, err := json.MarshalIndent(in, "", "  ")
 

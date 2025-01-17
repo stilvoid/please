@@ -7,7 +7,7 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
-	"github.com/stilvoid/please/internal"
+	"github.com/stilvoid/please/internal/web"
 )
 
 var requestAliases = []string{
@@ -76,14 +76,14 @@ func requestCommand(args []string) {
 		input = os.Stdin
 	}
 
-	resp, err := internal.MakeRequest(method, url, input, *headersIncluded)
+	resp, err := web.MakeRequest(method, url, input, *headersIncluded)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	err = internal.WriteResponse(os.Stdout, resp, *includeHeaders, *includeStatus)
+	err = web.WriteResponse(os.Stdout, resp, *includeHeaders, *includeStatus)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

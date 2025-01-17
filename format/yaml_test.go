@@ -8,17 +8,37 @@ import (
 
 func TestYAML(t *testing.T) {
 	expecteds := []string{
-		"123",
-		"456.789",
-		"abc",
-		"true",
-		"false",
-		"null",
-		"- 123\n- abc",
-		"foo: bar",
-		"123:\n- baz\n- quux",
-		"true:\n  null: null",
-		"- 456\n- def\n- 3: 4\n- - first\n  - second\n  - - deeper",
+		`123`,
+		`456.789`,
+		`abc`,
+		`true`,
+		`false`,
+		`null`,
+		`- 123
+- abc`,
+		`foo: bar`,
+		`123:
+- baz
+- quux`,
+		`true:
+  null: null`,
+		`- 456
+- def
+- 3: 4
+- - first
+  - second
+  - - deeper`,
+		`Array:
+- def
+- 456
+- true
+- false
+- null
+Map:
+  456: def
+  foo: 123
+Name: abc
+Number: (12+3i)`,
 	}
 
 	if len(expecteds) != len(testCases) {

@@ -37,8 +37,10 @@ func formatQueryInternal(in interface{}) string {
 }
 
 func Query(in interface{}) (string, error) {
-	in = internal.ArraysToMaps(in)
-	in = internal.ForceStringKeys(in)
+	in = internal.Coerce(in, internal.Config{
+		MapArrays:  true,
+		StringKeys: true,
+	})
 
 	return formatQueryInternal(in), nil
 }
