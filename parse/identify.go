@@ -12,9 +12,9 @@ var order = []string{
 }
 
 // Identify tries to figure out the format of the structured data passed in
-// If successful, the name of the detected format and a copy of its data parsed into an interface{} will be returned
+// If successful, the name of the detected format and a copy of its data parsed into an any will be returned
 // If the data format could not be identified, an error will be returned
-func Identify(input []byte) (string, interface{}, error) {
+func Identify(input []byte) (string, any, error) {
 	for _, name := range order {
 		parser, err := Get(name)
 

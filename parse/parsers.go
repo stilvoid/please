@@ -5,8 +5,8 @@ import (
 	"sort"
 )
 
-// Type Parser is a function that takes a byte slice and attempts to parse it into a structure format in an interface{}
-type Parser func([]byte) (interface{}, error)
+// Type Parser is a function that takes a byte slice and attempts to parse it into a structure format in an any
+type Parser func([]byte) (any, error)
 
 var parsers = make(map[string]Parser)
 

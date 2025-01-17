@@ -8,11 +8,11 @@ import (
 )
 
 func TestXML(t *testing.T) {
-	xmlTestCases := append(testCases, map[interface{}]interface{}{ // XML style
-		"top": map[interface{}]interface{}{
-			"#text":      []interface{}{"Some text", "more text"},
+	xmlTestCases := append(testCases, map[any]any{ // XML style
+		"top": map[any]any{
+			"#text":      []any{"Some text", "more text"},
 			"-attribute": "value",
-			"child": map[interface{}]interface{}{
+			"child": map[any]any{
 				"#text": "child text",
 				"-type": "clever",
 			},

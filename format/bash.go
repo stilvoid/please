@@ -21,13 +21,13 @@ func wrapObj(in string) string {
 	return "\"" + out + "\""
 }
 
-func formatBashInternal(in interface{}, buf *bytes.Buffer) {
+func formatBashInternal(in any, buf *bytes.Buffer) {
 	if in == nil {
 		return
 	}
 
 	switch v := in.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		keys := slices.Collect(maps.Keys(v))
 		sort.Strings(keys)
 
@@ -54,7 +54,7 @@ func formatBashInternal(in interface{}, buf *bytes.Buffer) {
 	}
 }
 
-func Bash(in interface{}) (string, error) {
+func Bash(in any) (string, error) {
 	in = internal.Coerce(in, internal.Config{
 		MapArrays:  true,
 		StringKeys: true,

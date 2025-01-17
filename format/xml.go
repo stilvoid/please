@@ -39,7 +39,7 @@ func xmlCloseTag(in string) string {
 	return "</" + badTagRe.ReplaceAllLiteralString(in, "_") + ">"
 }
 
-func xmlWrap(in interface{}) string {
+func xmlWrap(in any) string {
 	out := fmt.Sprint(in)
 	out = strings.Replace(out, "&", "&amp;", -1)
 	out = strings.Replace(out, "<", "&lt;", -1)
@@ -54,12 +54,12 @@ func doIndent(indent int, buf *bytes.Buffer) {
 	}
 }
 
-func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buffer) {
+func formatXMLInternal(in any, parent string, indent int, buf *bytes.Buffer) {
 	switch v := in.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		attributes := make(map[string]string)
-		children := make(map[string]interface{})
-		text := make([]interface{}, 0)
+		children := make(map[string]any)
+		text := make([]any, 0)
 
 		keys := slices.Collect(maps.Keys(v))
 		sort.Strings(keys)
@@ -108,7 +108,7 @@ func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buf
 			for _, key := range keys {
 				value := children[key]
 
-				if _, ok := value.([]interface{}); ok && key == "root" {
+				if _, ok := value.([]any); ok && key == "root" {
 					key = "tag"
 				}
 
@@ -121,9 +121,9 @@ func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buf
 		// Close up
 		buf.WriteString(xmlCloseTag(parent))
 		buf.WriteString("\n")
-	case []interface{}:
+	case []any:
 		for _, value := range v {
-			if _, ok := value.([]interface{}); ok {
+			if _, ok := value.([]any); ok {
 				doIndent(indent, buf)
 				buf.WriteString(xmlTag(parent, nil))
 				buf.WriteString("\n")
@@ -144,11 +144,11 @@ func formatXMLInternal(in interface{}, parent string, indent int, buf *bytes.Buf
 	}
 }
 
-func Xml(in interface{}) (string, error) {
+func Xml(in any) (string, error) {
 	in = internal.Coerce(in, internal.Config{StringKeys: true})
 
-	if _, ok := in.([]interface{}); ok {
-		in = map[string]interface{}{
+	if _, ok := in.([]any); ok {
+		in = map[string]any{
 			"root": in,
 		}
 	}

@@ -5,8 +5,8 @@ import (
 	"sort"
 )
 
-// Type Formatter is a function that takes an interface{} and attempts to format it as a string
-type Formatter func(interface{}) (string, error)
+// Type Formatter is a function that takes an any and attempts to format it as a string
+type Formatter func(any) (string, error)
 
 var formatters = make(map[string]Formatter)
 

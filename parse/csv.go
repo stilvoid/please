@@ -5,6 +5,6 @@ import (
 	"encoding/csv"
 )
 
-func Csv(input []byte) (interface{}, error) {
+func Csv(input []byte) (any, error) {
 	return csv.NewReader(bytes.NewReader(input)).ReadAll()
 }

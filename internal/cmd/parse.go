@@ -63,7 +63,7 @@ func parseCommand(args []string) {
 	}
 
 	// Try parsing
-	var parsed interface{}
+	var parsed any
 
 	// Deal with format detection
 	if *inFormat == "auto" {

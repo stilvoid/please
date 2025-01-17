@@ -6,16 +6,16 @@ import (
 	"github.com/stilvoid/please/format"
 )
 
-var input = map[interface{}]interface{}{
+var input = map[any]any{
 	"description": "some example json",
-	"an array": []interface{}{
+	"an array": []any{
 		"first entry",
-		map[interface{}]interface{}{
+		map[any]any{
 			"nested": "object",
 		},
-		[]interface{}{"nested", "array"},
+		[]any{"nested", "array"},
 	},
-	"child": map[interface{}]interface{}{
+	"child": map[any]any{
 		"with": "value",
 	},
 }

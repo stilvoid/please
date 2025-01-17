@@ -15,34 +15,34 @@ func TestYAML(t *testing.T) {
 		"[1,2,3,4,5]",
 	}
 
-	expecteds := []interface{}{
-		map[interface{}]interface{}{
+	expecteds := []any{
+		map[any]any{
 			"foo": "bar",
 			"baz": 123,
-			"quux": []interface{}{
+			"quux": []any{
 				1,
 				2,
-				[]interface{}{
+				[]any{
 					3,
 					4,
 				},
-				map[interface{}]interface{}{
+				map[any]any{
 					"a": false,
 				},
 			},
 		},
 		"I am a fish",
-		[]interface{}{
+		[]any{
 			"hello",
 			"123",
-			map[interface{}]interface{}{
-				"b": []interface{}{
+			map[any]any{
+				"b": []any{
 					"cake",
 					true,
 				},
 			},
 		},
-		[]interface{}{1, 2, 3, 4, 5},
+		[]any{1, 2, 3, 4, 5},
 	}
 
 	for i := range inputs {

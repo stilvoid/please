@@ -16,14 +16,14 @@ func TestXML(t *testing.T) {
 		</item>
 	</things>`
 
-	expected := map[string]interface{}{
-		"things": map[string]interface{}{
-			"item": []interface{}{
-				map[string]interface{}{
+	expected := map[string]any{
+		"things": map[string]any{
+			"item": []any{
+				map[string]any{
 					"-id":   "1",
 					"#text": "Foo",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"-id":   "2",
 					"#text": "Bar",
 					"child": "Rock",

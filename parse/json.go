@@ -2,8 +2,8 @@ package parse
 
 import "encoding/json"
 
-func Json(input []byte) (interface{}, error) {
-	var parsed interface{}
+func Json(input []byte) (any, error) {
+	var parsed any
 
 	err := json.Unmarshal(input, &parsed)
 

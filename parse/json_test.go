@@ -15,34 +15,34 @@ func TestJSON(t *testing.T) {
 		`[1,2,3,4,5]`,
 	}
 
-	expecteds := []interface{}{
-		map[string]interface{}{
+	expecteds := []any{
+		map[string]any{
 			"foo": "bar",
 			"baz": 123.0,
-			"quux": []interface{}{
+			"quux": []any{
 				1.0,
 				2.0,
-				[]interface{}{
+				[]any{
 					3.0,
 					4.0,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"a": false,
 				},
 			},
 		},
 		"I am a fish",
-		[]interface{}{
+		[]any{
 			"hello",
 			123.0,
-			map[string]interface{}{
-				"b": []interface{}{
+			map[string]any{
+				"b": []any{
 					"cake",
 					true,
 				},
 			},
 		},
-		[]interface{}{1.0, 2.0, 3.0, 4.0, 5.0},
+		[]any{1.0, 2.0, 3.0, 4.0, 5.0},
 	}
 
 	for i := range inputs {

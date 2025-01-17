@@ -7,7 +7,7 @@ import (
 	"net/textproto"
 )
 
-func Mime(input []byte) (interface{}, error) {
+func Mime(input []byte) (any, error) {
 	inputReader := bufio.NewReader(bytes.NewReader(input))
 
 	reader := textproto.NewReader(inputReader)
@@ -22,12 +22,12 @@ func Mime(input []byte) (interface{}, error) {
 		return nil, err
 	}
 
-	messageHeaders := make(map[string]interface{})
+	messageHeaders := make(map[string]any)
 	for key, value := range headers {
 		messageHeaders[key] = value
 	}
 
-	message := make(map[string]interface{})
+	message := make(map[string]any)
 	message["headers"] = messageHeaders
 	message["body"] = string(bytesBody)
 

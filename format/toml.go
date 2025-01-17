@@ -7,7 +7,7 @@ import (
 	"github.com/stilvoid/please/internal"
 )
 
-func Toml(in interface{}) (string, error) {
+func Toml(in any) (string, error) {
 	in = internal.Coerce(in, internal.Config{
 		StripNulls: true,
 		StringKeys: true,
