@@ -1,10 +1,6 @@
-package main
+package please
 
 import (
-	"fmt"
-	"log"
-	"os"
-
 	"github.com/spf13/cobra"
 	"github.com/stilvoid/please/cmd/identify"
 	"github.com/stilvoid/please/cmd/parse"
@@ -16,28 +12,19 @@ import (
 var version = "git"
 
 func init() {
-	rootCmd.Version = version
+	Cmd.Version = version
 
-	rootCmd.AddCommand(identify.Cmd)
-	rootCmd.AddCommand(parse.Cmd)
-	rootCmd.AddCommand(request.Cmd)
-	rootCmd.AddCommand(respond.Cmd)
-	rootCmd.AddCommand(serve.Cmd)
+	Cmd.AddCommand(identify.Cmd)
+	Cmd.AddCommand(parse.Cmd)
+	Cmd.AddCommand(request.Cmd)
+	Cmd.AddCommand(respond.Cmd)
+	Cmd.AddCommand(serve.Cmd)
 
-	rootCmd.Root().CompletionOptions.DisableDefaultCmd = true
-
-	log.SetFlags(0)
+	Cmd.Root().CompletionOptions.DisableDefaultCmd = true
 }
 
-var rootCmd = &cobra.Command{
+var Cmd = &cobra.Command{
 	Use:     "please",
 	Short:   "Please is a utility for making and receiving web requests and parsing and reformatting the common data formats that are sent over them.",
 	Version: version,
-}
-
-func main() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
 }
