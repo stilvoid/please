@@ -11,4 +11,4 @@ To listen for a web request on port 8001 and reply "Hello, world" with a 200 sta
 
 	echo "Hello, world" | please respond 200 :8001
 */
-package main
+package please

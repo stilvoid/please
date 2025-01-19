@@ -3,17 +3,28 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"maps"
 	"os"
+	"slices"
+	"sort"
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/jmespath/go-jmespath"
 	"github.com/pborman/getopt"
-	"github.com/stilvoid/please/format"
-	"github.com/stilvoid/please/parse"
+	"github.com/stilvoid/please"
 )
+
+var parserNames []string
+var formatNames []string
 
 func init() {
 	Commands["parse"] = parseCommand
+
+	parserNames = slices.Collect(maps.Keys(please.Parsers))
+	sort.Strings(parserNames)
+
+	formatNames = slices.Collect(maps.Keys(please.Parsers))
+	sort.Strings(formatNames)
 }
 
 func parseHelp() {
@@ -27,12 +38,12 @@ func parseHelp() {
 	fmt.Println()
 	fmt.Println("Available input types:")
 	fmt.Printf("    auto\n")
-	for _, format := range parse.Names() {
+	for _, format := range parserNames {
 		fmt.Printf("    %s\n", format)
 	}
 	fmt.Println()
 	fmt.Println("Available output types:")
-	for _, format := range format.Names() {
+	for _, format := range formatNames {
 		fmt.Printf("    %s\n", format)
 	}
 }
@@ -67,13 +78,12 @@ func parseCommand(args []string) {
 
 	// Deal with format detection
 	if *inFormat == "auto" {
-		*inFormat, parsed, err = parse.Identify(input)
+		*inFormat, parsed, err = identify(input)
 	} else {
 		// Try parsing
-		parser, innerErr := parse.Get(*inFormat)
-
-		if innerErr != nil {
-			fmt.Fprintln(os.Stderr, innerErr)
+		parser, ok := please.Parsers[*inFormat]
+		if !ok {
+			fmt.Fprintf(os.Stderr, "No such parser: %s\n", *inFormat)
 			os.Exit(1)
 		}
 
@@ -100,10 +110,9 @@ func parseCommand(args []string) {
 	}
 
 	// ...and format back out :)
-	formatter, err := format.Get(*outFormat)
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+	formatter, ok := please.Formatters[*outFormat]
+	if !ok {
+		fmt.Fprintf(os.Stderr, "No such formatter: %s\n", *outFormat)
 		os.Exit(1)
 	}
 

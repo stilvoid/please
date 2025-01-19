@@ -7,7 +7,7 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/pborman/getopt"
-	"github.com/stilvoid/please/parse"
+	"github.com/stilvoid/please"
 )
 
 func init() {
@@ -39,7 +39,7 @@ func identifyCommand(args []string) {
 		os.Exit(1)
 	}
 
-	format, _, err := parse.Identify(input)
+	format, _, err := identify(input)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -47,4 +47,35 @@ func identifyCommand(args []string) {
 	}
 
 	fmt.Println(format)
+}
+
+// These should be in order of least to most likely
+// i.e. more picky formats should be listed first
+var order = []string{
+	"xml",
+	"mime",
+	"json",
+	"yaml",
+}
+
+// identify tries to figure out the format of the structured data passed in
+// If successful, the name of the detected format and a copy of its data parsed into an any will be returned
+// If the data format could not be identified, an error will be returned
+func identify(input []byte) (string, any, error) {
+	for _, name := range order {
+		parser, ok := please.Parsers[name]
+		if !ok {
+			panic(fmt.Errorf("Implementation error. Unknown parser %s", name))
+			continue
+		}
+
+		output, err := parser(input)
+		if err != nil {
+			continue
+		}
+
+		return name, output, nil
+	}
+
+	return "", nil, fmt.Errorf("input format could not be identified")
 }
