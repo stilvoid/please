@@ -1,15 +1,10 @@
 package main
 
 import (
-	"log"
-
+	"github.com/spf13/cobra"
 	"github.com/stilvoid/please/cmd/please"
 )
 
 func main() {
-	log.SetFlags(0)
-
-	if err := please.Cmd.Execute(); err != nil {
-		log.Fatal(err)
-	}
+	cobra.CheckErr(please.Cmd.Execute())
 }

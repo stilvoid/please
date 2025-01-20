@@ -14,15 +14,10 @@ var Cmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		data, err := os.ReadFile(args[0])
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-		}
+		cobra.CheckErr(err)
 
 		format, _, err := Identify(data)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			os.Exit(1)
-		}
+		cobra.CheckErr(err)
 
 		fmt.Println(format)
 	},
@@ -42,13 +37,7 @@ var order = []string{
 // If the data format could not be identified, an error will be returned
 func Identify(input []byte) (string, any, error) {
 	for _, name := range order {
-		parser, ok := please.Parsers[name]
-		if !ok {
-			panic(fmt.Errorf("Implementation error. Unknown parser %s", name))
-			continue
-		}
-
-		output, err := parser(input)
+		output, err := please.Parse(name, input)
 		if err != nil {
 			continue
 		}

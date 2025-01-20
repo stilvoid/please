@@ -1,8 +1,8 @@
 package request
 
 import (
+	"errors"
 	"io"
-	"log"
 	"os"
 
 	"github.com/andrew-d/go-termutil"
@@ -54,26 +54,20 @@ var Cmd = &cobra.Command{
 		if bodyFn != "" {
 			if bodyFn == "-" {
 				if termutil.Isatty(os.Stdin.Fd()) {
-					log.Fatal("Unable to read from stdin")
+					cobra.CheckErr(errors.New("Unable to read from stdin"))
 				} else {
 					input = os.Stdin
 				}
 			} else {
 				input, err = os.Open(bodyFn)
-				if err != nil {
-					log.Fatal(err)
-				}
+				cobra.CheckErr(err)
 			}
 		}
 
 		resp, err := web.MakeRequest(method, url, input, headersIncluded)
-		if err != nil {
-			log.Fatal(err)
-		}
+		cobra.CheckErr(err)
 
 		err = web.WriteResponse(os.Stdout, resp, outputHeaders, outputStatus)
-		if err != nil {
-			log.Fatal(err)
-		}
+		cobra.CheckErr(err)
 	},
 }

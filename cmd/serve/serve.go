@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -34,22 +33,18 @@ var Cmd = &cobra.Command{
 
 		fmt.Println("Listening on", address)
 
-		fsys := loggingFileSystem{
-			FileSystem: http.Dir(path),
-			logger:     log.New(os.Stdout, "", log.LstdFlags),
-		}
+		fsys := loggingFileSystem{http.Dir(path)}
 
-		log.Fatal(http.ListenAndServe(address, http.FileServer(fsys)))
+		cobra.CheckErr(http.ListenAndServe(address, http.FileServer(fsys)))
 	},
 }
 
 type loggingFileSystem struct {
 	http.FileSystem
-	logger *log.Logger
 }
 
 func (fsys loggingFileSystem) Open(path string) (http.File, error) {
-	fsys.logger.Println(path)
+	log.Println(path)
 
 	return fsys.FileSystem.Open(path)
 }

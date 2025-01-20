@@ -3,9 +3,9 @@ package respond
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"net/textproto"
@@ -41,7 +41,7 @@ var Cmd = &cobra.Command{
 	Short: "Listen for HTTP requests and respond to them",
 	Run: func(cmd *cobra.Command, args []string) {
 		if headersIncluded && bodyFn == "" {
-			log.Fatal("You must specify a body filename if --include-headers is set")
+			cobra.CheckErr(errors.New("You must specify a body filename if --include-headers is set"))
 		}
 
 		address = fmt.Sprintf("%s:%d", address, port)
@@ -55,23 +55,19 @@ var Cmd = &cobra.Command{
 		}
 
 		listener, err := net.Listen("tcp", address)
-		if err != nil {
-			log.Fatal(err)
-		}
+		cobra.CheckErr(err)
 
 		if bodyFn != "" {
 			if bodyFn == "" {
 				if termutil.Isatty(os.Stdin.Fd()) {
-					log.Fatal("Unable to read from stdin")
+					cobra.CheckErr(errors.New("Unable to read from stdin"))
 				} else {
 					handler.data = os.Stdin
 				}
 			} else {
 				var err error
 				handler.data, err = os.Open(bodyFn)
-				if err != nil {
-					log.Fatal(err)
-				}
+				cobra.CheckErr(err)
 			}
 		}
 
@@ -82,7 +78,7 @@ var Cmd = &cobra.Command{
 		go func() {
 			err := server.Serve(listener)
 			if err != nil && err.Error() != "http: Server closed" {
-				log.Fatal(err)
+				cobra.CheckErr(err)
 			}
 		}()
 
@@ -104,24 +100,19 @@ type responder struct {
 }
 
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	err := web.WriteRequest(os.Stdout, req, h.includeMethod, h.includeUrl, h.includeHeaders)
-	if err != nil {
-		log.Fatal(err)
-	}
+	cobra.CheckErr(web.WriteRequest(os.Stdout, req, h.includeMethod, h.includeUrl, h.includeHeaders))
 
 	inputReader := bufio.NewReader(h.data)
 
 	if h.headersIncluded {
 		if h.data == nil {
-			log.Fatal("Error reading headers")
+			cobra.CheckErr(errors.New("No body to read headers from"))
 		}
 
 		// Parse headers from input
 		reader := textproto.NewReader(inputReader)
 		headers, err := reader.ReadMIMEHeader()
-		if err != nil {
-			log.Fatal("Error parsing headers: ", err.Error())
-		}
+		cobra.CheckErr(err)
 
 		for name, values := range headers {
 			for i, value := range values {
