@@ -7,7 +7,7 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/spf13/cobra"
-	"github.com/stilvoid/please/internal/web"
+	"github.com/stilvoid/please/internal"
 )
 
 var headersIncluded bool
@@ -64,10 +64,9 @@ var Cmd = &cobra.Command{
 			}
 		}
 
-		resp, err := web.MakeRequest(method, url, input, headersIncluded)
+		resp, err := internal.MakeRequest(method, url, input, headersIncluded)
 		cobra.CheckErr(err)
 
-		err = web.WriteResponse(os.Stdout, resp, outputHeaders, outputStatus)
-		cobra.CheckErr(err)
+		cobra.CheckErr(internal.PrintResponse(resp, outputHeaders, outputStatus))
 	},
 }

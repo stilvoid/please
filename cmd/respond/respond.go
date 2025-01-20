@@ -13,7 +13,7 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/spf13/cobra"
-	"github.com/stilvoid/please/internal/web"
+	"github.com/stilvoid/please/internal"
 )
 
 var headersIncluded bool
@@ -100,7 +100,7 @@ type responder struct {
 }
 
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	cobra.CheckErr(web.WriteRequest(os.Stdout, req, h.includeMethod, h.includeUrl, h.includeHeaders))
+	cobra.CheckErr(internal.PrintRequest(req, h.includeMethod, h.includeUrl, h.includeHeaders))
 
 	inputReader := bufio.NewReader(h.data)
 
