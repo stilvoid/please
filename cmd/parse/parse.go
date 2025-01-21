@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -19,13 +20,13 @@ func init() {
 	Cmd.Flags().StringVarP(&inFormat, "from", "f", "auto", "input format")
 	Cmd.Flags().StringVarP(&outFormat, "to", "t", "auto", "output format")
 	Cmd.Flags().StringVarP(&query, "query", "q", "", "JMESPath query")
-	Cmd.Flags().BoolVar(&listMode, "list", false, "List available input and output types")
+	Cmd.Flags().BoolVarP(&listMode, "list", "l", false, "List available input and output types")
 }
 
 var Cmd = &cobra.Command{
 	Use:   "parse [filename]",
 	Short: "Parse and convert structured data",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if listMode {
 			fmt.Println("Input formats:")
@@ -38,6 +39,8 @@ var Cmd = &cobra.Command{
 				fmt.Printf("  %s\n", name)
 			}
 			return
+		} else if len(args) != 1 {
+			cobra.CheckErr(errors.New("You must supply a filename"))
 		}
 
 		// Read from stdin

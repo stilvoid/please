@@ -38,7 +38,7 @@ func init() {
 
 var Cmd = &cobra.Command{
 	Use:   "respond",
-	Short: "Listen for HTTP requests and respond to them",
+	Short: "Listen for an HTTP request and respond to it",
 	Run: func(cmd *cobra.Command, args []string) {
 		if headersIncluded && bodyFn == "" {
 			cobra.CheckErr(errors.New("You must specify a body filename if --include-headers is set"))

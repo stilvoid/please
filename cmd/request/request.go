@@ -24,7 +24,7 @@ func init() {
 
 var Cmd = &cobra.Command{
 	Use:     "request [method] [url]",
-	Short:   "Make a web request to [url] using the specified HTTP [method].",
+	Short:   "Send a web request to a url",
 	Aliases: []string{"get", "post", "put", "delete"},
 	Args:    cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {

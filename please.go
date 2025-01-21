@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"maps"
 	"slices"
+	"sort"
 
 	"github.com/stilvoid/please/format"
 	"github.com/stilvoid/please/parse"
@@ -38,14 +39,17 @@ var Parsers []string
 
 func init() {
 	Formatters = slices.Collect(maps.Keys(formatters))
+	sort.Strings(Formatters)
+
 	Parsers = slices.Collect(maps.Keys(parsers))
+	sort.Strings(Parsers)
 }
 
 // Format converts input data into format as a byte array
 func Format(format string, input any) (string, error) {
 	formatter, ok := formatters[format]
 	if !ok {
-		return "", fmt.Errorf("Invalid format: %s", format)
+		return "", fmt.Errorf("Invalid formatter: %s", format)
 	}
 
 	return formatter(input)
@@ -55,7 +59,7 @@ func Format(format string, input any) (string, error) {
 func Parse(format string, input []byte) (any, error) {
 	parser, ok := parsers[format]
 	if !ok {
-		return nil, fmt.Errorf("Invalid format: %s", format)
+		return nil, fmt.Errorf("Invalid parser: %s", format)
 	}
 
 	return parser(input)
