@@ -29,6 +29,7 @@ var order = []string{
 	"xml",
 	"mime",
 	"json",
+	"toml",
 	"yaml",
 }
 
