@@ -56,20 +56,14 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 }
 
 // PrintRequest writes an http.Request to stdout
-func PrintRequest(req *http.Request, includeMethod bool, includeUrl bool, includeHeaders bool) error {
+func PrintRequest(req *http.Request, includeHeaders bool) error {
 	body, err := ioutil.ReadAll(req.Body)
 	req.Body.Close()
 	if err != nil {
 		return err
 	}
 
-	if includeMethod {
-		fmt.Println(req.Method)
-	}
-
-	if includeUrl {
-		fmt.Println(req.URL)
-	}
+	fmt.Printf("%s %s\n", req.Method, req.URL)
 
 	if includeHeaders {
 		req.Header.Write(os.Stdout)
@@ -82,19 +76,16 @@ func PrintRequest(req *http.Request, includeMethod bool, includeUrl bool, includ
 }
 
 // PrintResponse writes an http.Response to stdout
-func PrintResponse(resp *http.Response, includeHeaders bool, includeStatus bool) error {
+func PrintResponse(resp *http.Response, includeHeaders bool) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-
 	if err != nil {
 		return err
 	}
 
-	if includeStatus {
-		fmt.Println(resp.Status)
-	}
-
 	if includeHeaders {
+		fmt.Println(resp.Status)
+
 		resp.Header.Write(os.Stdout)
 		fmt.Println()
 	}

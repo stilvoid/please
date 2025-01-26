@@ -16,8 +16,6 @@ import (
 
 var headersIncluded bool
 var includeHeaders bool
-var includeMethod bool
-var includeUrl bool
 var bodyFn string
 var address string
 var port int
@@ -26,8 +24,6 @@ var status int
 func init() {
 	Cmd.Flags().BoolVarP(&headersIncluded, "include-headers", "i", false, "Read headers from the response body")
 	Cmd.Flags().BoolVarP(&includeHeaders, "output-headers", "o", false, "Output request headers")
-	Cmd.Flags().BoolVarP(&includeMethod, "output-method", "m", false, "Output request method")
-	Cmd.Flags().BoolVarP(&includeUrl, "output-url", "u", false, "Output request URL")
 	Cmd.Flags().StringVarP(&bodyFn, "body", "b", "", "Filename to read the response body from. Use - or omit for stdin")
 	Cmd.Flags().StringVarP(&address, "address", "a", "", "Address to listen on")
 	Cmd.Flags().IntVarP(&port, "port", "p", 8000, "Port to listen on")
@@ -47,8 +43,6 @@ var Cmd = &cobra.Command{
 		handler := responder{
 			status:          status,
 			includeHeaders:  includeHeaders,
-			includeMethod:   includeMethod,
-			includeUrl:      includeUrl,
 			headersIncluded: headersIncluded,
 		}
 
@@ -74,6 +68,8 @@ var Cmd = &cobra.Command{
 			}
 		}()
 
+		fmt.Println("Listening on", address)
+
 		<-ch
 
 		server.Shutdown(context.Background())
@@ -85,14 +81,12 @@ var ch chan bool
 type responder struct {
 	status          int
 	includeHeaders  bool
-	includeMethod   bool
-	includeUrl      bool
 	headersIncluded bool
 	data            io.Reader
 }
 
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	cobra.CheckErr(internal.PrintRequest(req, h.includeMethod, h.includeUrl, h.includeHeaders))
+	cobra.CheckErr(internal.PrintRequest(req, h.includeHeaders))
 
 	inputReader := bufio.NewReader(h.data)
 
