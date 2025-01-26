@@ -1,5 +1,17 @@
 Please is a utility for making and receiving web requests and parsing and reformatting the common data formats that are sent over them.
 
+## Installing
+
+`brew install stilvoid/tools/please`
+
+_or_
+
+Download a binary from the [releases](https://github.com/stilvoid/please/releases) page.
+
+_or_
+
+Run `go install github.com/stilvoid/please@latest`
+
 ## Usage
 
 ```

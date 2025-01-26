@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/stilvoid/please"
 	"github.com/stilvoid/please/internal"
+	"github.com/stilvoid/please/parse"
 )
 
 var Cmd = &cobra.Command{
@@ -45,7 +45,7 @@ var order = []string{
 // If the data format could not be identified, an error will be returned
 func Identify(input []byte) (string, any, error) {
 	for _, name := range order {
-		output, err := please.Parse(name, input)
+		output, err := parse.Parse(name, input)
 		if err != nil {
 			continue
 		}

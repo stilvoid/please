@@ -7,9 +7,10 @@ import (
 
 	"github.com/jmespath/go-jmespath"
 	"github.com/spf13/cobra"
-	"github.com/stilvoid/please"
 	"github.com/stilvoid/please/cmd/identify"
+	"github.com/stilvoid/please/format"
 	"github.com/stilvoid/please/internal"
+	"github.com/stilvoid/please/parse"
 )
 
 var inFormat string
@@ -23,12 +24,12 @@ func init() {
 
 	formats := strings.Builder{}
 	formats.WriteString("Input formats:\n")
-	for _, name := range please.Parsers {
+	for _, name := range parse.Parsers {
 		formats.WriteString(fmt.Sprintf("  %s\n", name))
 	}
 	formats.WriteString("\n")
 	formats.WriteString("Output formats:\n")
-	for _, name := range please.Formatters {
+	for _, name := range format.Formatters {
 		formats.WriteString(fmt.Sprintf("  %s\n", name))
 	}
 
@@ -58,7 +59,7 @@ var Cmd = &cobra.Command{
 			inFormat, parsed, err = identify.Identify(input)
 		} else {
 			// Try parsing
-			parsed, err = please.Parse(inFormat, input)
+			parsed, err = parse.Parse(inFormat, input)
 		}
 
 		cobra.CheckErr(err)
@@ -74,7 +75,7 @@ var Cmd = &cobra.Command{
 		}
 
 		// ...and format back out :)
-		output, err := please.Format(outFormat, parsed)
+		output, err := format.Format(outFormat, parsed)
 		cobra.CheckErr(err)
 
 		fmt.Println(output)
