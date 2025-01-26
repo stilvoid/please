@@ -2,6 +2,8 @@ package parse
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/jmespath/go-jmespath"
 	"github.com/spf13/cobra"
@@ -13,13 +15,24 @@ import (
 var inFormat string
 var outFormat string
 var query string
-var listMode bool
 
 func init() {
-	Cmd.Flags().StringVarP(&inFormat, "from", "f", "auto", "input format")
-	Cmd.Flags().StringVarP(&outFormat, "to", "t", "auto", "output format")
+	Cmd.Flags().StringVarP(&inFormat, "from", "f", "auto", "input format (see please help parse for formats)")
+	Cmd.Flags().StringVarP(&outFormat, "to", "t", "auto", "output format (see please help parse for formats)")
 	Cmd.Flags().StringVarP(&query, "query", "q", "", "JMESPath query")
-	Cmd.Flags().BoolVarP(&listMode, "list", "l", false, "List available input and output types")
+
+	formats := strings.Builder{}
+	formats.WriteString("Input formats:\n")
+	for _, name := range please.Parsers {
+		formats.WriteString(fmt.Sprintf("  %s\n", name))
+	}
+	formats.WriteString("\n")
+	formats.WriteString("Output formats:\n")
+	for _, name := range please.Formatters {
+		formats.WriteString(fmt.Sprintf("  %s\n", name))
+	}
+
+	Cmd.Long = "Parse and converted structured data from FILENAME or stdin if omitted.\n\n" + formats.String()
 }
 
 var Cmd = &cobra.Command{
@@ -27,22 +40,15 @@ var Cmd = &cobra.Command{
 	Short: "Parse and convert structured data from FILENAME or stdin if omitted",
 	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		if listMode {
-			fmt.Println("Input formats:")
-			for _, name := range please.Parsers {
-				fmt.Printf("  %s\n", name)
-			}
-			fmt.Println()
-			fmt.Println("Output formats:")
-			for _, name := range please.Formatters {
-				fmt.Printf("  %s\n", name)
-			}
-			return
-		}
-
-		// Read from stdin?
 		input, err := internal.ReadFileOrStdin(args...)
-		cobra.CheckErr(err)
+		if err != nil {
+			if len(args) == 0 {
+				fmt.Fprintln(os.Stderr, cmd.Short+"\n")
+				cmd.Usage()
+				os.Exit(1)
+			}
+			cobra.CheckErr(err)
+		}
 
 		// Try parsing
 		var parsed any

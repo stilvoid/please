@@ -2,6 +2,7 @@ package identify
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/stilvoid/please"
@@ -14,7 +15,13 @@ var Cmd = &cobra.Command{
 	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		data, err := internal.ReadFileOrStdin(args...)
-		cobra.CheckErr(err)
+		if err != nil {
+			if len(args) == 0 {
+				cmd.Help()
+				os.Exit(1)
+			}
+			cobra.CheckErr(err)
+		}
 
 		format, _, err := Identify(data)
 		cobra.CheckErr(err)
