@@ -46,13 +46,13 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 		req.Header = headers
 	}
 
+	req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", Name, Version))
+
 	if err != nil {
 		return nil, err
 	}
 
-	//return http.DefaultClient.Do(req)
-
-	return http.DefaultTransport.RoundTrip(req)
+	return http.DefaultClient.Do(req)
 }
 
 // PrintRequest writes an http.Request to stdout

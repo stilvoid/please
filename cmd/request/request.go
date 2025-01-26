@@ -1,23 +1,21 @@
 package request
 
 import (
-	"errors"
 	"io"
 	"os"
 
-	"github.com/andrew-d/go-termutil"
 	"github.com/spf13/cobra"
 	"github.com/stilvoid/please/internal"
 )
 
 var headersIncluded bool
-var outputResponse bool
+var verbose bool
 var bodyFn string
 
 func init() {
 	Cmd.Flags().BoolVarP(&headersIncluded, "include-headers", "i", false, "Read headers from the request body")
-	Cmd.Flags().BoolVarP(&outputResponse, "output-response", "o", false, "Output response status line and headers")
-	Cmd.Flags().StringVarP(&bodyFn, "body", "b", "", "Filename to read the request body from. Use - for stdin.")
+	Cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Output response status line and headers")
+	Cmd.Flags().StringVarP(&bodyFn, "body", "b", "", "Filename to read the request body from. Use - or omit for stdin.")
 }
 
 var Cmd = &cobra.Command{
@@ -49,22 +47,16 @@ var Cmd = &cobra.Command{
 		var input io.Reader
 		var err error
 
-		if bodyFn != "" {
-			if bodyFn == "-" {
-				if termutil.Isatty(os.Stdin.Fd()) {
-					cobra.CheckErr(errors.New("Unable to read from stdin"))
-				} else {
-					input = os.Stdin
-				}
-			} else {
-				input, err = os.Open(bodyFn)
-				cobra.CheckErr(err)
-			}
+		if bodyFn == "" {
+			input, err = internal.StdinOrNothing()
+		} else {
+			input, err = internal.FileOrStdin(bodyFn)
 		}
+		cobra.CheckErr(err)
 
 		resp, err := internal.MakeRequest(method, url, input, headersIncluded)
 		cobra.CheckErr(err)
 
-		cobra.CheckErr(internal.PrintResponse(resp, outputResponse))
+		cobra.CheckErr(internal.PrintResponse(resp, verbose))
 	},
 }

@@ -7,13 +7,10 @@ import (
 	"github.com/stilvoid/please/cmd/request"
 	"github.com/stilvoid/please/cmd/respond"
 	"github.com/stilvoid/please/cmd/serve"
+	"github.com/stilvoid/please/internal"
 )
 
-var version = "git"
-
 func init() {
-	Cmd.Version = version
-
 	Cmd.AddCommand(identify.Cmd)
 	Cmd.AddCommand(parse.Cmd)
 	Cmd.AddCommand(request.Cmd)
@@ -26,5 +23,5 @@ func init() {
 var Cmd = &cobra.Command{
 	Use:     "please",
 	Short:   "Please is a utility for making and receiving web requests and parsing and reformatting the common data formats that are sent over them.",
-	Version: version,
+	Version: internal.Version,
 }
