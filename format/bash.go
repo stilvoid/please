@@ -3,6 +3,9 @@ package format
 import (
 	"bytes"
 	"fmt"
+	"maps"
+	"slices"
+	"sort"
 	"strings"
 
 	"github.com/stilvoid/please/internal"
@@ -18,24 +21,25 @@ func wrapObj(in string) string {
 	return "\"" + out + "\""
 }
 
-func formatBashInternal(in interface{}, buf *bytes.Buffer) {
+func formatBashInternal(in any, buf *bytes.Buffer) {
 	if in == nil {
 		return
 	}
 
 	switch v := in.(type) {
-	case map[string]interface{}:
-		keys := internal.SortedKeys(v)
+	case map[string]any:
+		keys := slices.Collect(maps.Keys(v))
+		sort.Strings(keys)
 
 		buf.WriteByte('(')
 
 		for i, key := range keys {
 			var innerBuf bytes.Buffer
 
-			formatBashInternal(v[key.(string)], &innerBuf)
+			formatBashInternal(v[key], &innerBuf)
 
 			buf.WriteByte('[')
-			buf.WriteString(key.(string))
+			buf.WriteString(key)
 			buf.WriteString("]=")
 			buf.WriteString(wrapObj(innerBuf.String()))
 
@@ -50,9 +54,11 @@ func formatBashInternal(in interface{}, buf *bytes.Buffer) {
 	}
 }
 
-func Bash(in interface{}) (string, error) {
-	in = internal.ArraysToMaps(in)
-	in = internal.ForceStringKeys(in)
+func Bash(in any) (string, error) {
+	in = internal.Coerce(in, internal.Config{
+		MapArrays:  true,
+		StringKeys: true,
+	})
 
 	var buf bytes.Buffer
 

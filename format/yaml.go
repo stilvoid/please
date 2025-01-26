@@ -1,8 +1,13 @@
 package format
 
-import "gopkg.in/yaml.v2"
+import (
+	"github.com/stilvoid/please/internal"
+	"gopkg.in/yaml.v2"
+)
 
-func Yaml(in interface{}) (string, error) {
+func Yaml(in any) (string, error) {
+	in = internal.Coerce(in, internal.Config{})
+
 	bytes, err := yaml.Marshal(in)
 
 	// We strip off the trailing newline that yaml.v2 seems to insist on

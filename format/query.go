@@ -7,12 +7,12 @@ import (
 	"github.com/stilvoid/please/internal"
 )
 
-func formatQueryInternal(in interface{}) string {
+func formatQueryInternal(in any) string {
 	if in == nil {
 		return ""
 	}
 
-	inMap, ok := in.(map[string]interface{})
+	inMap, ok := in.(map[string]any)
 
 	if !ok {
 		return fmt.Sprint(in)
@@ -22,7 +22,7 @@ func formatQueryInternal(in interface{}) string {
 
 	for key, value := range inMap {
 		switch value.(type) {
-		case map[string]interface{}:
+		case map[string]any:
 			result := formatQueryInternal(value)
 
 			output.Add(key, result)
@@ -36,9 +36,11 @@ func formatQueryInternal(in interface{}) string {
 	return output.Encode()
 }
 
-func Query(in interface{}) (string, error) {
-	in = internal.ArraysToMaps(in)
-	in = internal.ForceStringKeys(in)
+func Query(in any) (string, error) {
+	in = internal.Coerce(in, internal.Config{
+		MapArrays:  true,
+		StringKeys: true,
+	})
 
 	return formatQueryInternal(in), nil
 }

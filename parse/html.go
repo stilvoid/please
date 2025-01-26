@@ -9,8 +9,8 @@ import (
 	"golang.org/x/net/html"
 )
 
-func Html(input []byte) (interface{}, error) {
-	var parsed interface{}
+func Html(input []byte) (any, error) {
+	var parsed any
 
 	doc, err := html.Parse(bytes.NewReader(input))
 
@@ -21,8 +21,8 @@ func Html(input []byte) (interface{}, error) {
 	return parsed, err
 }
 
-func formatHTML(n *html.Node) map[string]interface{} {
-	out := make(map[string]interface{})
+func formatHTML(n *html.Node) map[string]any {
+	out := make(map[string]any)
 
 	for _, a := range n.Attr {
 		out[fmt.Sprintf("-%s", a.Key)] = a.Val
@@ -48,13 +48,13 @@ func formatHTML(n *html.Node) map[string]interface{} {
 				kind := val.Kind()
 
 				if kind != reflect.Array && kind != reflect.Slice {
-					out[c.Data] = []interface{}{
+					out[c.Data] = []any{
 						existingValue,
 						newValue,
 					}
 				} else {
 					// *this* is sick
-					out[c.Data] = reflect.Append(val, reflect.ValueOf(newValue)).Interface().([]interface{})
+					out[c.Data] = reflect.Append(val, reflect.ValueOf(newValue)).Interface().([]any)
 				}
 			}
 		}

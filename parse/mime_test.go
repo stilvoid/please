@@ -14,8 +14,8 @@ func TestMIME(t *testing.T) {
 		"\n" +
 		"This is the body."
 
-	expected := map[string]interface{}{
-		"headers": map[string]interface{}{
+	expected := map[string]any{
+		"headers": map[string]any{
 			"Test":            []string{"123"},
 			"Multiple-Header": []string{"value1", "Value2"},
 		},

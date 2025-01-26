@@ -3,15 +3,16 @@ package format_test
 import (
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/stilvoid/please/format"
 )
 
 func TestXML(t *testing.T) {
-	xmlTestCases := append(testCases, map[interface{}]interface{}{ // XML style
-		"top": map[interface{}]interface{}{
-			"#text":      []interface{}{"Some text", "more text"},
+	xmlTestCases := append(testCases, map[any]any{ // XML style
+		"top": map[any]any{
+			"#text":      []any{"Some text", "more text"},
 			"-attribute": "value",
-			"child": map[interface{}]interface{}{
+			"child": map[any]any{
 				"#text": "child text",
 				"-type": "clever",
 			},
@@ -56,6 +57,19 @@ func TestXML(t *testing.T) {
   </tag>
 </root>`,
 		`<root>
+  <Array>def</Array>
+  <Array>456</Array>
+  <Array>true</Array>
+  <Array>false</Array>
+  <Array>&lt;nil&gt;</Array>
+  <Map>
+    <_56>def</_56>
+    <foo>123</foo>
+  </Map>
+  <Name>abc</Name>
+  <Number>(12+3i)</Number>
+</root>`,
+		`<root>
   <top attribute="value">
     Some text
     more text
@@ -77,8 +91,8 @@ func TestXML(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 
-		if actual != expected {
-			t.Errorf("unexpected:\n'%v'\nwant:\n'%v'", actual, expected)
+		if d := cmp.Diff(expected, actual); d != "" {
+			t.Error(d)
 		}
 	}
 }

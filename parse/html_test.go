@@ -18,16 +18,16 @@ func TestHTML(t *testing.T) {
 		</body>
 	</html>`
 
-	expected := map[string]interface{}{
-		"html": map[string]interface{}{
-			"head": map[string]interface{}{
-				"title": map[string]interface{}{
+	expected := map[string]any{
+		"html": map[string]any{
+			"head": map[string]any{
+				"title": map[string]any{
 					"#text": "Test",
 				},
 			},
-			"body": map[string]interface{}{
+			"body": map[string]any{
 				"-id": "mybody",
-				"p": map[string]interface{}{
+				"p": map[string]any{
 					"#text": "Hello",
 				},
 			},

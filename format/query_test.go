@@ -19,6 +19,7 @@ func TestQuery(t *testing.T) {
 		"123=0%3Dbaz%261%3Dquux",
 		"true=null%3D",
 		"0=456&1=def&2=3%3D4&3=0%3Dfirst%261%3Dsecond%262%3D0%253Ddeeper",
+		"Array=0%3Ddef%261%3D456%262%3Dtrue%263%3Dfalse%264%3D&Map=456%3Ddef%26foo%3D123&Name=abc&Number=%2812%2B3i%29",
 	}
 
 	if len(expecteds) != len(testCases) {

@@ -1,4 +1,3 @@
-// Package common provides some utility functions for dealing with HTTP requests and responses
 package internal
 
 import (
@@ -9,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/textproto"
+	"os"
 	"strings"
 )
 
@@ -46,61 +46,51 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 		req.Header = headers
 	}
 
+	req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", Name, Version))
+
 	if err != nil {
 		return nil, err
 	}
 
-	//return http.DefaultClient.Do(req)
-
-	return http.DefaultTransport.RoundTrip(req)
+	return http.DefaultClient.Do(req)
 }
 
-// WriteRequest writes an http.Request to the specified writer
-func WriteRequest(w io.Writer, req *http.Request, includeMethod bool, includeUrl bool, includeHeaders bool) error {
+// PrintRequest writes an http.Request to stdout
+func PrintRequest(req *http.Request, includeHeaders bool) error {
 	body, err := ioutil.ReadAll(req.Body)
 	req.Body.Close()
-
 	if err != nil {
 		return err
 	}
 
-	if includeMethod {
-		fmt.Fprintln(w, req.Method)
-	}
-
-	if includeUrl {
-		fmt.Fprintln(w, req.URL)
-	}
+	fmt.Printf("%s %s\n", req.Method, req.URL)
 
 	if includeHeaders {
-		req.Header.Write(w)
-		fmt.Fprintln(w)
+		req.Header.Write(os.Stdout)
+		fmt.Println()
 	}
 
-	fmt.Fprintln(w, string(body))
+	fmt.Println(string(body))
 
 	return nil
 }
 
-// WriteResponse writes an http.Response to the specified writer
-func WriteResponse(w io.Writer, resp *http.Response, includeHeaders bool, includeStatus bool) error {
+// PrintResponse writes an http.Response to stdout
+func PrintResponse(resp *http.Response, includeHeaders bool) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-
 	if err != nil {
 		return err
 	}
 
-	if includeStatus {
-		fmt.Fprintln(w, resp.Status)
-	}
-
 	if includeHeaders {
-		resp.Header.Write(w)
-		fmt.Fprintln(w)
+		fmt.Println(resp.Status)
+
+		resp.Header.Write(os.Stdout)
+		fmt.Println()
 	}
 
-	fmt.Fprintln(w, string(body))
+	fmt.Println(string(body))
 
 	return nil
 }
