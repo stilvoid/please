@@ -9,9 +9,7 @@ import (
 	"net"
 	"net/http"
 	"net/textproto"
-	"os"
 
-	"github.com/andrew-d/go-termutil"
 	"github.com/spf13/cobra"
 	"github.com/stilvoid/please/internal"
 )
@@ -30,7 +28,7 @@ func init() {
 	Cmd.Flags().BoolVarP(&includeHeaders, "output-headers", "o", false, "Output request headers")
 	Cmd.Flags().BoolVarP(&includeMethod, "output-method", "m", false, "Output request method")
 	Cmd.Flags().BoolVarP(&includeUrl, "output-url", "u", false, "Output request URL")
-	Cmd.Flags().StringVarP(&bodyFn, "body", "b", "", "Filename to read the response body from. Use - for stdin.")
+	Cmd.Flags().StringVarP(&bodyFn, "body", "b", "", "Filename to read the response body from. Use - or omit for stdin")
 	Cmd.Flags().StringVarP(&address, "address", "a", "", "Address to listen on")
 	Cmd.Flags().IntVarP(&port, "port", "p", 8000, "Port to listen on")
 	Cmd.Flags().IntVarP(&status, "status", "s", 200, "Status code to respond with")
@@ -57,18 +55,12 @@ var Cmd = &cobra.Command{
 		listener, err := net.Listen("tcp", address)
 		cobra.CheckErr(err)
 
-		if bodyFn != "" {
-			if bodyFn == "" {
-				if termutil.Isatty(os.Stdin.Fd()) {
-					cobra.CheckErr(errors.New("Unable to read from stdin"))
-				} else {
-					handler.data = os.Stdin
-				}
-			} else {
-				var err error
-				handler.data, err = os.Open(bodyFn)
-				cobra.CheckErr(err)
-			}
+		if bodyFn == "" {
+			handler.data, err = internal.StdinOrNothing()
+			cobra.CheckErr(err)
+		} else {
+			handler.data, err = internal.FileOrStdin(bodyFn)
+			cobra.CheckErr(err)
 		}
 
 		server := &http.Server{Addr: address, Handler: handler}
@@ -96,7 +88,7 @@ type responder struct {
 	includeMethod   bool
 	includeUrl      bool
 	headersIncluded bool
-	data            io.ReadSeeker
+	data            io.Reader
 }
 
 func (h responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {

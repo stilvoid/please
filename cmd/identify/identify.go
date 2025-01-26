@@ -2,18 +2,18 @@ package identify
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/stilvoid/please"
+	"github.com/stilvoid/please/internal"
 )
 
 var Cmd = &cobra.Command{
-	Use:   "identify [filename]",
-	Short: "Identify the format of some structured data",
-	Args:  cobra.ExactArgs(1),
+	Use:   "identify (FILENAME)",
+	Short: "Identify the format of some structured data from FILENAME or stdin if omitted",
+	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		data, err := os.ReadFile(args[0])
+		data, err := internal.ReadFileOrStdin(args...)
 		cobra.CheckErr(err)
 
 		format, _, err := Identify(data)

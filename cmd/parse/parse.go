@@ -1,14 +1,13 @@
 package parse
 
 import (
-	"errors"
 	"fmt"
-	"os"
 
 	"github.com/jmespath/go-jmespath"
 	"github.com/spf13/cobra"
 	"github.com/stilvoid/please"
 	"github.com/stilvoid/please/cmd/identify"
+	"github.com/stilvoid/please/internal"
 )
 
 var inFormat string
@@ -24,8 +23,8 @@ func init() {
 }
 
 var Cmd = &cobra.Command{
-	Use:   "parse [filename]",
-	Short: "Parse and convert structured data",
+	Use:   "parse (FILENAME)",
+	Short: "Parse and convert structured data from FILENAME or stdin if omitted",
 	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if listMode {
@@ -39,12 +38,10 @@ var Cmd = &cobra.Command{
 				fmt.Printf("  %s\n", name)
 			}
 			return
-		} else if len(args) != 1 {
-			cobra.CheckErr(errors.New("You must supply a filename"))
 		}
 
-		// Read from stdin
-		input, err := os.ReadFile(args[0])
+		// Read from stdin?
+		input, err := internal.ReadFileOrStdin(args...)
 		cobra.CheckErr(err)
 
 		// Try parsing
