@@ -75,14 +75,46 @@ func PrintRequest(req *http.Request, includeHeaders bool) error {
 	return nil
 }
 
-// PrintResponse writes an http.Response to stdout
-func PrintResponse(resp *http.Response, includeHeaders bool) error {
+// PrintResponse writes an http.Response to stdout or a file
+func PrintResponse(resp *http.Response, includeHeaders bool, outputFile string) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
 		return err
 	}
 
+	// If outputFile is specified, write to file instead of stdout
+	if outputFile != "" {
+		// Create the file
+		file, err := os.Create(outputFile)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		// Write headers to file if requested
+		if includeHeaders {
+			_, err = fmt.Fprintln(file, resp.Status)
+			if err != nil {
+				return err
+			}
+
+			err = resp.Header.Write(file)
+			if err != nil {
+				return err
+			}
+			_, err = fmt.Fprintln(file)
+			if err != nil {
+				return err
+			}
+		}
+
+		// Write body to file
+		_, err = file.Write(body)
+		return err
+	}
+
+	// Otherwise write to stdout as before
 	if includeHeaders {
 		fmt.Println(resp.Status)
 

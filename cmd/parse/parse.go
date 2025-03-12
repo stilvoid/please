@@ -16,11 +16,13 @@ import (
 var inFormat string
 var outFormat string
 var query string
+var outputFile string
 
 func init() {
 	Cmd.Flags().StringVarP(&inFormat, "from", "f", "auto", "input format (see please help parse for formats)")
 	Cmd.Flags().StringVarP(&outFormat, "to", "t", "auto", "output format (see please help parse for formats)")
 	Cmd.Flags().StringVarP(&query, "query", "q", "", "JMESPath query")
+	Cmd.Flags().StringVarP(&outputFile, "output", "o", "", "Filename to write the output to. Omit for stdout.")
 
 	formats := strings.Builder{}
 	formats.WriteString("Input formats:\n")
@@ -79,6 +81,11 @@ var Cmd = &cobra.Command{
 		output, err := format.Format(outFormat, parsed)
 		cobra.CheckErr(err)
 
-		fmt.Println(output)
+		if outputFile != "" {
+			err = os.WriteFile(outputFile, []byte(output), 0644)
+			cobra.CheckErr(err)
+		} else {
+			fmt.Println(output)
+		}
 	},
 }
