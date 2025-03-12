@@ -1,125 +1,167 @@
-Please is a utility for making and receiving web requests and parsing and reformatting the common data formats that are sent over them.
+# Please
 
-## Installing
+Please is a versatile command-line utility for working with web requests and common data formats. It simplifies the process of making HTTP requests, serving content, and converting between different data formats.
 
-`brew install stilvoid/tools/please`
+## Features
 
-_or_
+- Make HTTP requests with support for different methods (GET, POST, PUT, DELETE)
+- Start a simple HTTP server to serve local files
+- Listen and respond to HTTP requests
+- Parse and convert between various data formats
+- Identify data format of files or input streams
+- Query data using JMESPath expressions
 
-Download a binary from the [releases](https://github.com/stilvoid/please/releases) page.
+## Installation
 
-_or_
+Choose one of the following methods:
 
-Run `go install github.com/stilvoid/please@latest`
+### Using Homebrew
 
-## Usage
-
-```
-please [command]
-
-Available Commands:
-  help        Help about any command
-  identify    Identify the format of some structured data from FILENAME or stdin if omitted
-  parse       Parse and convert structured data from FILENAME or stdin if omitted
-  request     Send a web request to a url and print the response
-  respond     Listen for an HTTP request and respond to it
-  serve       Serve the contents of PATH (current directory if omitted) through a simple web server
+```bash
+brew install stilvoid/tools/please
 ```
 
-## Please Identify
+### Using Go
 
-Identify the format of some structured data from FILENAME or stdin if omitted
-
-```
-Usage:
-  please identify (FILENAME) [flags]
-
-Flags:
-  -h, --help   help for identify
+```bash
+go install github.com/stilvoid/please@latest
 ```
 
-## Please parse
+### Manual Installation
 
-Parse and converted structured data from FILENAME or stdin if omitted.
+Download the appropriate binary for your platform from the [releases page](https://github.com/stilvoid/please/releases).
 
+## Commands
+
+### please identify
+
+Identifies the format of structured data from a file or stdin.
+
+```bash
+please identify [FILENAME]
 ```
+
+### please parse
+
+Parses and converts structured data between different formats.
+
+```bash
+please parse [FILENAME] [flags]
+```
+
+Supported formats:
+
 Input formats:
-  csv
-  html
-  json
-  mime
-  query
-  toml
-  xml
-  yaml
+- CSV
+- HTML
+- JSON
+- MIME
+- Query string
+- TOML
+- XML
+- YAML
 
 Output formats:
-  bash
-  dot
-  json
-  query
-  toml
-  xml
-  yaml
-
-## Please parse
-
-Usage:
-  please parse (FILENAME) [flags]
+- Bash
+- DOT (graph description)
+- JSON
+- Query string
+- TOML
+- XML
+- YAML
 
 Flags:
-  -f, --from string    input format (see please help parse for formats) (default "auto")
-  -h, --help           help for parse
-  -q, --query string   JMESPath query
-  -t, --to string      output format (see please help parse for formats) (default "auto")
+- `-f, --from string`: Input format (default "auto")
+- `-t, --to string`: Output format (default "auto")
+- `-q, --query string`: Apply a JMESPath query to the data
+
+### please request
+
+Sends HTTP requests and displays the response.
+
+```bash
+please request [method] [url] [flags]
 ```
 
-## Please Request
-
-Send a web request to a url and print the response
-
-```
-Usage:
-  please request [method] [url] [flags]
-
-Aliases:
-  request, get, post, put, delete
+Aliases: `get`, `post`, `put`, `delete`
 
 Flags:
-  -b, --body string       Filename to read the request body from. Use - or omit for stdin.
-  -h, --help              help for request
-  -i, --include-headers   Read headers from the request body
-  -v, --verbose           Output response status line and headers
+- `-b, --body string`: File to read request body from (use "-" for stdin)
+- `-i, --include-headers`: Read headers from the request body
+- `-v, --verbose`: Show response status line and headers
+
+### please respond
+
+Creates a temporary HTTP server that listens for requests and responds with specified content.
+
+```bash
+please respond [flags]
 ```
-
-## Please Respond
-
-Listen for an HTTP request and respond to it
-
-```
-Usage:
-  please respond [flags]
 
 Flags:
-  -a, --address string    Address to listen on
-  -b, --body string       Filename to read the response body from. Use - or omit for stdin
-  -h, --help              help for respond
-  -i, --include-headers   Read headers from the response body
-  -p, --port int          Port to listen on (default 8000)
-  -s, --status int        Status code to respond with (default 200)
-  -v, --verbose           Output request headers
+- `-a, --address string`: Address to listen on
+- `-p, --port int`: Port to listen on (default 8000)
+- `-b, --body string`: File to read response body from (use "-" for stdin)
+- `-i, --include-headers`: Read headers from the response body
+- `-s, --status int`: HTTP status code to respond with (default 200)
+- `-v, --verbose`: Show request headers
+
+### please serve
+
+Starts a simple HTTP server to serve local files.
+
+```bash
+please serve [PATH] [flags]
 ```
-
-## Please Serve
-
-Serve the contents of PATH (current directory if omitted) through a simple web server
-
-```
-Usage:
-  please serve (PATH) [flags]
 
 Flags:
-  -a, --address string   Address to listen on
-  -h, --help             help for serve
-  -p, --port int         Post to listen on (default 8000)
+- `-a, --address string`: Address to listen on
+- `-p, --port int`: Port to listen on (default 8000)
+
+## Examples
+
+1. Convert JSON to YAML:
+```bash
+echo '{"name": "test"}' | please parse --from json --to yaml
 ```
+Output:
+```yaml
+name: test
+```
+
+2. Query JSON data using JMESPath:
+```bash
+echo '{"users": [{"name": "test1"}, {"name": "test2"}]}' | please parse --query "users[*].name"
+```
+Output:
+```json
+[
+  "test1",
+  "test2"
+]
+```
+
+3. Make a POST request with JSON body:
+```bash
+echo '{"data": "example"}' | please request post https://api.example.com/endpoint
+```
+
+4. Serve current directory:
+```bash
+please serve
+```
+This will start a web server on port 8000 serving the current directory.
+
+5. Start a mock server that responds with specific content:
+```bash
+echo 'Hello World' | please respond -p 8080
+```
+This will start a server on port 8080 that responds with "Hello World" to all requests.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the terms found in the [LICENSE](LICENSE) file.
