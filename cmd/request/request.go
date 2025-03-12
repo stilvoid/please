@@ -3,6 +3,7 @@ package request
 import (
 	"io"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/stilvoid/please/internal"
@@ -12,12 +13,14 @@ var headersIncluded bool
 var verbose bool
 var bodyFn string
 var outputFile string
+var headers []string
 
 func init() {
 	Cmd.Flags().BoolVarP(&headersIncluded, "include-headers", "i", false, "Read headers from the request body")
 	Cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Output response status line and headers")
 	Cmd.Flags().StringVarP(&bodyFn, "body", "b", "", "Filename to read the request body from. Use - or omit for stdin.")
 	Cmd.Flags().StringVarP(&outputFile, "output", "o", "", "Filename to write the response to. Omit for stdout.")
+	Cmd.Flags().StringArrayVarP(&headers, "header", "H", []string{}, "Add a header to the request (can be used multiple times)")
 }
 
 var Cmd = &cobra.Command{
@@ -56,7 +59,19 @@ var Cmd = &cobra.Command{
 		}
 		cobra.CheckErr(err)
 
-		resp, err := internal.MakeRequest(method, url, input, headersIncluded)
+		// Convert header array to map
+		headerMap := make(map[string][]string)
+		for _, h := range headers {
+			parts := strings.SplitN(h, ":", 2)
+			if len(parts) != 2 {
+				cobra.CheckErr("Invalid header format. Use 'Name: Value'")
+			}
+			name := strings.TrimSpace(parts[0])
+			value := strings.TrimSpace(parts[1])
+			headerMap[name] = append(headerMap[name], value)
+		}
+
+		resp, err := internal.MakeRequest(method, url, input, headersIncluded, headerMap)
 		cobra.CheckErr(err)
 
 		cobra.CheckErr(internal.PrintResponse(resp, verbose, outputFile))

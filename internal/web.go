@@ -13,7 +13,7 @@ import (
 )
 
 // MakeRequest performs an HTTP request based on the information provided
-func MakeRequest(method string, url string, input io.Reader, headersIncluded bool) (*http.Response, error) {
+func MakeRequest(method string, url string, input io.Reader, headersIncluded bool, customHeaders map[string][]string) (*http.Response, error) {
 	var req *http.Request
 	var headers map[string][]string
 	var err error
@@ -46,11 +46,19 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 		req.Header = headers
 	}
 
-	req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", Name, Version))
-
 	if err != nil {
 		return nil, err
 	}
+
+	// Add custom headers from command line
+	for name, values := range customHeaders {
+		for _, value := range values {
+			req.Header.Add(name, value)
+		}
+	}
+
+	// Add User-Agent header last to ensure it's not overridden
+	req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", Name, Version))
 
 	return http.DefaultClient.Do(req)
 }
