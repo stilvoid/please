@@ -37,9 +37,10 @@ func init() {
 }
 
 var Cmd = &cobra.Command{
-	Use:   "parse (FILENAME)",
-	Short: "Parse and convert structured data from FILENAME or stdin if omitted",
-	Args:  cobra.RangeArgs(0, 1),
+	Use:     "parse (FILENAME)",
+	Short:   "Parse and convert structured data from FILENAME or stdin if omitted",
+	Aliases: []string{"format"},
+	Args:    cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		input, err := internal.ReadFileOrStdin(args...)
 		if err != nil {
