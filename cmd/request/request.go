@@ -11,14 +11,14 @@ import (
 
 var headersIncluded bool
 var verbose bool
-var bodyFn string
+var inputFile string
 var outputFile string
 var headers []string
 
 func init() {
 	Cmd.Flags().BoolVarP(&headersIncluded, "include-headers", "i", false, "Read headers from the request body")
 	Cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Output response status line and headers")
-	Cmd.Flags().StringVarP(&bodyFn, "body", "b", "", "Filename to read the request body from. Use - or omit for stdin.")
+	Cmd.Flags().StringVarP(&inputFile, "data", "d", "", "Filename to read the request body from. Omit for stdin.")
 	Cmd.Flags().StringVarP(&outputFile, "output", "o", "", "Filename to write the response to. Omit for stdout.")
 	Cmd.Flags().StringArrayVarP(&headers, "header", "H", []string{}, "Add a header to the request (can be used multiple times)")
 }
@@ -52,10 +52,10 @@ var Cmd = &cobra.Command{
 		var input io.Reader
 		var err error
 
-		if bodyFn == "" {
+		if inputFile == "" {
 			input, err = internal.StdinOrNothing()
 		} else {
-			input, err = internal.FileOrStdin(bodyFn)
+			input, err = internal.FileOrStdin(inputFile)
 		}
 		cobra.CheckErr(err)
 
