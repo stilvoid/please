@@ -3,7 +3,6 @@ package parse
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/jmespath/go-jmespath"
 	"github.com/spf13/cobra"
@@ -18,34 +17,37 @@ var outFormat string
 var query string
 var outputFile string
 var inputFile string
+var listFormats bool
 
 func init() {
-	Cmd.Flags().StringVarP(&inFormat, "from", "f", "auto", "input format (see please help parse for formats)")
-	Cmd.Flags().StringVarP(&outFormat, "to", "t", "auto", "output format (see please help parse for formats)")
+	Cmd.Flags().StringVarP(&inFormat, "from", "f", "auto", "input format")
+	Cmd.Flags().StringVarP(&outFormat, "to", "t", "auto", "output format")
 	Cmd.Flags().StringVarP(&query, "query", "q", "", "JMESPath query")
 	Cmd.Flags().StringVarP(&outputFile, "output", "o", "", "Filename to write the output to. Omit for stdout.")
 	Cmd.Flags().StringVarP(&inputFile, "input", "i", "", "Filename to read input from. Omit for stdin.")
-
-	formats := strings.Builder{}
-	formats.WriteString("Input formats:\n")
-	for _, name := range parse.Parsers {
-		formats.WriteString(fmt.Sprintf("  %s\n", name))
-	}
-	formats.WriteString("\n")
-	formats.WriteString("Output formats:\n")
-	for _, name := range format.Formatters {
-		formats.WriteString(fmt.Sprintf("  %s\n", name))
-	}
-
-	Cmd.Long = "Parse and converted structured data from FILENAME or stdin if omitted.\n\n" + formats.String()
+	Cmd.Flags().BoolVarP(&listFormats, "list", "l", false, "List available formats")
 }
 
 var Cmd = &cobra.Command{
 	Use:     "parse (FILENAME)",
 	Short:   "Parse and convert structured data from FILENAME or stdin if omitted",
+	Long:    "Parse and convert structured data between different formats. Use --list to see available formats.",
 	Aliases: []string{"format"},
 	Args:    cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
+		if listFormats {
+			fmt.Println("Input formats:")
+			for _, name := range parse.Parsers {
+				fmt.Printf("  %s\n", name)
+			}
+			fmt.Println()
+			fmt.Println("Output formats:")
+			for _, name := range format.Formatters {
+				fmt.Printf("  %s\n", name)
+			}
+			return
+		}
+
 		var input []byte
 		var err error
 
