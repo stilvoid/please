@@ -63,22 +63,35 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 	return http.DefaultClient.Do(req)
 }
 
-// PrintRequest writes an http.Request to stdout
-func PrintRequest(req *http.Request, includeHeaders bool) error {
+// WriteRequest writes an http.Request to a writer
+func WriteRequest(w io.Writer, req *http.Request, includeHeaders bool, prefix string) error {
 	body, err := ioutil.ReadAll(req.Body)
 	req.Body.Close()
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("%s %s\n", req.Method, req.URL)
+	// Create a new ReadCloser with the same body for future use
+	req.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 
+	// First line: HTTP method and path
+	fmt.Fprintf(w, "%s%s %s\n", prefix, req.Method, req.URL.String())
+
+	// Headers (if requested)
 	if includeHeaders {
-		req.Header.Write(os.Stdout)
-		fmt.Println()
+		for key, values := range req.Header {
+			for _, value := range values {
+				fmt.Fprintf(w, "%s: %s\n", key, value)
+			}
+		}
+		// Empty line separating headers from body
+		fmt.Fprintln(w)
 	}
 
-	fmt.Println(string(body))
+	// Body (if any)
+	if len(body) > 0 {
+		fmt.Fprintln(w, string(body))
+	}
 
 	return nil
 }
