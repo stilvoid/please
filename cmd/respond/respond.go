@@ -12,30 +12,31 @@ import (
 	"net/textproto"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/spf13/cobra"
 	"github.com/stilvoid/please/internal"
 )
 
-var headersIncluded bool
+var parseHeaders bool
 var verbose bool
 var inputFile string
 var outputFile string
-var address string
-var port int
+var listen string
 var status int
 var keepAlive bool
+var headers []string
 
 func init() {
-	Cmd.Flags().BoolVarP(&headersIncluded, "include-headers", "i", false, "Read headers from the response body")
+	Cmd.Flags().BoolVarP(&parseHeaders, "parse-headers", "p", false, "Read headers from the input data")
 	Cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Show full request details including headers and body")
-	Cmd.Flags().StringVarP(&inputFile, "data", "d", "", "Filename to read the response body from. Omit for stdin.")
+	Cmd.Flags().StringVarP(&inputFile, "input", "i", "", "File to read input data from. Omit for stdin.")
 	Cmd.Flags().StringVarP(&outputFile, "output", "o", "", "Filename to write the request to. Omit for stdout.")
-	Cmd.Flags().StringVarP(&address, "address", "a", "", "Address to listen on")
-	Cmd.Flags().IntVarP(&port, "port", "p", 8000, "Port to listen on")
+	Cmd.Flags().StringVarP(&listen, "listen", "l", ":8000", "Address to listen on (e.g. ':8000' or 'localhost:8000')")
 	Cmd.Flags().IntVarP(&status, "status", "s", 200, "Status code to respond with")
 	Cmd.Flags().BoolVarP(&keepAlive, "keep-alive", "k", false, "Keep server running to handle multiple requests")
+	Cmd.Flags().StringArrayVarP(&headers, "header", "H", []string{}, "Add a header to the response (can be used multiple times)")
 }
 
 var Cmd = &cobra.Command{
@@ -43,8 +44,6 @@ var Cmd = &cobra.Command{
 	Short: "Listen for HTTP requests and respond to them",
 	Long:  "Listen for HTTP requests and respond to them. By default, responds to a single request and exits. Use --keep-alive to keep the server running.",
 	Run: func(cmd *cobra.Command, args []string) {
-		address = fmt.Sprintf("%s:%d", address, port)
-
 		// Read the response data once at startup
 		var responseData []byte
 		var err error
@@ -78,18 +77,31 @@ var Cmd = &cobra.Command{
 		}
 
 		handler := responder{
-			status:          status,
-			verbose:         verbose,
-			headersIncluded: headersIncluded,
-			responseData:    responseData,
-			keepAlive:       keepAlive,
-			outputWriter:    outputWriter,
+			status:       status,
+			verbose:      verbose,
+			parseHeaders: parseHeaders,
+			responseData: responseData,
+			keepAlive:    keepAlive,
+			outputWriter: outputWriter,
 		}
 
-		listener, err := net.Listen("tcp", address)
+		// Convert header array to map
+		headerMap := make(map[string][]string)
+		for _, h := range headers {
+			parts := strings.SplitN(h, ":", 2)
+			if len(parts) != 2 {
+				cobra.CheckErr("Invalid header format. Use 'Name: Value'")
+			}
+			name := strings.TrimSpace(parts[0])
+			value := strings.TrimSpace(parts[1])
+			headerMap[name] = append(headerMap[name], value)
+		}
+		handler.headers = headerMap
+
+		listener, err := net.Listen("tcp", listen)
 		cobra.CheckErr(err)
 
-		server := &http.Server{Addr: address, Handler: &handler}
+		server := &http.Server{Addr: listen, Handler: &handler}
 
 		// Channel for signaling server shutdown
 		ch = make(chan bool, 1)
@@ -105,7 +117,7 @@ var Cmd = &cobra.Command{
 			}
 		}()
 
-		fmt.Println("Listening on", address)
+		fmt.Println("Listening on", listen)
 		if keepAlive {
 			fmt.Println("Server will keep running. Press Ctrl+C to stop.")
 		} else {
@@ -128,13 +140,14 @@ var Cmd = &cobra.Command{
 var ch chan bool
 
 type responder struct {
-	status          int
-	verbose         bool
-	headersIncluded bool
-	responseData    []byte
-	keepAlive       bool
-	requestCount    int
-	outputWriter    io.Writer
+	status       int
+	verbose      bool
+	parseHeaders bool
+	responseData []byte
+	keepAlive    bool
+	requestCount int
+	outputWriter io.Writer
+	headers      map[string][]string
 }
 
 func (h *responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -151,8 +164,15 @@ func (h *responder) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(os.Stderr, "Error writing request: %v\n", err)
 	}
 
+	// Add custom headers from command line
+	for name, values := range h.headers {
+		for _, value := range values {
+			w.Header().Add(name, value)
+		}
+	}
+
 	// Set up the response
-	if h.headersIncluded && len(h.responseData) > 0 {
+	if h.parseHeaders && len(h.responseData) > 0 {
 		// Parse headers from the response data
 		reader := textproto.NewReader(bufio.NewReader(bytes.NewReader(h.responseData)))
 		headers, err := reader.ReadMIMEHeader()

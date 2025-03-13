@@ -9,16 +9,16 @@ import (
 	"github.com/stilvoid/please/internal"
 )
 
-var headersIncluded bool
+var parseHeaders bool
 var verbose bool
 var inputFile string
 var outputFile string
 var headers []string
 
 func init() {
-	Cmd.Flags().BoolVarP(&headersIncluded, "include-headers", "i", false, "Read headers from the request body")
+	Cmd.Flags().BoolVarP(&parseHeaders, "parse-headers", "p", false, "Read headers from the input data")
 	Cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Output response status line and headers")
-	Cmd.Flags().StringVarP(&inputFile, "data", "d", "", "Filename to read the request body from. Omit for stdin.")
+	Cmd.Flags().StringVarP(&inputFile, "input", "i", "", "File to read input data from. Omit for stdin.")
 	Cmd.Flags().StringVarP(&outputFile, "output", "o", "", "Filename to write the response to. Omit for stdout.")
 	Cmd.Flags().StringArrayVarP(&headers, "header", "H", []string{}, "Add a header to the request (can be used multiple times)")
 }
@@ -71,7 +71,7 @@ var Cmd = &cobra.Command{
 			headerMap[name] = append(headerMap[name], value)
 		}
 
-		resp, err := internal.MakeRequest(method, url, input, headersIncluded, headerMap)
+		resp, err := internal.MakeRequest(method, url, input, parseHeaders, headerMap)
 		cobra.CheckErr(err)
 
 		cobra.CheckErr(internal.PrintResponse(resp, verbose, outputFile))
