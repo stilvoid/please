@@ -64,7 +64,7 @@ func MakeRequest(method string, url string, input io.Reader, headersIncluded boo
 }
 
 // WriteRequest writes an http.Request to a writer
-func WriteRequest(w io.Writer, req *http.Request, includeHeaders bool, prefix string) error {
+func WriteRequest(w io.Writer, req *http.Request, verbose bool, prefix string) error {
 	body, err := ioutil.ReadAll(req.Body)
 	req.Body.Close()
 	if err != nil {
@@ -77,8 +77,8 @@ func WriteRequest(w io.Writer, req *http.Request, includeHeaders bool, prefix st
 	// First line: HTTP method and path
 	fmt.Fprintf(w, "%s%s %s\n", prefix, req.Method, req.URL.String())
 
-	// Headers (if requested)
-	if includeHeaders {
+	// Headers and body only if verbose mode is enabled
+	if verbose {
 		for key, values := range req.Header {
 			for _, value := range values {
 				fmt.Fprintf(w, "%s: %s\n", key, value)
@@ -86,11 +86,18 @@ func WriteRequest(w io.Writer, req *http.Request, includeHeaders bool, prefix st
 		}
 		// Empty line separating headers from body
 		fmt.Fprintln(w)
-	}
 
-	// Body (if any)
-	if len(body) > 0 {
-		fmt.Fprintln(w, string(body))
+		// Body (if any) - only print when verbose is enabled
+		if len(body) > 0 {
+			bodyStr := string(body)
+			coda := "\n\n"
+			if strings.HasSuffix(bodyStr, "\n\n") {
+				coda = ""
+			} else if strings.HasSuffix(bodyStr, "\n") {
+				coda = "\n"
+			}
+			fmt.Fprint(w, bodyStr+coda)
+		}
 	}
 
 	return nil

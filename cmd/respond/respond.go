@@ -29,7 +29,7 @@ var keepAlive bool
 
 func init() {
 	Cmd.Flags().BoolVarP(&headersIncluded, "include-headers", "i", false, "Read headers from the response body")
-	Cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Output request headers")
+	Cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Show full request details including headers and body")
 	Cmd.Flags().StringVarP(&inputFile, "data", "d", "", "Filename to read the response body from. Omit for stdin.")
 	Cmd.Flags().StringVarP(&outputFile, "output", "o", "", "Filename to write the request to. Omit for stdout.")
 	Cmd.Flags().StringVarP(&address, "address", "a", "", "Address to listen on")
