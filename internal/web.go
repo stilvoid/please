@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/textproto"
-	"os"
 	"strings"
 )
 
@@ -75,17 +74,26 @@ func WriteRequest(w io.Writer, req *http.Request, verbose bool, prefix string) e
 	req.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 
 	// First line: HTTP method and path
-	fmt.Fprintf(w, "%s%s %s\n", prefix, req.Method, req.URL.String())
+	_, err = fmt.Fprintf(w, "%s%s %s\n", prefix, req.Method, req.URL.String())
+	if err != nil {
+		return err
+	}
 
 	// Headers and body only if verbose mode is enabled
 	if verbose {
 		for key, values := range req.Header {
 			for _, value := range values {
-				fmt.Fprintf(w, "%s: %s\n", key, value)
+				_, err = fmt.Fprintf(w, "%s: %s\n", key, value)
+				if err != nil {
+					return err
+				}
 			}
 		}
 		// Empty line separating headers from body
-		fmt.Fprintln(w)
+		_, err = fmt.Fprintln(w)
+		if err != nil {
+			return err
+		}
 
 		// Body (if any) - only print when verbose is enabled
 		if len(body) > 0 {
@@ -96,61 +104,45 @@ func WriteRequest(w io.Writer, req *http.Request, verbose bool, prefix string) e
 			} else if strings.HasSuffix(bodyStr, "\n") {
 				coda = "\n"
 			}
-			fmt.Fprint(w, bodyStr+coda)
+			_, err = fmt.Fprint(w, bodyStr+coda)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
 	return nil
 }
 
-// PrintResponse writes an http.Response to stdout or a file
-func PrintResponse(resp *http.Response, includeHeaders bool, outputFile string) error {
+// WriteResponse writes an http.Response to a writer
+func WriteResponse(w io.Writer, resp *http.Response, verbose bool) error {
+	var err error
+
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
 		return err
 	}
 
-	// If outputFile is specified, write to file instead of stdout
-	if outputFile != "" {
-		// Create the file
-		file, err := os.Create(outputFile)
+	// Otherwise write to stdout as before
+	if verbose {
+		_, err = fmt.Fprintln(w, resp.Status)
 		if err != nil {
 			return err
 		}
-		defer file.Close()
 
-		// Write headers to file if requested
-		if includeHeaders {
-			_, err = fmt.Fprintln(file, resp.Status)
-			if err != nil {
-				return err
-			}
-
-			err = resp.Header.Write(file)
-			if err != nil {
-				return err
-			}
-			_, err = fmt.Fprintln(file)
-			if err != nil {
-				return err
-			}
+		err = resp.Header.Write(w)
+		if err != nil {
+			return err
 		}
 
-		// Write body to file
-		_, err = file.Write(body)
-		return err
+		_, err = fmt.Fprintln(w)
+		if err != nil {
+			return err
+		}
 	}
 
-	// Otherwise write to stdout as before
-	if includeHeaders {
-		fmt.Println(resp.Status)
+	_, err = w.Write(body)
 
-		resp.Header.Write(os.Stdout)
-		fmt.Println()
-	}
-
-	fmt.Println(string(body))
-
-	return nil
+	return err
 }

@@ -74,6 +74,17 @@ var Cmd = &cobra.Command{
 		resp, err := internal.MakeRequest(method, url, input, parseHeaders, headerMap)
 		cobra.CheckErr(err)
 
-		cobra.CheckErr(internal.PrintResponse(resp, verbose, outputFile))
+		var w io.Writer
+		if outputFile == "" {
+			w = os.Stdout
+		} else {
+			f, err := os.Create(outputFile)
+			cobra.CheckErr(err)
+			defer f.Close()
+
+			w = f
+		}
+
+		cobra.CheckErr(internal.WriteResponse(w, resp, verbose))
 	},
 }
