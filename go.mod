@@ -1,6 +1,6 @@
 module github.com/stilvoid/please
 
-go 1.23.5
+go 1.24.0
 
 require (
 	github.com/BurntSushi/toml v1.5.0
@@ -9,7 +9,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/spf13/cobra v1.9.1
-	golang.org/x/net v0.42.0
+	golang.org/x/net v0.47.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
