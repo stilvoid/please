@@ -1,3 +1,9 @@
+# DEPRECATED
+
+Please is now deprecated and will no longer be maintained. [Nushell](https://www.nushell.sh/) does everything I wanted please to do and more... and better!
+
+---
+
 Please is a utility for making and receiving web requests and parsing and reformatting the common data formats that are sent over them.
 
 ## Installing
